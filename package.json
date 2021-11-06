@@ -6,6 +6,7 @@
   "author": "Gabriel Ferraz <gftf2011@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "lint-staged": "^11.2.6",
     "standard": "^16.0.4"
   }
 }
