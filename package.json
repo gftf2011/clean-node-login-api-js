@@ -1,0 +1,8 @@
+{
+  "name": "clean-node-login-api-js",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/gftf2011/clean-node-login-api-js.git",
+  "author": "Gabriel Ferraz <gftf2011@gmail.com>",
+  "license": "MIT"
+}
