@@ -4,5 +4,8 @@
   "main": "index.js",
   "repository": "https://github.com/gftf2011/clean-node-login-api-js.git",
   "author": "Gabriel Ferraz <gftf2011@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "standard": "^16.0.4"
+  }
 }
