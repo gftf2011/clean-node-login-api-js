@@ -5,7 +5,19 @@
   "repository": "https://github.com/gftf2011/clean-node-login-api-js.git",
   "author": "Gabriel Ferraz <gftf2011@gmail.com>",
   "license": "MIT",
+  "lint-staged": {
+    "*.js": [
+      "standard --fix",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
   "devDependencies": {
+    "husky": "^7.0.4",
     "lint-staged": "^11.2.6",
     "standard": "^16.0.4"
   }
