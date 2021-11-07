@@ -104,4 +104,17 @@ describe('Login Router', () => {
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
+
+  it('Should return 500 if AuthUseCase has no execute method', () => {
+    const sut = new LoginRouter({})
+    const httpRequest = {
+      body: {
+        email: FAKE_GENERIC_EMAIL,
+        password: FAKE_GENERIC_PASSWORD
+      }
+    }
+    const httpResponse = sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
+  })
 })
