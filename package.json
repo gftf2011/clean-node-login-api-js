@@ -6,6 +6,10 @@
   "author": "Gabriel Ferraz <gftf2011@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@commitlint/config-conventional": "^14.1.0",
+    "commitizen": "^4.2.4",
+    "commitlint": "^14.1.0",
+    "cz-conventional-changelog": "3.3.0",
     "husky": "^7.0.0",
     "jest": "^27.3.1",
     "lint-staged": "^11.2.6",
@@ -18,6 +22,12 @@
   },
   "scripts": {
     "test": "jest",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "commit": "cz"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
