@@ -5,7 +5,7 @@ module.exports = class LoginRouter {
     this.authUseCase = authUseCase
   }
 
-  route (httpRequest) {
+  async route (httpRequest) {
     if (!httpRequest || !httpRequest.body || !this.authUseCase || !this.authUseCase.execute) {
       return HttpResponse.serverError()
     }
@@ -18,8 +18,11 @@ module.exports = class LoginRouter {
       return HttpResponse.badRequest('password')
     }
 
-    this.authUseCase.execute(email, password)
-
-    return HttpResponse.unauthorized()
+    // accessToken is temporary, it might be replaced by an object of existent User in the database
+    const accessToken = await this.authUseCase.execute(email, password)
+    if (!accessToken) {
+      return HttpResponse.unauthorized()
+    }
+    return HttpResponse.success()
   }
 }
