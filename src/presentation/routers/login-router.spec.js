@@ -3,11 +3,19 @@ const FAKE_GENERIC_EMAIL = 'test@gmail.com'
 
 class LoginRouter {
   route (httpRequest) {
-    if (!httpRequest.body.email) {
+    if (!httpRequest) {
+      return {
+        statusCode: 500
+      }
+    }
+
+    const { email, password } = httpRequest.body
+
+    if (!email) {
       return {
         statusCode: 400
       }
-    } else if (!httpRequest.body.password) {
+    } else if (!password) {
       return {
         statusCode: 401
       }
@@ -36,5 +44,11 @@ describe('Login Router', () => {
     }
     const httpResponse = sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(401)
+  })
+
+  it('Should return 500 if no "httpRequest" is provided', () => {
+    const sut = new LoginRouter()
+    const httpResponse = sut.route()
+    expect(httpResponse.statusCode).toBe(500)
   })
 })
