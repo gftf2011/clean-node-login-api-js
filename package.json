@@ -21,7 +21,7 @@
     ]
   },
   "scripts": {
-    "test": "jest",
+    "test": "jest --watchAll",
     "test:staged": "jest",
     "prepare": "husky install",
     "commit": "cz"
