@@ -11,6 +11,11 @@
     "lint-staged": "^11.2.6",
     "standard": "^16.0.4"
   },
+  "standard": {
+    "env": [
+      "jest"
+    ]
+  },
   "scripts": {
     "test": "jest",
     "prepare": "husky install"
