@@ -7,9 +7,13 @@ const ServerError = require('../errors/server-error')
 const FAKE_GENERIC_PASSWORD = 'any_password'
 const FAKE_GENERIC_EMAIL = 'test@gmail.com'
 
+const makeSut = () => {
+  return new LoginRouter()
+}
+
 describe('Login Router', () => {
   it('Should return 400 if no "email" is provided', () => {
-    const sut = new LoginRouter()
+    const sut = makeSut()
     const httpRequest = {
       body: {
         password: FAKE_GENERIC_PASSWORD
@@ -21,7 +25,7 @@ describe('Login Router', () => {
   })
 
   it('Should return 401 if no "password" is provided', () => {
-    const sut = new LoginRouter()
+    const sut = makeSut()
     const httpRequest = {
       body: {
         email: FAKE_GENERIC_EMAIL
@@ -33,14 +37,14 @@ describe('Login Router', () => {
   })
 
   it('Should return 500 if no "httpRequest" is provided', () => {
-    const sut = new LoginRouter()
+    const sut = makeSut()
     const httpResponse = sut.route()
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
   it('Should return 500 if no "httpRequest" has no "body"', () => {
-    const sut = new LoginRouter()
+    const sut = makeSut()
     const httpRequest = {}
     const httpResponse = sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
