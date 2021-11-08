@@ -10,7 +10,7 @@ module.exports = class LoginRouter {
   }
 
   async route (httpRequest) {
-    if (!httpRequest || !httpRequest.body || !this.authUseCase || !this.authUseCase.execute) {
+    if (!httpRequest || !httpRequest.body || !this.authUseCase || !this.authUseCase.execute || !this.emailValidator || !this.emailValidator.isValid) {
       return HttpResponse.serverError()
     }
 
