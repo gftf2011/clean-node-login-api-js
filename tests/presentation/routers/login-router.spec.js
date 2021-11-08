@@ -47,6 +47,19 @@ const makeSut = () => {
   }
 }
 
+const makeSutWithError = () => {
+  const authUseCaseSpy = new AuthUseCaseSpy()
+  authUseCaseSpy.execute = (_email, _password) => {
+    throw new Error()
+  }
+  const sut = new LoginRouter(authUseCaseSpy)
+
+  return {
+    authUseCaseSpy,
+    sut
+  }
+}
+
 describe('Login Router', () => {
   it('Should return 400 if no "email" is provided', async () => {
     const { sut } = makeSut()
@@ -119,5 +132,14 @@ describe('Login Router', () => {
     const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body.accessToken).toBe(authUseCaseSpy.accessToken)
+  })
+
+  it('Should return 500 when AuthUseCase call crashes', async () => {
+    const { sut, authUseCaseSpy } = makeSutWithError()
+    authUseCaseSpy.accessToken = FAKE_ACCESS_TOKEN
+    const httpRequest = FAKE_HTTP_REQUEST
+    const httpResponse = await sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 })
