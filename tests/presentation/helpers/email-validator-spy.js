@@ -1,5 +1,6 @@
 module.exports = class EmailValidatorSpy {
-  isValid (_email) {
+  isValid (email) {
+    this.email = email
     return this.isEmailValid
   }
 }

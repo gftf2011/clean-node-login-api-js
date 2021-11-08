@@ -219,8 +219,7 @@ describe('Login Router', () => {
     emailValidatorSpy.isEmailValid = true
     authUseCaseSpy.accessToken = FAKE_ACCESS_TOKEN
     const httpRequest = FAKE_HTTP_REQUEST
-    const httpResponse = await sut.route(httpRequest)
-    expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body.accessToken).toBe(authUseCaseSpy.accessToken)
+    await sut.route(httpRequest)
+    expect(httpRequest.body.email).toBe(emailValidatorSpy.email)
   })
 })
