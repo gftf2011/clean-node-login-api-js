@@ -24,6 +24,7 @@
     "test": "jest --watch --silent --verbose --colors",
     "test:all": "jest --watchAll --silent --verbose --colors",
     "test:staged": "jest --passWithNoTests --findRelatedTests --silent",
+    "test:ci": "jest --coverage",
     "prepare": "husky install",
     "commit": "cz"
   },
