@@ -3,9 +3,10 @@ const UnauthorizedUserError = require('../errors/unauthorized-error')
 const ServerError = require('../errors/server-error')
 
 module.exports = class HttpResponse {
-  static success () {
+  static success (data) {
     return {
-      statusCode: 200
+      statusCode: 200,
+      body: data
     }
   }
 

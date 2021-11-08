@@ -118,5 +118,6 @@ describe('Login Router', () => {
     const httpRequest = FAKE_HTTP_REQUEST
     const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body.accessToken).toBe(authUseCaseSpy.accessToken)
   })
 })
