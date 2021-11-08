@@ -28,4 +28,10 @@ describe('Email Validator', () => {
     const isEmailValid = sut.isValid(INVALID_EMAIL)
     expect(isEmailValid).toBe(false)
   })
+
+  it('Should call validator with correct email', () => {
+    const { sut } = makeSut()
+    sut.isValid(VALID_EMAIL)
+    expect(validator.email).toBe(VALID_EMAIL)
+  })
 })
