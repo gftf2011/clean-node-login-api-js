@@ -136,7 +136,7 @@ describe('Login Router', () => {
     expect(httpResponse.body).toEqual(new UnauthorizedUserError())
   })
 
-  it('Should return 500 if AuthUseCase is provided', async () => {
+  it('Should return 500 if AuthUseCase is not provided', async () => {
     const sut = new LoginRouter()
     const httpRequest = FAKE_HTTP_REQUEST
     const httpResponse = await sut.route(httpRequest)
@@ -177,5 +177,25 @@ describe('Login Router', () => {
     const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamError('email'))
+  })
+
+  it('Should return 500 if EmailValidator is not provided', async () => {
+    const authUseCaseSpy = new AuthUseCaseSpy()
+    const sut = new LoginRouter(authUseCaseSpy)
+    authUseCaseSpy.accessToken = FAKE_ACCESS_TOKEN
+    const httpRequest = FAKE_HTTP_REQUEST
+    const httpResponse = await sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
+  })
+
+  it('Should return 500 if EmailValidator has no isVallid method', async () => {
+    const authUseCaseSpy = new AuthUseCaseSpy()
+    const sut = new LoginRouter(authUseCaseSpy, {})
+    authUseCaseSpy.accessToken = FAKE_ACCESS_TOKEN
+    const httpRequest = FAKE_HTTP_REQUEST
+    const httpResponse = await sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 })
