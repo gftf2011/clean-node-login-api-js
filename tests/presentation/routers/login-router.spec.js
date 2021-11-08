@@ -72,21 +72,6 @@ const makeSutWithAuthUseCaseThrowingError = () => {
   }
 }
 
-const makeSutWithEmailValidatorReturningFalse = () => {
-  const emailValidatorSpy = new EmailValidatorSpy()
-  emailValidatorSpy.isValid = (_email) => {
-    return false
-  }
-  const authUseCaseSpy = new AuthUseCaseSpy()
-  const sut = new LoginRouter(authUseCaseSpy, emailValidatorSpy)
-
-  return {
-    emailValidatorSpy,
-    authUseCaseSpy,
-    sut
-  }
-}
-
 const makeSutWithEmailValidatorThrowingError = () => {
   const emailValidatorSpy = new EmailValidatorSpy()
   emailValidatorSpy.isValid = (_email) => {
@@ -112,7 +97,8 @@ describe('Login Router', () => {
   })
 
   it('Should return 400 if no "password" is provided', async () => {
-    const { sut } = makeSut()
+    const { sut, emailValidatorSpy } = makeSut()
+    emailValidatorSpy.isEmailValid = true
     const httpRequest = INVALID_FAKE_HTTP_REQUEST_WITH_NO_PASSWORD
     const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
@@ -135,7 +121,8 @@ describe('Login Router', () => {
   })
 
   it('Should call AuthUseCase with correct params', async () => {
-    const { sut, authUseCaseSpy } = makeSut()
+    const { sut, authUseCaseSpy, emailValidatorSpy } = makeSut()
+    emailValidatorSpy.isEmailValid = true
     const httpRequest = FAKE_HTTP_REQUEST
     await sut.route(httpRequest)
     expect(authUseCaseSpy.email).toBe(httpRequest.body.email)
@@ -143,7 +130,8 @@ describe('Login Router', () => {
   })
 
   it('Should return 401 when invalid credentials are provided', async () => {
-    const { sut, authUseCaseSpy } = makeSut()
+    const { sut, authUseCaseSpy, emailValidatorSpy } = makeSut()
+    emailValidatorSpy.isEmailValid = true
     authUseCaseSpy.accessToken = INVALID_FAKE_ACCESS_TOKEN
     const httpRequest = FAKE_HTTP_REQUEST_WITH_INVALID_EMAIL_AND_INVALID_PASSWORD
     const httpResponse = await sut.route(httpRequest)
@@ -168,7 +156,8 @@ describe('Login Router', () => {
   })
 
   it('Should return 200 when valid credentials are provided', async () => {
-    const { sut, authUseCaseSpy } = makeSut()
+    const { sut, authUseCaseSpy, emailValidatorSpy } = makeSut()
+    emailValidatorSpy.isEmailValid = true
     authUseCaseSpy.accessToken = FAKE_ACCESS_TOKEN
     const httpRequest = FAKE_HTTP_REQUEST
     const httpResponse = await sut.route(httpRequest)
@@ -177,7 +166,8 @@ describe('Login Router', () => {
   })
 
   it('Should return 500 when AuthUseCase call crashes', async () => {
-    const { sut, authUseCaseSpy } = makeSutWithAuthUseCaseThrowingError()
+    const { sut, authUseCaseSpy, emailValidatorSpy } = makeSutWithAuthUseCaseThrowingError()
+    emailValidatorSpy.isEmailValid = true
     authUseCaseSpy.accessToken = FAKE_ACCESS_TOKEN
     const httpRequest = FAKE_HTTP_REQUEST
     const httpResponse = await sut.route(httpRequest)
@@ -186,7 +176,8 @@ describe('Login Router', () => {
   })
 
   it('Should return 400 if invalid email is provided', async () => {
-    const { sut, authUseCaseSpy } = makeSutWithEmailValidatorReturningFalse()
+    const { sut, authUseCaseSpy, emailValidatorSpy } = makeSut()
+    emailValidatorSpy.isEmailValid = false
     authUseCaseSpy.accessToken = FAKE_ACCESS_TOKEN
     const httpRequest = FAKE_HTTP_REQUEST_WITH_INVALID_EMAIL_AND_VALID_PASSWORD
     const httpResponse = await sut.route(httpRequest)
@@ -221,5 +212,15 @@ describe('Login Router', () => {
     const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
+  })
+
+  it('Should call EmailValidator with correct email', async () => {
+    const { sut, authUseCaseSpy, emailValidatorSpy } = makeSut()
+    emailValidatorSpy.isEmailValid = true
+    authUseCaseSpy.accessToken = FAKE_ACCESS_TOKEN
+    const httpRequest = FAKE_HTTP_REQUEST
+    const httpResponse = await sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body.accessToken).toBe(authUseCaseSpy.accessToken)
   })
 })
