@@ -19,6 +19,12 @@ const FAKE_HTTP_REQUEST = {
     password: FAKE_GENERIC_PASSWORD
   }
 }
+// const FAKE_HTTP_REQUEST_WITH_INVALID_EMAIL_AND_VALID_PASSWORD = {
+//   body: {
+//     email: INVALID_FAKE_GENERIC_EMAIL,
+//     password: FAKE_GENERIC_PASSWORD
+//   }
+// }
 const FAKE_HTTP_REQUEST_WITH_INVALID_EMAIL_AND_INVALID_PASSWORD = {
   body: {
     email: INVALID_FAKE_GENERIC_EMAIL,
@@ -142,4 +148,12 @@ describe('Login Router', () => {
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
+
+  // it('Should return 400 if invalid email is provided', async () => {
+  //   const { sut, authUseCaseSpy } = makeSut()
+  //   authUseCaseSpy.accessToken = FAKE_ACCESS_TOKEN
+  //   const httpRequest = FAKE_HTTP_REQUEST_WITH_INVALID_EMAIL_AND_VALID_PASSWORD
+  //   const httpResponse = await sut.route(httpRequest)
+  //   expect(httpResponse.statusCode).toBe(400)
+  // })
 })
