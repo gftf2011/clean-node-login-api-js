@@ -10,21 +10,17 @@ module.exports = class LoginRouter {
   }
 
   async route (httpRequest) {
-    if (!httpRequest || !httpRequest.body || !this.authUseCase || !this.authUseCase.execute || !this.emailValidator || !this.emailValidator.isValid) {
-      return HttpResponse.serverError()
-    }
-
-    const { email, password } = httpRequest.body
-
-    if (!email) {
-      return HttpResponse.badRequest(new MissingParamError('email'))
-    } else if (!this.emailValidator.isValid(email)) {
-      return HttpResponse.badRequest(new InvalidParamError('email'))
-    } else if (!password) {
-      return HttpResponse.badRequest(new MissingParamError('password'))
-    }
-
     try {
+      const { email, password } = httpRequest.body
+
+      if (!email) {
+        return HttpResponse.badRequest(new MissingParamError('email'))
+      } else if (!this.emailValidator.isValid(email)) {
+        return HttpResponse.badRequest(new InvalidParamError('email'))
+      } else if (!password) {
+        return HttpResponse.badRequest(new MissingParamError('password'))
+      }
+
       // accessToken is temporary, it might be replaced by an object of existent User in the database
       const accessToken = await this.authUseCase.execute(email, password)
       if (!accessToken) {
