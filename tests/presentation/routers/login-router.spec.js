@@ -1,10 +1,12 @@
 const LoginRouter = require('../../../src/presentation/routers/login-router')
 
+const InvalidParamError = require('../../../src/presentation/errors/invalid-param-error')
 const MissingParamError = require('../../../src/presentation/errors/missing-param-error')
 const UnauthorizedUserError = require('../../../src/presentation/errors/unauthorized-error')
 const ServerError = require('../../../src/presentation/errors/server-error')
 
 const AuthUseCaseSpy = require('../helpers/auth-use-case-spy')
+const EmailValidatorSpy = require('../helpers/email-validator-spy')
 
 const FAKE_GENERIC_PASSWORD = 'any_password'
 const FAKE_GENERIC_EMAIL = 'test@gmail.com'
@@ -19,12 +21,12 @@ const FAKE_HTTP_REQUEST = {
     password: FAKE_GENERIC_PASSWORD
   }
 }
-// const FAKE_HTTP_REQUEST_WITH_INVALID_EMAIL_AND_VALID_PASSWORD = {
-//   body: {
-//     email: INVALID_FAKE_GENERIC_EMAIL,
-//     password: FAKE_GENERIC_PASSWORD
-//   }
-// }
+const FAKE_HTTP_REQUEST_WITH_INVALID_EMAIL_AND_VALID_PASSWORD = {
+  body: {
+    email: INVALID_FAKE_GENERIC_EMAIL,
+    password: FAKE_GENERIC_PASSWORD
+  }
+}
 const FAKE_HTTP_REQUEST_WITH_INVALID_EMAIL_AND_INVALID_PASSWORD = {
   body: {
     email: INVALID_FAKE_GENERIC_EMAIL,
@@ -44,23 +46,42 @@ const INVALID_FAKE_HTTP_REQUEST_WITH_NO_PASSWORD = {
 const INVALID_FAKE_EMPTY_HTTP_REQUEST = {}
 
 const makeSut = () => {
+  const emailValidatorSpy = new EmailValidatorSpy()
   const authUseCaseSpy = new AuthUseCaseSpy()
-  const sut = new LoginRouter(authUseCaseSpy)
+  const sut = new LoginRouter(authUseCaseSpy, emailValidatorSpy)
 
   return {
+    emailValidatorSpy,
     authUseCaseSpy,
     sut
   }
 }
 
-const makeSutWithError = () => {
+const makeSutWithAuthUseCaseThrowingError = () => {
+  const emailValidatorSpy = new EmailValidatorSpy()
   const authUseCaseSpy = new AuthUseCaseSpy()
   authUseCaseSpy.execute = async (_email, _password) => {
     throw new Error()
   }
-  const sut = new LoginRouter(authUseCaseSpy)
+  const sut = new LoginRouter(authUseCaseSpy, emailValidatorSpy)
 
   return {
+    emailValidatorSpy,
+    authUseCaseSpy,
+    sut
+  }
+}
+
+const makeSutWithEmailValidatorReturningFalse = () => {
+  const emailValidatorSpy = new EmailValidatorSpy()
+  emailValidatorSpy.isValid = (_email) => {
+    return false
+  }
+  const authUseCaseSpy = new AuthUseCaseSpy()
+  const sut = new LoginRouter(authUseCaseSpy, emailValidatorSpy)
+
+  return {
+    emailValidatorSpy,
     authUseCaseSpy,
     sut
   }
@@ -141,7 +162,7 @@ describe('Login Router', () => {
   })
 
   it('Should return 500 when AuthUseCase call crashes', async () => {
-    const { sut, authUseCaseSpy } = makeSutWithError()
+    const { sut, authUseCaseSpy } = makeSutWithAuthUseCaseThrowingError()
     authUseCaseSpy.accessToken = FAKE_ACCESS_TOKEN
     const httpRequest = FAKE_HTTP_REQUEST
     const httpResponse = await sut.route(httpRequest)
@@ -149,11 +170,12 @@ describe('Login Router', () => {
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
-  // it('Should return 400 if invalid email is provided', async () => {
-  //   const { sut, authUseCaseSpy } = makeSut()
-  //   authUseCaseSpy.accessToken = FAKE_ACCESS_TOKEN
-  //   const httpRequest = FAKE_HTTP_REQUEST_WITH_INVALID_EMAIL_AND_VALID_PASSWORD
-  //   const httpResponse = await sut.route(httpRequest)
-  //   expect(httpResponse.statusCode).toBe(400)
-  // })
+  it('Should return 400 if invalid email is provided', async () => {
+    const { sut, authUseCaseSpy } = makeSutWithEmailValidatorReturningFalse()
+    authUseCaseSpy.accessToken = FAKE_ACCESS_TOKEN
+    const httpRequest = FAKE_HTTP_REQUEST_WITH_INVALID_EMAIL_AND_VALID_PASSWORD
+    const httpResponse = await sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new InvalidParamError('email'))
+  })
 })
