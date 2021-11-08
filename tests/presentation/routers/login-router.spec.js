@@ -49,7 +49,7 @@ const makeSut = () => {
 
 const makeSutWithError = () => {
   const authUseCaseSpy = new AuthUseCaseSpy()
-  authUseCaseSpy.execute = (_email, _password) => {
+  authUseCaseSpy.execute = async (_email, _password) => {
     throw new Error()
   }
   const sut = new LoginRouter(authUseCaseSpy)
