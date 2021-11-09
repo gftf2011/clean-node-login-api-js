@@ -6,15 +6,28 @@ const AuthUseCase = require('../../../src/domain/use-cases/auth-use-case')
 class LoadUserByEmailRepositorySpy {
   async load (email) {
     this.email = email
+    return this.user
   }
 }
 
 const FAKE_GENERIC_EMAIL = 'test@gmail.com'
 const FAKE_GENERIC_PASSWORD = 'any_password'
 const INVALID_FAKE_GENERIC_EMAIL = 'invalid_test@gmail.com'
+const INVALID_FAKE_GENERIC_PASSWORD = 'invalid_password'
 
 const makeSut = () => {
   const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy()
+  loadUserByEmailRepositorySpy.user = {}
+  const sut = new AuthUseCase(loadUserByEmailRepositorySpy)
+  return {
+    sut,
+    loadUserByEmailRepositorySpy
+  }
+}
+
+const makeSutWithNoUser = () => {
+  const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy()
+  loadUserByEmailRepositorySpy.user = null
   const sut = new AuthUseCase(loadUserByEmailRepositorySpy)
   return {
     sut,
@@ -53,9 +66,15 @@ describe('Auth UseCase', () => {
     expect(promise).rejects.toThrow(new ServerError())
   })
 
-  it('Should return null if LoadUserByEmailRepository returns null', async () => {
-    const { sut } = makeSut()
+  it('Should return null if invalid email is provided', async () => {
+    const { sut } = makeSutWithNoUser()
     const accessToken = await sut.execute(INVALID_FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
+    expect(accessToken).toBeNull()
+  })
+
+  it('Should return null if invalid password is provided', async () => {
+    const { sut } = makeSut()
+    const accessToken = await sut.execute(FAKE_GENERIC_EMAIL, INVALID_FAKE_GENERIC_PASSWORD)
     expect(accessToken).toBeNull()
   })
 })
