@@ -1,29 +1,11 @@
 const MissingParamError = require('../../../src/utils/errors/missing-param-error')
 const ServerError = require('../../../src/utils/errors/server-error')
 
+const AuthUseCase = require('../../../src/domain/use-cases/auth-use-case')
+
 class LoadUserByEmailRepositorySpy {
   async load (email) {
     this.email = email
-  }
-}
-
-class AuthUseCase {
-  constructor (loadUserByEmailRepository) {
-    this.loadUserByEmailRepository = loadUserByEmailRepository
-  }
-
-  async execute (email, password) {
-    if (!this.loadUserByEmailRepository || !this.loadUserByEmailRepository.load) {
-      throw new ServerError()
-    } else if (!email) {
-      throw new MissingParamError('email')
-    } else if (!password) {
-      throw new MissingParamError('password')
-    }
-    const user = await this.loadUserByEmailRepository.load(email)
-    if (!user) {
-      return null
-    }
   }
 }
 
