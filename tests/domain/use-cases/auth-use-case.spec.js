@@ -17,6 +17,7 @@ const INVALID_FAKE_GENERIC_PASSWORD = 'invalid_password'
 
 const makeSut = () => {
   const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy()
+  // User body format still unknown so an empty object will be used temporarily
   loadUserByEmailRepositorySpy.user = {}
   const sut = new AuthUseCase(loadUserByEmailRepositorySpy)
   return {
