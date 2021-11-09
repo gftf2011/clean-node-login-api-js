@@ -1,7 +1,7 @@
 class AuthUseCase {
   async execute (email, password) {
     if (!email) {
-      return null
+      throw new Error()
     }
   }
 }
@@ -14,9 +14,9 @@ const makeSut = () => {
 }
 
 describe('Auth UseCase', () => {
-  it('Should return null if no email is provided', async () => {
+  it('Should throw error if no email is provided', async () => {
     const { sut } = makeSut()
-    const accessToken = await sut.execute(undefined, FAKE_GENERIC_PASSWORD)
-    expect(accessToken).toBeNull()
+    const promise = sut.execute(undefined, FAKE_GENERIC_PASSWORD)
+    expect(promise).rejects.toThrow()
   })
 })
