@@ -1,4 +1,5 @@
 const MissingParamError = require('../../../src/utils/errors/missing-param-error')
+const ServerError = require('../../../src/utils/errors/server-error')
 
 class LoadUserByEmailRepositorySpy {
   async load (email) {
@@ -12,7 +13,9 @@ class AuthUseCase {
   }
 
   async execute (email, password) {
-    if (!email) {
+    if (!this.loadUserByEmailRepository || !this.loadUserByEmailRepository.load) {
+      throw new ServerError()
+    } else if (!email) {
       throw new MissingParamError('email')
     } else if (!password) {
       throw new MissingParamError('password')
@@ -50,5 +53,17 @@ describe('Auth UseCase', () => {
     const { sut, loadUserByEmailRepositorySpy } = makeSut()
     await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(FAKE_GENERIC_EMAIL).toBe(loadUserByEmailRepositorySpy.email)
+  })
+
+  it('Should throw error if no LoadUserByEmailRepository is provided', async () => {
+    const sut = new AuthUseCase()
+    const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
+    expect(promise).rejects.toThrow(new ServerError())
+  })
+
+  it('Should throw error if LoadUserByEmailRepository has no load method', async () => {
+    const sut = new AuthUseCase({})
+    const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
+    expect(promise).rejects.toThrow(new ServerError())
   })
 })
