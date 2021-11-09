@@ -1,9 +1,9 @@
 const LoginRouter = require('../../../src/presentation/routers/login-router')
 
-const InvalidParamError = require('../../../src/presentation/errors/invalid-param-error')
-const MissingParamError = require('../../../src/presentation/errors/missing-param-error')
-const UnauthorizedUserError = require('../../../src/presentation/errors/unauthorized-error')
-const ServerError = require('../../../src/presentation/errors/server-error')
+const InvalidParamError = require('../../../src/utils/errors/invalid-param-error')
+const MissingParamError = require('../../../src/utils/errors/missing-param-error')
+const UnauthorizedUserError = require('../../../src/utils/errors/unauthorized-error')
+const ServerError = require('../../../src/utils/errors/server-error')
 
 const AuthUseCaseSpy = require('../helpers/auth-use-case-spy')
 const EmailValidatorSpy = require('../helpers/email-validator-spy')
