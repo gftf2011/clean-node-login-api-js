@@ -20,12 +20,16 @@ class AuthUseCase {
     } else if (!password) {
       throw new MissingParamError('password')
     }
-    await this.loadUserByEmailRepository.load(email)
+    const user = await this.loadUserByEmailRepository.load(email)
+    if (!user) {
+      return null
+    }
   }
 }
 
 const FAKE_GENERIC_EMAIL = 'test@gmail.com'
 const FAKE_GENERIC_PASSWORD = 'any_password'
+const INVALID_FAKE_GENERIC_EMAIL = 'invalid_test@gmail.com'
 
 const makeSut = () => {
   const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy()
@@ -55,15 +59,21 @@ describe('Auth UseCase', () => {
     expect(FAKE_GENERIC_EMAIL).toBe(loadUserByEmailRepositorySpy.email)
   })
 
-  it('Should throw error if no LoadUserByEmailRepository is provided', async () => {
+  it('Should throw error if no LoadUserByEmailRepository is provided', () => {
     const sut = new AuthUseCase()
     const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(promise).rejects.toThrow(new ServerError())
   })
 
-  it('Should throw error if LoadUserByEmailRepository has no load method', async () => {
+  it('Should throw error if LoadUserByEmailRepository has no load method', () => {
     const sut = new AuthUseCase({})
     const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(promise).rejects.toThrow(new ServerError())
+  })
+
+  it('Should return null if LoadUserByEmailRepository returns null', async () => {
+    const { sut } = makeSut()
+    const accessToken = await sut.execute(INVALID_FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
+    expect(accessToken).toBeNull()
   })
 })
