@@ -11,10 +11,6 @@ module.exports = class LoginRouter {
 
   async route (httpRequest) {
     try {
-      if (!httpRequest || !httpRequest.body || !this.authUseCase || !this.authUseCase.execute || !this.emailValidator || !this.emailValidator.isValid) {
-        return HttpResponse.serverError()
-      }
-
       const { email, password } = httpRequest.body
 
       if (!email) {
@@ -32,6 +28,9 @@ module.exports = class LoginRouter {
       }
       return HttpResponse.success({ accessToken })
     } catch (error) {
+      if (error instanceof MissingParamError || error instanceof InvalidParamError) {
+        return HttpResponse.badRequest(error)
+      }
       return HttpResponse.serverError()
     }
   }
