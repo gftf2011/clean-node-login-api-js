@@ -10,29 +10,43 @@ class LoadUserByEmailRepositorySpy {
   }
 }
 
+class EncrypterSpy {
+  async compare (password, hashedPassword) {
+    this.password = password
+    this.hashedPassword = hashedPassword
+  }
+}
+
 const FAKE_GENERIC_EMAIL = 'test@gmail.com'
 const FAKE_GENERIC_PASSWORD = 'any_password'
+const FAKE_HASHED_PASSWORD = 'hashed_password'
 const INVALID_FAKE_GENERIC_EMAIL = 'invalid_test@gmail.com'
 const INVALID_FAKE_GENERIC_PASSWORD = 'invalid_password'
 
 const makeSut = () => {
+  const encrypterSpy = new EncrypterSpy()
   const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy()
   // User body format still unknown so an empty object will be used temporarily
-  loadUserByEmailRepositorySpy.user = {}
-  const sut = new AuthUseCase(loadUserByEmailRepositorySpy)
+  loadUserByEmailRepositorySpy.user = {
+    password: FAKE_HASHED_PASSWORD
+  }
+  const sut = new AuthUseCase(loadUserByEmailRepositorySpy, encrypterSpy)
   return {
     sut,
-    loadUserByEmailRepositorySpy
+    loadUserByEmailRepositorySpy,
+    encrypterSpy
   }
 }
 
 const makeSutWithNoUser = () => {
+  const encrypterSpy = new EncrypterSpy()
   const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy()
   loadUserByEmailRepositorySpy.user = null
-  const sut = new AuthUseCase(loadUserByEmailRepositorySpy)
+  const sut = new AuthUseCase(loadUserByEmailRepositorySpy, encrypterSpy)
   return {
     sut,
-    loadUserByEmailRepositorySpy
+    loadUserByEmailRepositorySpy,
+    encrypterSpy
   }
 }
 
@@ -77,5 +91,12 @@ describe('Auth UseCase', () => {
     const { sut } = makeSut()
     const accessToken = await sut.execute(FAKE_GENERIC_EMAIL, INVALID_FAKE_GENERIC_PASSWORD)
     expect(accessToken).toBeNull()
+  })
+
+  it('Should call Encrypter with correct values', async () => {
+    const { sut, loadUserByEmailRepositorySpy, encrypterSpy } = makeSut()
+    await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
+    expect(encrypterSpy.password).toBe(FAKE_GENERIC_PASSWORD)
+    expect(encrypterSpy.hashedPassword).toBe(loadUserByEmailRepositorySpy.user.password)
   })
 })
