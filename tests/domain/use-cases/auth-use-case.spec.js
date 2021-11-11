@@ -98,4 +98,18 @@ describe('Auth UseCase', () => {
     expect(encrypterSpy.password).toBe(FAKE_GENERIC_PASSWORD)
     expect(encrypterSpy.hashedPassword).toBe(loadUserByEmailRepositorySpy.user.password)
   })
+
+  it('Should throw error if no Encrypter is provided', () => {
+    const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
+    const sut = new AuthUseCase(loadUserByEmailRepositorySpy)
+    const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
+    expect(promise).rejects.toThrow(new ServerError())
+  })
+
+  it('Should throw error if Encrypter has no compare method', () => {
+    const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
+    const sut = new AuthUseCase(loadUserByEmailRepositorySpy, {})
+    const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
+    expect(promise).rejects.toThrow(new ServerError())
+  })
 })

@@ -8,7 +8,7 @@ module.exports = class AuthUseCase {
   }
 
   async execute (email, password) {
-    if (!this.loadUserByEmailRepository || !this.loadUserByEmailRepository.load) {
+    if (!this.loadUserByEmailRepository || !this.loadUserByEmailRepository.load || !this.encrypter || !this.encrypter.compare) {
       throw new ServerError()
     } else if (!email) {
       throw new MissingParamError('email')
