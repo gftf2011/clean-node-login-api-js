@@ -135,4 +135,20 @@ describe('Auth UseCase', () => {
     await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(tokenGeneratorSpy.userId).toBe(loadUserByEmailRepositorySpy.user.id)
   })
+
+  it('Should throw error if no TokenGenerator is provided', () => {
+    const encrypterSpy = createEncrypterSpyFactory()
+    const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
+    const sut = new AuthUseCase(loadUserByEmailRepositorySpy, encrypterSpy)
+    const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
+    expect(promise).rejects.toThrow(new ServerError())
+  })
+
+  it('Should throw error if TokenGenerator has no generate method', () => {
+    const encrypterSpy = createEncrypterSpyFactory()
+    const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
+    const sut = new AuthUseCase(loadUserByEmailRepositorySpy, encrypterSpy, {})
+    const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
+    expect(promise).rejects.toThrow(new ServerError())
+  })
 })
