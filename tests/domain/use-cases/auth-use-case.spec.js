@@ -3,11 +3,25 @@ const ServerError = require('../../../src/utils/errors/server-error')
 
 const AuthUseCase = require('../../../src/domain/use-cases/auth-use-case')
 
+const FAKE_GENERIC_ACCESS_TOKEN = 'any_token'
+const FAKE_GENERIC_USER_ID = 'any_user_id'
 const FAKE_GENERIC_EMAIL = 'test@gmail.com'
 const FAKE_GENERIC_PASSWORD = 'any_password'
 const FAKE_HASHED_PASSWORD = 'hashed_password'
 const INVALID_FAKE_GENERIC_EMAIL = 'invalid_test@gmail.com'
 const INVALID_FAKE_GENERIC_PASSWORD = 'invalid_password'
+
+const createTokenGeneratorSpyFactory = () => {
+  class TokenGeneratorSpy {
+    async generate (userId) {
+      this.userId = userId
+      return this.accessToken
+    }
+  }
+  const tokenGeneratorSpy = new TokenGeneratorSpy()
+  tokenGeneratorSpy.accessToken = FAKE_GENERIC_ACCESS_TOKEN
+  return tokenGeneratorSpy
+}
 
 const createEncrypterSpyFactory = () => {
   class EncrypterSpy {
@@ -31,6 +45,7 @@ const createLoadUserByEmailRepositorySpyFactory = () => {
   }
   const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy()
   loadUserByEmailRepositorySpy.user = {
+    id: FAKE_GENERIC_USER_ID,
     password: FAKE_HASHED_PASSWORD
   }
   return loadUserByEmailRepositorySpy
@@ -39,11 +54,13 @@ const createLoadUserByEmailRepositorySpyFactory = () => {
 const createSutFactory = () => {
   const encrypterSpy = createEncrypterSpyFactory()
   const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
-  const sut = new AuthUseCase(loadUserByEmailRepositorySpy, encrypterSpy)
+  const tokenGeneratorSpy = createTokenGeneratorSpyFactory()
+  const sut = new AuthUseCase(loadUserByEmailRepositorySpy, encrypterSpy, tokenGeneratorSpy)
   return {
     sut,
     loadUserByEmailRepositorySpy,
-    encrypterSpy
+    encrypterSpy,
+    tokenGeneratorSpy
   }
 }
 
@@ -111,5 +128,11 @@ describe('Auth UseCase', () => {
     const sut = new AuthUseCase(loadUserByEmailRepositorySpy, {})
     const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(promise).rejects.toThrow(new ServerError())
+  })
+
+  it('Should call TokenGenerator with correct userId', async () => {
+    const { sut, loadUserByEmailRepositorySpy, tokenGeneratorSpy } = createSutFactory()
+    await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
+    expect(tokenGeneratorSpy.userId).toBe(loadUserByEmailRepositorySpy.user.id)
   })
 })
