@@ -151,4 +151,10 @@ describe('Auth UseCase', () => {
     const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(promise).rejects.toThrow(new ServerError())
   })
+
+  it('Should return an accessToken if correct credentials are provided', async () => {
+    const { sut } = createSutFactory()
+    const accessToken = await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
+    expect(accessToken).toBe(FAKE_GENERIC_ACCESS_TOKEN)
+  })
 })
