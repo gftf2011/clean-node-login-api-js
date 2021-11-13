@@ -5,8 +5,8 @@ const MissingParamError = require('../../../src/utils/errors/missing-param-error
 const UnauthorizedUserError = require('../../../src/utils/errors/unauthorized-error')
 const ServerError = require('../../../src/utils/errors/server-error')
 
-const AuthUseCaseSpy = require('../../../spys/auth-use-case-spy')
-const EmailValidatorSpy = require('../../../spys/email-validator-spy')
+const AuthUseCaseSpy = require('../../../spies/auth-use-case-spy')
+const EmailValidatorSpy = require('../../../spies/email-validator-spy')
 
 const FAKE_GENERIC_PASSWORD = 'any_password'
 const FAKE_GENERIC_EMAIL = 'test@gmail.com'
