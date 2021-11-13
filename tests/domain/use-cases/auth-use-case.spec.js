@@ -87,6 +87,12 @@ describe('Auth UseCase', () => {
     expect(FAKE_GENERIC_EMAIL).toBe(loadUserByEmailRepositorySpy.email)
   })
 
+  it('Should throw error if no dependency is provided', () => {
+    const sut = new AuthUseCase()
+    const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
+    expect(promise).rejects.toThrow(new ServerError())
+  })
+
   it('Should throw error if no LoadUserByEmailRepository is provided', () => {
     const sut = new AuthUseCase({})
     const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
