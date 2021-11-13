@@ -14,6 +14,13 @@ const createSutFactory = () => {
 }
 
 describe('Encrypter', () => {
+  it('Should call bcrypt with correct values', async () => {
+    const { sut } = createSutFactory()
+    await sut.compare(FAKE_GENERIC_PASSWORD, FAKE_HASHED_PASSWORD)
+    expect(bcrypt.password).toBe(FAKE_GENERIC_PASSWORD)
+    expect(bcrypt.hashedPassword).toBe(FAKE_HASHED_PASSWORD)
+  })
+
   it('Should return "true" if bcrypt returns "true"', async () => {
     const { sut } = createSutFactory()
     const isValid = await sut.compare(FAKE_GENERIC_PASSWORD, FAKE_HASHED_PASSWORD)
