@@ -1,5 +1,7 @@
 const validator = require('validator')
 
+const MissingParamError = require('../../../src/utils/errors/missing-param-error')
+
 const EmailValidator = require('../../../src/utils/validators/email-validator')
 
 const createSutFactory = () => {
@@ -29,5 +31,11 @@ describe('Email Validator', () => {
     const { sut } = createSutFactory()
     const isEmailValid = sut.isValid(INVALID_EMAIL)
     expect(isEmailValid).toBe(false)
+  })
+
+  it('Should throws MissingParamError if no email is provided', () => {
+    const { sut } = createSutFactory()
+    const pointer = sut.isValid
+    expect(pointer).toThrow(new MissingParamError('email'))
   })
 })
