@@ -194,22 +194,6 @@ describe('Login Router', () => {
     expect(httpResponse.body).toEqual(new UnauthorizedUserError())
   })
 
-  it('Should return 500 if AuthUseCase is not provided', async () => {
-    const sut = new LoginRouter()
-    const httpRequest = FAKE_HTTP_REQUEST
-    const httpResponse = await sut.route(httpRequest)
-    expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(new ServerError())
-  })
-
-  it('Should return 500 if AuthUseCase has no execute method', async () => {
-    const sut = new LoginRouter({})
-    const httpRequest = FAKE_HTTP_REQUEST
-    const httpResponse = await sut.route(httpRequest)
-    expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(new ServerError())
-  })
-
   it('Should return 200 when valid credentials are provided', async () => {
     const { sut, authUseCaseSpy } = createSutFactory()
     const httpRequest = FAKE_HTTP_REQUEST
@@ -236,14 +220,6 @@ describe('Login Router', () => {
     expect(httpResponse.body).toEqual(new MissingParamError('password'))
   })
 
-  it('Should return 500 when AuthUseCase calls crashes', async () => {
-    const { sut } = createSutFactoryAuthUseCaseThrowingServerError()
-    const httpRequest = FAKE_HTTP_REQUEST
-    const httpResponse = await sut.route(httpRequest)
-    expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(new ServerError())
-  })
-
   it('Should return 400 if invalid email is provided', async () => {
     const { sut, emailValidatorSpy } = createSutFactory()
     emailValidatorSpy.isEmailValid = false
@@ -253,9 +229,42 @@ describe('Login Router', () => {
     expect(httpResponse.body).toEqual(new InvalidParamError('email'))
   })
 
+  it('Should call EmailValidator with correct email', async () => {
+    const { sut, emailValidatorSpy } = createSutFactory()
+    const httpRequest = FAKE_HTTP_REQUEST
+    await sut.route(httpRequest)
+    expect(httpRequest.body.email).toBe(emailValidatorSpy.email)
+  })
+
+  it('Should throw error if no dependency is provided', async () => {
+    const sut = new LoginRouter()
+    const httpRequest = FAKE_HTTP_REQUEST
+    const httpResponse = await sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
+  })
+
+  it('Should return 500 if AuthUseCase is not provided', async () => {
+    const sut = new LoginRouter({})
+    const httpRequest = FAKE_HTTP_REQUEST
+    const httpResponse = await sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
+  })
+
+  it('Should return 500 if AuthUseCase has no execute method', async () => {
+    const sut = new LoginRouter({ authUseCase: {} })
+    const httpRequest = FAKE_HTTP_REQUEST
+    const httpResponse = await sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
+  })
+
   it('Should return 500 if EmailValidator is not provided', async () => {
     const authUseCaseSpy = createAuthUseCaseSpyFactory()
-    const sut = new LoginRouter(authUseCaseSpy)
+    const sut = new LoginRouter({
+      authUseCase: authUseCaseSpy
+    })
     const httpRequest = FAKE_HTTP_REQUEST
     const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
@@ -264,7 +273,10 @@ describe('Login Router', () => {
 
   it('Should return 500 if EmailValidator has no isValid method', async () => {
     const authUseCaseSpy = createAuthUseCaseSpyFactory()
-    const sut = new LoginRouter(authUseCaseSpy, {})
+    const sut = new LoginRouter({
+      authUseCase: authUseCaseSpy,
+      emailValidator: {}
+    })
     const httpRequest = FAKE_HTTP_REQUEST
     const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
@@ -279,10 +291,11 @@ describe('Login Router', () => {
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
-  it('Should call EmailValidator with correct email', async () => {
-    const { sut, emailValidatorSpy } = createSutFactory()
+  it('Should return 500 when AuthUseCase calls crashes', async () => {
+    const { sut } = createSutFactoryAuthUseCaseThrowingServerError()
     const httpRequest = FAKE_HTTP_REQUEST
-    await sut.route(httpRequest)
-    expect(httpRequest.body.email).toBe(emailValidatorSpy.email)
+    const httpResponse = await sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 })
