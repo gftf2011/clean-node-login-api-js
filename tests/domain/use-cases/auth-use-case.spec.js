@@ -4,6 +4,7 @@ const ServerError = require('../../../src/utils/errors/server-error')
 const AuthUseCase = require('../../../src/domain/use-cases/auth-use-case')
 
 const TokenGeneratorSpy = require('../../../spys/token-generator-spy')
+const EncrypterSpy = require('../../../spys/encrypter-spy')
 
 const FAKE_GENERIC_ACCESS_TOKEN = 'any_token'
 const FAKE_GENERIC_USER_ID = 'any_user_id'
@@ -20,13 +21,6 @@ const createTokenGeneratorSpyFactory = () => {
 }
 
 const createEncrypterSpyFactory = () => {
-  class EncrypterSpy {
-    async compare (password, hashedPassword) {
-      this.password = password
-      this.hashedPassword = hashedPassword
-      return this.isValid
-    }
-  }
   const encrypterSpy = new EncrypterSpy()
   encrypterSpy.isValid = true
   return encrypterSpy
