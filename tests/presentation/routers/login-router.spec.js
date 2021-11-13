@@ -60,7 +60,10 @@ const createAuthUseCaseSpyFactory = () => {
 const createSutFactory = () => {
   const emailValidatorSpy = createEmailValidatorSpyFactory()
   const authUseCaseSpy = createAuthUseCaseSpyFactory()
-  const sut = new LoginRouter(authUseCaseSpy, emailValidatorSpy)
+  const sut = new LoginRouter({
+    authUseCase: authUseCaseSpy,
+    emailValidator: emailValidatorSpy
+  })
 
   return {
     emailValidatorSpy,
@@ -76,7 +79,10 @@ const createSutFactoryAuthUseCaseWithNoPasswordError = () => {
     authUseCaseSpy.email = email
     throw new MissingParamError('password')
   }
-  const sut = new LoginRouter(authUseCaseSpy, emailValidatorSpy)
+  const sut = new LoginRouter({
+    authUseCase: authUseCaseSpy,
+    emailValidator: emailValidatorSpy
+  })
 
   return {
     emailValidatorSpy,
@@ -91,7 +97,10 @@ const createSutFactoryAuthUseCaseWithNoEmailError = () => {
   authUseCaseSpy.execute = async () => {
     throw new MissingParamError('email')
   }
-  const sut = new LoginRouter(authUseCaseSpy, emailValidatorSpy)
+  const sut = new LoginRouter({
+    authUseCase: authUseCaseSpy,
+    emailValidator: emailValidatorSpy
+  })
 
   return {
     emailValidatorSpy,
@@ -106,7 +115,10 @@ const createSutFactoryAuthUseCaseThrowingServerError = () => {
   authUseCaseSpy.execute = async () => {
     throw new ServerError()
   }
-  const sut = new LoginRouter(authUseCaseSpy, emailValidatorSpy)
+  const sut = new LoginRouter({
+    authUseCase: authUseCaseSpy,
+    emailValidator: emailValidatorSpy
+  })
 
   return {
     emailValidatorSpy,
@@ -121,7 +133,10 @@ const createSutFactoryWithEmailValidatorThrowingError = () => {
     throw new ServerError()
   }
   const authUseCaseSpy = createAuthUseCaseSpyFactory()
-  const sut = new LoginRouter(authUseCaseSpy, emailValidatorSpy)
+  const sut = new LoginRouter({
+    authUseCase: authUseCaseSpy,
+    emailValidator: emailValidatorSpy
+  })
 
   return {
     emailValidatorSpy,
