@@ -3,6 +3,8 @@ const ServerError = require('../../../src/utils/errors/server-error')
 
 const AuthUseCase = require('../../../src/domain/use-cases/auth-use-case')
 
+const TokenGeneratorSpy = require('../../../spys/token-generator-spy')
+
 const FAKE_GENERIC_ACCESS_TOKEN = 'any_token'
 const FAKE_GENERIC_USER_ID = 'any_user_id'
 const FAKE_GENERIC_EMAIL = 'test@gmail.com'
@@ -12,12 +14,6 @@ const INVALID_FAKE_GENERIC_EMAIL = 'invalid_test@gmail.com'
 const INVALID_FAKE_GENERIC_PASSWORD = 'invalid_password'
 
 const createTokenGeneratorSpyFactory = () => {
-  class TokenGeneratorSpy {
-    async generate (userId) {
-      this.userId = userId
-      return this.accessToken
-    }
-  }
   const tokenGeneratorSpy = new TokenGeneratorSpy()
   tokenGeneratorSpy.accessToken = FAKE_GENERIC_ACCESS_TOKEN
   return tokenGeneratorSpy
