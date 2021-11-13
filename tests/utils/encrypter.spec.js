@@ -34,9 +34,15 @@ describe('Encrypter', () => {
     expect(isValid).toBe(false)
   })
 
-  it('Should throw MissingParamError if no value is not provided', () => {
+  it('Should throw MissingParamError if no value is provided', () => {
     const { sut } = createSutFactory()
-    const promise = sut.compare(undefined, FAKE_HASHED_PASSWORD)
+    const promise = sut.compare()
     expect(promise).rejects.toThrow(new MissingParamError('value'))
+  })
+
+  it('Should throw MissingParamError if no hashValue is provided', () => {
+    const { sut } = createSutFactory()
+    const promise = sut.compare(FAKE_GENERIC_PASSWORD)
+    expect(promise).rejects.toThrow(new MissingParamError('hashValue'))
   })
 })
