@@ -6,6 +6,7 @@ const AuthUseCase = require('../../../src/domain/use-cases/auth-use-case')
 const TokenGeneratorSpy = require('../../../spys/token-generator-spy')
 const EncrypterSpy = require('../../../spys/encrypter-spy')
 const LoadUserByEmailRepositorySpy = require('../../../spys/load-user-by-email-repository-spy')
+const UpdateAccessTokenRepositorySpy = require('../../../spys/update-access-token-repository-spy')
 
 const FAKE_GENERIC_ACCESS_TOKEN = 'any_token'
 const FAKE_GENERIC_USER_ID = 'any_user_id'
@@ -16,12 +17,6 @@ const INVALID_FAKE_GENERIC_EMAIL = 'invalid_test@gmail.com'
 const INVALID_FAKE_GENERIC_PASSWORD = 'invalid_password'
 
 const createUpdateAccessTokenRepositorySpyFactory = () => {
-  class UpdateAccessTokenRepositorySpy {
-    async update (userId, accessToken) {
-      this.userId = userId
-      this.accessToken = accessToken
-    }
-  }
   const updateAccessTokenRepositorySpy = new UpdateAccessTokenRepositorySpy()
   return updateAccessTokenRepositorySpy
 }
