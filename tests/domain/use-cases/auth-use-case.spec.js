@@ -263,6 +263,20 @@ describe('Auth UseCase', () => {
     expect(promise).rejects.toThrow(new ServerError())
   })
 
+  it('Should throw error if UpdateAccessTokenRepository has no update method', () => {
+    const encrypterSpy = createEncrypterSpyFactory()
+    const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
+    const tokenGeneratorSpy = createTokenGeneratorSpyFactory()
+    const sut = new AuthUseCase({
+      loadUserByEmailRepository: loadUserByEmailRepositorySpy,
+      encrypter: encrypterSpy,
+      tokenGenerator: tokenGeneratorSpy,
+      updateAccessTokenRepository: {}
+    })
+    const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
+    expect(promise).rejects.toThrow(new ServerError())
+  })
+
   it('Should throw error if LoadUserByEmailRepositorySpy throws error', () => {
     const { sut } = createSutLoadUserByEmailRepositorySpyFactoryWithError()
     const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
