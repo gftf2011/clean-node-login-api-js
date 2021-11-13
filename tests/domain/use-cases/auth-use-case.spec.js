@@ -55,7 +55,11 @@ const createSutFactory = () => {
   const encrypterSpy = createEncrypterSpyFactory()
   const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
   const tokenGeneratorSpy = createTokenGeneratorSpyFactory()
-  const sut = new AuthUseCase(loadUserByEmailRepositorySpy, encrypterSpy, tokenGeneratorSpy)
+  const sut = new AuthUseCase({
+    loadUserByEmailRepository: loadUserByEmailRepositorySpy,
+    encrypter: encrypterSpy,
+    tokenGenerator: tokenGeneratorSpy
+  })
   return {
     sut,
     loadUserByEmailRepositorySpy,
@@ -84,13 +88,13 @@ describe('Auth UseCase', () => {
   })
 
   it('Should throw error if no LoadUserByEmailRepository is provided', () => {
-    const sut = new AuthUseCase()
+    const sut = new AuthUseCase({})
     const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(promise).rejects.toThrow(new ServerError())
   })
 
   it('Should throw error if LoadUserByEmailRepository has no load method', () => {
-    const sut = new AuthUseCase({})
+    const sut = new AuthUseCase({ loadUserByEmailRepository: {} })
     const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(promise).rejects.toThrow(new ServerError())
   })
@@ -118,14 +122,19 @@ describe('Auth UseCase', () => {
 
   it('Should throw error if no Encrypter is provided', () => {
     const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
-    const sut = new AuthUseCase(loadUserByEmailRepositorySpy)
+    const sut = new AuthUseCase({
+      loadUserByEmailRepository: loadUserByEmailRepositorySpy
+    })
     const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(promise).rejects.toThrow(new ServerError())
   })
 
   it('Should throw error if Encrypter has no compare method', () => {
     const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
-    const sut = new AuthUseCase(loadUserByEmailRepositorySpy, {})
+    const sut = new AuthUseCase({
+      loadUserByEmailRepository: loadUserByEmailRepositorySpy,
+      encrypter: {}
+    })
     const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(promise).rejects.toThrow(new ServerError())
   })
@@ -139,7 +148,10 @@ describe('Auth UseCase', () => {
   it('Should throw error if no TokenGenerator is provided', () => {
     const encrypterSpy = createEncrypterSpyFactory()
     const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
-    const sut = new AuthUseCase(loadUserByEmailRepositorySpy, encrypterSpy)
+    const sut = new AuthUseCase({
+      loadUserByEmailRepository: loadUserByEmailRepositorySpy,
+      encrypter: encrypterSpy
+    })
     const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(promise).rejects.toThrow(new ServerError())
   })
@@ -147,7 +159,11 @@ describe('Auth UseCase', () => {
   it('Should throw error if TokenGenerator has no generate method', () => {
     const encrypterSpy = createEncrypterSpyFactory()
     const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
-    const sut = new AuthUseCase(loadUserByEmailRepositorySpy, encrypterSpy, {})
+    const sut = new AuthUseCase({
+      loadUserByEmailRepository: loadUserByEmailRepositorySpy,
+      encrypter: encrypterSpy,
+      tokenGenerator: {}
+    })
     const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(promise).rejects.toThrow(new ServerError())
   })
