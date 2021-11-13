@@ -15,6 +15,17 @@ const FAKE_HASHED_PASSWORD = 'hashed_password'
 const INVALID_FAKE_GENERIC_EMAIL = 'invalid_test@gmail.com'
 const INVALID_FAKE_GENERIC_PASSWORD = 'invalid_password'
 
+const createUpdateAccessTokenRepositorySpyFactory = () => {
+  class UpdateAccessTokenRepositorySpy {
+    async update (userId, accessToken) {
+      this.userId = userId
+      this.accessToken = accessToken
+    }
+  }
+  const updateAccessTokenRepositorySpy = new UpdateAccessTokenRepositorySpy()
+  return updateAccessTokenRepositorySpy
+}
+
 const createTokenGeneratorSpyFactory = () => {
   const tokenGeneratorSpy = new TokenGeneratorSpy()
   tokenGeneratorSpy.accessToken = FAKE_GENERIC_ACCESS_TOKEN
@@ -37,23 +48,27 @@ const createLoadUserByEmailRepositorySpyFactory = () => {
 }
 
 const createSutFactory = () => {
+  const updateAccessTokenRepositorySpy = createUpdateAccessTokenRepositorySpyFactory()
   const encrypterSpy = createEncrypterSpyFactory()
   const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
   const tokenGeneratorSpy = createTokenGeneratorSpyFactory()
   const sut = new AuthUseCase({
     loadUserByEmailRepository: loadUserByEmailRepositorySpy,
+    updateAccessTokenRepository: updateAccessTokenRepositorySpy,
     encrypter: encrypterSpy,
     tokenGenerator: tokenGeneratorSpy
   })
   return {
     sut,
     loadUserByEmailRepositorySpy,
+    updateAccessTokenRepositorySpy,
     encrypterSpy,
     tokenGeneratorSpy
   }
 }
 
 const createSutLoadUserByEmailRepositorySpyFactoryWithError = () => {
+  const updateAccessTokenRepositorySpy = createUpdateAccessTokenRepositorySpyFactory()
   const encrypterSpy = createEncrypterSpyFactory()
   const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
   const tokenGeneratorSpy = createTokenGeneratorSpyFactory()
@@ -62,18 +77,21 @@ const createSutLoadUserByEmailRepositorySpyFactoryWithError = () => {
   }
   const sut = new AuthUseCase({
     loadUserByEmailRepository: loadUserByEmailRepositorySpy,
+    updateAccessTokenRepository: updateAccessTokenRepositorySpy,
     encrypter: encrypterSpy,
     tokenGenerator: tokenGeneratorSpy
   })
   return {
     sut,
     loadUserByEmailRepositorySpy,
+    updateAccessTokenRepositorySpy,
     encrypterSpy,
     tokenGeneratorSpy
   }
 }
 
 const createSutEncrypterSpyFactoryWithError = () => {
+  const updateAccessTokenRepositorySpy = createUpdateAccessTokenRepositorySpyFactory()
   const encrypterSpy = createEncrypterSpyFactory()
   const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
   const tokenGeneratorSpy = createTokenGeneratorSpyFactory()
@@ -82,18 +100,21 @@ const createSutEncrypterSpyFactoryWithError = () => {
   }
   const sut = new AuthUseCase({
     loadUserByEmailRepository: loadUserByEmailRepositorySpy,
+    updateAccessTokenRepository: updateAccessTokenRepositorySpy,
     encrypter: encrypterSpy,
     tokenGenerator: tokenGeneratorSpy
   })
   return {
     sut,
     loadUserByEmailRepositorySpy,
+    updateAccessTokenRepositorySpy,
     encrypterSpy,
     tokenGeneratorSpy
   }
 }
 
 const createSutTokenGenaratorSpyFactoryWithError = () => {
+  const updateAccessTokenRepositorySpy = createUpdateAccessTokenRepositorySpyFactory()
   const encrypterSpy = createEncrypterSpyFactory()
   const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
   const tokenGeneratorSpy = createTokenGeneratorSpyFactory()
@@ -102,12 +123,14 @@ const createSutTokenGenaratorSpyFactoryWithError = () => {
   }
   const sut = new AuthUseCase({
     loadUserByEmailRepository: loadUserByEmailRepositorySpy,
+    updateAccessTokenRepository: updateAccessTokenRepositorySpy,
     encrypter: encrypterSpy,
     tokenGenerator: tokenGeneratorSpy
   })
   return {
     sut,
     loadUserByEmailRepositorySpy,
+    updateAccessTokenRepositorySpy,
     encrypterSpy,
     tokenGeneratorSpy
   }
@@ -151,6 +174,13 @@ describe('Auth UseCase', () => {
     const { sut, loadUserByEmailRepositorySpy, tokenGeneratorSpy } = createSutFactory()
     await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(tokenGeneratorSpy.userId).toBe(loadUserByEmailRepositorySpy.user.id)
+  })
+
+  it('Should call UpdateAccessTokenRepository with correct values', async () => {
+    const { sut, loadUserByEmailRepositorySpy, tokenGeneratorSpy, updateAccessTokenRepositorySpy } = createSutFactory()
+    await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
+    expect(updateAccessTokenRepositorySpy.userId).toBe(loadUserByEmailRepositorySpy.user.id)
+    expect(updateAccessTokenRepositorySpy.accessToken).toBe(tokenGeneratorSpy.accessToken)
   })
 
   it('Should throw error if no email is provided', () => {
