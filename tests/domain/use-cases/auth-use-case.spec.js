@@ -131,6 +131,29 @@ const createSutTokenGenaratorSpyFactoryWithError = () => {
   }
 }
 
+const createSutUpdateAccessTokenRepositorySpyFactoryWithError = () => {
+  const updateAccessTokenRepositorySpy = createUpdateAccessTokenRepositorySpyFactory()
+  const encrypterSpy = createEncrypterSpyFactory()
+  const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
+  const tokenGeneratorSpy = createTokenGeneratorSpyFactory()
+  updateAccessTokenRepositorySpy.update = async () => {
+    throw new ServerError()
+  }
+  const sut = new AuthUseCase({
+    loadUserByEmailRepository: loadUserByEmailRepositorySpy,
+    updateAccessTokenRepository: updateAccessTokenRepositorySpy,
+    encrypter: encrypterSpy,
+    tokenGenerator: tokenGeneratorSpy
+  })
+  return {
+    sut,
+    loadUserByEmailRepositorySpy,
+    updateAccessTokenRepositorySpy,
+    encrypterSpy,
+    tokenGeneratorSpy
+  }
+}
+
 describe('Auth UseCase', () => {
   it('Should return null if invalid email is provided', async () => {
     const { sut, loadUserByEmailRepositorySpy } = createSutFactory()
@@ -291,6 +314,12 @@ describe('Auth UseCase', () => {
 
   it('Should throw error if TokenGenerator throws error', () => {
     const { sut } = createSutTokenGenaratorSpyFactoryWithError()
+    const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
+    expect(promise).rejects.toThrow(new ServerError())
+  })
+
+  it('Should throw error if UpdateAccessTokenRepository throws error', () => {
+    const { sut } = createSutUpdateAccessTokenRepositorySpyFactoryWithError()
     const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(promise).rejects.toThrow(new ServerError())
   })
