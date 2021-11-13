@@ -54,6 +54,45 @@ const createSutFactory = () => {
 }
 
 describe('Auth UseCase', () => {
+  it('Should return null if invalid email is provided', async () => {
+    const { sut, loadUserByEmailRepositorySpy } = createSutFactory()
+    loadUserByEmailRepositorySpy.user = null
+    const accessToken = await sut.execute(INVALID_FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
+    expect(accessToken).toBeNull()
+  })
+
+  it('Should return null if invalid password is provided', async () => {
+    const { sut, encrypterSpy } = createSutFactory()
+    encrypterSpy.isValid = false
+    const accessToken = await sut.execute(FAKE_GENERIC_EMAIL, INVALID_FAKE_GENERIC_PASSWORD)
+    expect(accessToken).toBeNull()
+  })
+
+  it('Should return an accessToken if correct credentials are provided', async () => {
+    const { sut } = createSutFactory()
+    const accessToken = await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
+    expect(accessToken).toBe(FAKE_GENERIC_ACCESS_TOKEN)
+  })
+
+  it('Should call LoadUserByEmailRepository with correct email', async () => {
+    const { sut, loadUserByEmailRepositorySpy } = createSutFactory()
+    await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
+    expect(FAKE_GENERIC_EMAIL).toBe(loadUserByEmailRepositorySpy.email)
+  })
+
+  it('Should call Encrypter with correct values', async () => {
+    const { sut, loadUserByEmailRepositorySpy, encrypterSpy } = createSutFactory()
+    await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
+    expect(encrypterSpy.password).toBe(FAKE_GENERIC_PASSWORD)
+    expect(encrypterSpy.hashedPassword).toBe(loadUserByEmailRepositorySpy.user.password)
+  })
+
+  it('Should call TokenGenerator with correct userId', async () => {
+    const { sut, loadUserByEmailRepositorySpy, tokenGeneratorSpy } = createSutFactory()
+    await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
+    expect(tokenGeneratorSpy.userId).toBe(loadUserByEmailRepositorySpy.user.id)
+  })
+
   it('Should throw error if no email is provided', () => {
     const { sut } = createSutFactory()
     const promise = sut.execute(undefined, FAKE_GENERIC_PASSWORD)
@@ -64,12 +103,6 @@ describe('Auth UseCase', () => {
     const { sut } = createSutFactory()
     const promise = sut.execute(FAKE_GENERIC_EMAIL, undefined)
     expect(promise).rejects.toThrow(new MissingParamError('password'))
-  })
-
-  it('Should call LoadUserByEmailRepository with correct email', async () => {
-    const { sut, loadUserByEmailRepositorySpy } = createSutFactory()
-    await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
-    expect(FAKE_GENERIC_EMAIL).toBe(loadUserByEmailRepositorySpy.email)
   })
 
   it('Should throw error if no dependency is provided', () => {
@@ -90,27 +123,6 @@ describe('Auth UseCase', () => {
     expect(promise).rejects.toThrow(new ServerError())
   })
 
-  it('Should return null if invalid email is provided', async () => {
-    const { sut, loadUserByEmailRepositorySpy } = createSutFactory()
-    loadUserByEmailRepositorySpy.user = null
-    const accessToken = await sut.execute(INVALID_FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
-    expect(accessToken).toBeNull()
-  })
-
-  it('Should return null if invalid password is provided', async () => {
-    const { sut, encrypterSpy } = createSutFactory()
-    encrypterSpy.isValid = false
-    const accessToken = await sut.execute(FAKE_GENERIC_EMAIL, INVALID_FAKE_GENERIC_PASSWORD)
-    expect(accessToken).toBeNull()
-  })
-
-  it('Should call Encrypter with correct values', async () => {
-    const { sut, loadUserByEmailRepositorySpy, encrypterSpy } = createSutFactory()
-    await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
-    expect(encrypterSpy.password).toBe(FAKE_GENERIC_PASSWORD)
-    expect(encrypterSpy.hashedPassword).toBe(loadUserByEmailRepositorySpy.user.password)
-  })
-
   it('Should throw error if no Encrypter is provided', () => {
     const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
     const sut = new AuthUseCase({
@@ -128,12 +140,6 @@ describe('Auth UseCase', () => {
     })
     const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(promise).rejects.toThrow(new ServerError())
-  })
-
-  it('Should call TokenGenerator with correct userId', async () => {
-    const { sut, loadUserByEmailRepositorySpy, tokenGeneratorSpy } = createSutFactory()
-    await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
-    expect(tokenGeneratorSpy.userId).toBe(loadUserByEmailRepositorySpy.user.id)
   })
 
   it('Should throw error if no TokenGenerator is provided', () => {
@@ -157,11 +163,5 @@ describe('Auth UseCase', () => {
     })
     const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(promise).rejects.toThrow(new ServerError())
-  })
-
-  it('Should return an accessToken if correct credentials are provided', async () => {
-    const { sut } = createSutFactory()
-    const accessToken = await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
-    expect(accessToken).toBe(FAKE_GENERIC_ACCESS_TOKEN)
   })
 })
