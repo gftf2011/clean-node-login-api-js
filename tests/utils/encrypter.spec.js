@@ -1,7 +1,10 @@
+const bcrypt = require('bcrypt')
+
 const Encrypter = require('../../src/utils/encrypter')
 
 const FAKE_GENERIC_PASSWORD = 'any_password'
 const FAKE_HASHED_PASSWORD = 'hashed_password'
+const FAKE_WRONG_HASHED_PASSWORD = 'wrong_hashed_password'
 
 const createSutFactory = () => {
   const sut = new Encrypter()
@@ -15,5 +18,12 @@ describe('Encrypter', () => {
     const { sut } = createSutFactory()
     const isValid = await sut.compare(FAKE_GENERIC_PASSWORD, FAKE_HASHED_PASSWORD)
     expect(isValid).toBe(true)
+  })
+
+  it('Should return "false" if bcrypt returns "false"', async () => {
+    bcrypt.isValid = false
+    const { sut } = createSutFactory()
+    const isValid = await sut.compare(FAKE_GENERIC_PASSWORD, FAKE_WRONG_HASHED_PASSWORD)
+    expect(isValid).toBe(false)
   })
 })
