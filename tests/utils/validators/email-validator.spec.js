@@ -35,7 +35,6 @@ describe('Email Validator', () => {
 
   it('Should throws MissingParamError if no email is provided', () => {
     const { sut } = createSutFactory()
-    const pointer = sut.isValid
-    expect(pointer).toThrow(new MissingParamError('email'))
+    expect(() => { sut.isValid() }).toThrow(new MissingParamError('email'))
   })
 })
