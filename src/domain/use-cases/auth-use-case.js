@@ -16,7 +16,8 @@ module.exports = class AuthUseCase {
       !this.encrypter ||
       !this.encrypter.compare ||
       !this.tokenGenerator ||
-      !this.tokenGenerator.generate
+      !this.tokenGenerator.generate ||
+      !this.updateAccessTokenRepository
     ) {
       throw new ServerError()
     } else if (!email) {
