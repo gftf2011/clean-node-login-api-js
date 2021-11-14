@@ -1,10 +1,12 @@
+const jwt = require('jsonwebtoken')
+
 const FAKE_GENERIC_ID = 'any_id'
-// const FAKE_GENERIC_TOKEN = 'any_token'
+const FAKE_GENERIC_TOKEN = 'any_token'
 
 const createSutFactory = () => {
   class TokenGenerator {
-    async generate (_id) {
-      return null
+    async generate (id) {
+      return jwt.sign(id, 'secret')
     }
   }
   const sut = new TokenGenerator()
@@ -18,9 +20,10 @@ describe('Token Generator', () => {
     expect(token).toBeNull()
   })
 
-  // it('Should return a token if JWT returns a token', async () => {
-  //   const { sut } = createSutFactory()
-  //   const token = await sut.generate(FAKE_GENERIC_ID)
-  //   expect(token).toBeNull()
-  // })
+  it('Should return a token if JWT returns a token', async () => {
+    jwt.token = FAKE_GENERIC_TOKEN
+    const { sut } = createSutFactory()
+    const token = await sut.generate(FAKE_GENERIC_ID)
+    expect(token).toBe(FAKE_GENERIC_TOKEN)
+  })
 })
