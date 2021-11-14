@@ -1,20 +1,26 @@
 const jwt = require('jsonwebtoken')
 
+const ServerError = require('../../../src/utils/errors/server-error')
+
 const FAKE_GENERIC_ID = 'any_id'
 const FAKE_GENERIC_TOKEN = 'any_token'
 const FAKE_GENERIC_SECRET = 'any_secret'
 
-const createSutFactory = () => {
-  class TokenGenerator {
-    constructor (secret) {
-      this.secret = secret
-    }
-
-    async generate (id) {
-      return jwt.sign(id, this.secret)
-    }
+class TokenGenerator {
+  constructor ({ secret } = {}) {
+    this.secret = secret
   }
-  const sut = new TokenGenerator(FAKE_GENERIC_SECRET)
+
+  async generate (id) {
+    if (!this.secret) {
+      throw new ServerError()
+    }
+    return jwt.sign(id, this.secret)
+  }
+}
+
+const createSutFactory = () => {
+  const sut = new TokenGenerator({ secret: FAKE_GENERIC_SECRET })
   return { sut }
 }
 
@@ -37,5 +43,11 @@ describe('Token Generator', () => {
     const { sut } = createSutFactory()
     const token = await sut.generate(FAKE_GENERIC_ID)
     expect(token).toBe(FAKE_GENERIC_TOKEN)
+  })
+
+  it('Should throw ServerError if no secret is provided', () => {
+    const sut = new TokenGenerator({})
+    const promise = sut.generate(FAKE_GENERIC_ID)
+    expect(promise).rejects.toThrow(new ServerError())
   })
 })
