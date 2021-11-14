@@ -42,115 +42,98 @@ const createLoadUserByEmailRepositorySpyFactory = () => {
   return loadUserByEmailRepositorySpy
 }
 
+const createDependenciesFactory = () => {
+  this.updateAccessTokenRepositorySpy = createUpdateAccessTokenRepositorySpyFactory()
+  this.encrypterSpy = createEncrypterSpyFactory()
+  this.loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
+  this.tokenGeneratorSpy = createTokenGeneratorSpyFactory()
+  return {
+    updateAccessTokenRepositorySpy: this.updateAccessTokenRepositorySpy,
+    encrypterSpy: this.encrypterSpy,
+    loadUserByEmailRepositorySpy: this.loadUserByEmailRepositorySpy,
+    tokenGeneratorSpy: this.tokenGeneratorSpy
+  }
+}
+
 const createSutFactory = () => {
-  const updateAccessTokenRepositorySpy = createUpdateAccessTokenRepositorySpyFactory()
-  const encrypterSpy = createEncrypterSpyFactory()
-  const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
-  const tokenGeneratorSpy = createTokenGeneratorSpyFactory()
+  const dependencies = createDependenciesFactory()
   const sut = new AuthUseCase({
-    loadUserByEmailRepository: loadUserByEmailRepositorySpy,
-    updateAccessTokenRepository: updateAccessTokenRepositorySpy,
-    encrypter: encrypterSpy,
-    tokenGenerator: tokenGeneratorSpy
+    loadUserByEmailRepository: dependencies.loadUserByEmailRepositorySpy,
+    updateAccessTokenRepository: dependencies.updateAccessTokenRepositorySpy,
+    encrypter: dependencies.encrypterSpy,
+    tokenGenerator: dependencies.tokenGeneratorSpy
   })
   return {
     sut,
-    loadUserByEmailRepositorySpy,
-    updateAccessTokenRepositorySpy,
-    encrypterSpy,
-    tokenGeneratorSpy
+    ...dependencies
   }
 }
 
 const createSutLoadUserByEmailRepositorySpyFactoryWithError = () => {
-  const updateAccessTokenRepositorySpy = createUpdateAccessTokenRepositorySpyFactory()
-  const encrypterSpy = createEncrypterSpyFactory()
-  const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
-  const tokenGeneratorSpy = createTokenGeneratorSpyFactory()
-  loadUserByEmailRepositorySpy.load = async () => {
+  const dependencies = createDependenciesFactory()
+  dependencies.loadUserByEmailRepositorySpy.load = async () => {
     throw new ServerError()
   }
   const sut = new AuthUseCase({
-    loadUserByEmailRepository: loadUserByEmailRepositorySpy,
-    updateAccessTokenRepository: updateAccessTokenRepositorySpy,
-    encrypter: encrypterSpy,
-    tokenGenerator: tokenGeneratorSpy
+    loadUserByEmailRepository: dependencies.loadUserByEmailRepositorySpy,
+    updateAccessTokenRepository: dependencies.updateAccessTokenRepositorySpy,
+    encrypter: dependencies.encrypterSpy,
+    tokenGenerator: dependencies.tokenGeneratorSpy
   })
   return {
     sut,
-    loadUserByEmailRepositorySpy,
-    updateAccessTokenRepositorySpy,
-    encrypterSpy,
-    tokenGeneratorSpy
+    ...dependencies
   }
 }
 
 const createSutEncrypterSpyFactoryWithError = () => {
-  const updateAccessTokenRepositorySpy = createUpdateAccessTokenRepositorySpyFactory()
-  const encrypterSpy = createEncrypterSpyFactory()
-  const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
-  const tokenGeneratorSpy = createTokenGeneratorSpyFactory()
-  encrypterSpy.compare = async () => {
+  const dependencies = createDependenciesFactory()
+  dependencies.encrypterSpy.compare = async () => {
     throw new ServerError()
   }
   const sut = new AuthUseCase({
-    loadUserByEmailRepository: loadUserByEmailRepositorySpy,
-    updateAccessTokenRepository: updateAccessTokenRepositorySpy,
-    encrypter: encrypterSpy,
-    tokenGenerator: tokenGeneratorSpy
+    loadUserByEmailRepository: dependencies.loadUserByEmailRepositorySpy,
+    updateAccessTokenRepository: dependencies.updateAccessTokenRepositorySpy,
+    encrypter: dependencies.encrypterSpy,
+    tokenGenerator: dependencies.tokenGeneratorSpy
   })
   return {
     sut,
-    loadUserByEmailRepositorySpy,
-    updateAccessTokenRepositorySpy,
-    encrypterSpy,
-    tokenGeneratorSpy
+    ...dependencies
   }
 }
 
 const createSutTokenGenaratorSpyFactoryWithError = () => {
-  const updateAccessTokenRepositorySpy = createUpdateAccessTokenRepositorySpyFactory()
-  const encrypterSpy = createEncrypterSpyFactory()
-  const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
-  const tokenGeneratorSpy = createTokenGeneratorSpyFactory()
-  tokenGeneratorSpy.generate = async () => {
+  const dependencies = createDependenciesFactory()
+  dependencies.tokenGeneratorSpy.generate = async () => {
     throw new ServerError()
   }
   const sut = new AuthUseCase({
-    loadUserByEmailRepository: loadUserByEmailRepositorySpy,
-    updateAccessTokenRepository: updateAccessTokenRepositorySpy,
-    encrypter: encrypterSpy,
-    tokenGenerator: tokenGeneratorSpy
+    loadUserByEmailRepository: dependencies.loadUserByEmailRepositorySpy,
+    updateAccessTokenRepository: dependencies.updateAccessTokenRepositorySpy,
+    encrypter: dependencies.encrypterSpy,
+    tokenGenerator: dependencies.tokenGeneratorSpy
   })
   return {
     sut,
-    loadUserByEmailRepositorySpy,
-    updateAccessTokenRepositorySpy,
-    encrypterSpy,
-    tokenGeneratorSpy
+    ...dependencies
   }
 }
 
 const createSutUpdateAccessTokenRepositorySpyFactoryWithError = () => {
-  const updateAccessTokenRepositorySpy = createUpdateAccessTokenRepositorySpyFactory()
-  const encrypterSpy = createEncrypterSpyFactory()
-  const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
-  const tokenGeneratorSpy = createTokenGeneratorSpyFactory()
-  updateAccessTokenRepositorySpy.update = async () => {
+  const dependencies = createDependenciesFactory()
+  dependencies.updateAccessTokenRepositorySpy.update = async () => {
     throw new ServerError()
   }
   const sut = new AuthUseCase({
-    loadUserByEmailRepository: loadUserByEmailRepositorySpy,
-    updateAccessTokenRepository: updateAccessTokenRepositorySpy,
-    encrypter: encrypterSpy,
-    tokenGenerator: tokenGeneratorSpy
+    loadUserByEmailRepository: dependencies.loadUserByEmailRepositorySpy,
+    updateAccessTokenRepository: dependencies.updateAccessTokenRepositorySpy,
+    encrypter: dependencies.encrypterSpy,
+    tokenGenerator: dependencies.tokenGeneratorSpy
   })
   return {
     sut,
-    loadUserByEmailRepositorySpy,
-    updateAccessTokenRepositorySpy,
-    encrypterSpy,
-    tokenGeneratorSpy
+    ...dependencies
   }
 }
 
