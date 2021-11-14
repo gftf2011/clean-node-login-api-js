@@ -16,182 +16,151 @@ const FAKE_HASHED_PASSWORD = 'hashed_password'
 const INVALID_FAKE_GENERIC_EMAIL = 'invalid_test@gmail.com'
 const INVALID_FAKE_GENERIC_PASSWORD = 'invalid_password'
 
-const createUpdateAccessTokenRepositorySpyFactory = () => {
-  const updateAccessTokenRepositorySpy = new UpdateAccessTokenRepositorySpy()
-  return updateAccessTokenRepositorySpy
-}
-
-const createTokenGeneratorSpyFactory = () => {
-  const tokenGeneratorSpy = new TokenGeneratorSpy()
-  tokenGeneratorSpy.accessToken = FAKE_GENERIC_ACCESS_TOKEN
-  return tokenGeneratorSpy
-}
-
-const createEncrypterSpyFactory = () => {
-  const encrypterSpy = new EncrypterSpy()
-  encrypterSpy.isValid = true
-  return encrypterSpy
-}
-
-const createLoadUserByEmailRepositorySpyFactory = () => {
-  const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy()
-  loadUserByEmailRepositorySpy.user = {
-    id: FAKE_GENERIC_USER_ID,
-    password: FAKE_HASHED_PASSWORD
-  }
-  return loadUserByEmailRepositorySpy
-}
-
-const createDependenciesFactory = () => {
-  this.updateAccessTokenRepositorySpy = createUpdateAccessTokenRepositorySpyFactory()
-  this.encrypterSpy = createEncrypterSpyFactory()
-  this.loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
-  this.tokenGeneratorSpy = createTokenGeneratorSpyFactory()
-  return {
-    updateAccessTokenRepositorySpy: this.updateAccessTokenRepositorySpy,
-    encrypterSpy: this.encrypterSpy,
-    loadUserByEmailRepositorySpy: this.loadUserByEmailRepositorySpy,
-    tokenGeneratorSpy: this.tokenGeneratorSpy
+class UpdateAccessTokenRepositorySpyFactory {
+  create () {
+    this.updateAccessTokenRepositorySpy = new UpdateAccessTokenRepositorySpy()
+    return this.updateAccessTokenRepositorySpy
   }
 }
 
-const createSutFactory = () => {
-  const dependencies = createDependenciesFactory()
-  const sut = new AuthUseCase({
-    loadUserByEmailRepository: dependencies.loadUserByEmailRepositorySpy,
-    updateAccessTokenRepository: dependencies.updateAccessTokenRepositorySpy,
-    encrypter: dependencies.encrypterSpy,
-    tokenGenerator: dependencies.tokenGeneratorSpy
-  })
-  return {
-    sut,
-    ...dependencies
+class TokenGeneratorSpyFactory {
+  create () {
+    this.tokenGeneratorSpy = new TokenGeneratorSpy()
+    this.tokenGeneratorSpy.accessToken = FAKE_GENERIC_ACCESS_TOKEN
+    return this.tokenGeneratorSpy
   }
 }
 
-const createSutLoadUserByEmailRepositorySpyFactoryWithError = () => {
-  const dependencies = createDependenciesFactory()
-  dependencies.loadUserByEmailRepositorySpy.load = async () => {
-    throw new ServerError()
-  }
-  const sut = new AuthUseCase({
-    loadUserByEmailRepository: dependencies.loadUserByEmailRepositorySpy,
-    updateAccessTokenRepository: dependencies.updateAccessTokenRepositorySpy,
-    encrypter: dependencies.encrypterSpy,
-    tokenGenerator: dependencies.tokenGeneratorSpy
-  })
-  return {
-    sut,
-    ...dependencies
+class EncrypterSpyFactory {
+  create () {
+    this.encrypterSpy = new EncrypterSpy()
+    this.encrypterSpy.isValid = true
+    return this.encrypterSpy
   }
 }
 
-const createSutEncrypterSpyFactoryWithError = () => {
-  const dependencies = createDependenciesFactory()
-  dependencies.encrypterSpy.compare = async () => {
-    throw new ServerError()
-  }
-  const sut = new AuthUseCase({
-    loadUserByEmailRepository: dependencies.loadUserByEmailRepositorySpy,
-    updateAccessTokenRepository: dependencies.updateAccessTokenRepositorySpy,
-    encrypter: dependencies.encrypterSpy,
-    tokenGenerator: dependencies.tokenGeneratorSpy
-  })
-  return {
-    sut,
-    ...dependencies
+class LoadUserByEmailRepositorySpyFactory {
+  create () {
+    this.loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy()
+    this.loadUserByEmailRepositorySpy.user = {
+      id: FAKE_GENERIC_USER_ID,
+      password: FAKE_HASHED_PASSWORD
+    }
+    return this.loadUserByEmailRepositorySpy
   }
 }
 
-const createSutTokenGenaratorSpyFactoryWithError = () => {
-  const dependencies = createDependenciesFactory()
-  dependencies.tokenGeneratorSpy.generate = async () => {
-    throw new ServerError()
-  }
-  const sut = new AuthUseCase({
-    loadUserByEmailRepository: dependencies.loadUserByEmailRepositorySpy,
-    updateAccessTokenRepository: dependencies.updateAccessTokenRepositorySpy,
-    encrypter: dependencies.encrypterSpy,
-    tokenGenerator: dependencies.tokenGeneratorSpy
-  })
-  return {
-    sut,
-    ...dependencies
+class DependenciesFactory {
+  create () {
+    this.updateAccessTokenRepositorySpy = new UpdateAccessTokenRepositorySpyFactory().create()
+    this.encrypterSpy = new EncrypterSpyFactory().create()
+    this.loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpyFactory().create()
+    this.tokenGeneratorSpy = new TokenGeneratorSpyFactory().create()
+    return {
+      updateAccessTokenRepositorySpy: this.updateAccessTokenRepositorySpy,
+      encrypterSpy: this.encrypterSpy,
+      loadUserByEmailRepositorySpy: this.loadUserByEmailRepositorySpy,
+      tokenGeneratorSpy: this.tokenGeneratorSpy
+    }
   }
 }
 
-const createSutUpdateAccessTokenRepositorySpyFactoryWithError = () => {
-  const dependencies = createDependenciesFactory()
-  dependencies.updateAccessTokenRepositorySpy.update = async () => {
-    throw new ServerError()
-  }
-  const sut = new AuthUseCase({
-    loadUserByEmailRepository: dependencies.loadUserByEmailRepositorySpy,
-    updateAccessTokenRepository: dependencies.updateAccessTokenRepositorySpy,
-    encrypter: dependencies.encrypterSpy,
-    tokenGenerator: dependencies.tokenGeneratorSpy
-  })
-  return {
-    sut,
-    ...dependencies
+const LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR_SUT = 'LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR_SUT'
+const ENCRYPTER_WITH_ERROR_SUT = 'ENCRYPTER_WITH_ERROR_SUT'
+const TOKEN_GENERATOR_WITH_ERROR_SUT = 'TOKEN_GENERATOR_WITH_ERROR_SUT'
+const UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR_SUT = 'UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR_SUT'
+
+class SutFactory {
+  create (type) {
+    this.dependencies = new DependenciesFactory().create()
+
+    if (type === LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR_SUT) {
+      this.dependencies.loadUserByEmailRepositorySpy.load = async () => {
+        throw new ServerError()
+      }
+    } else if (type === ENCRYPTER_WITH_ERROR_SUT) {
+      this.dependencies.encrypterSpy.compare = async () => {
+        throw new ServerError()
+      }
+    } else if (type === TOKEN_GENERATOR_WITH_ERROR_SUT) {
+      this.dependencies.tokenGeneratorSpy.generate = async () => {
+        throw new ServerError()
+      }
+    } else if (type === UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR_SUT) {
+      this.dependencies.updateAccessTokenRepositorySpy.update = async () => {
+        throw new ServerError()
+      }
+    }
+
+    this.sut = new AuthUseCase({
+      loadUserByEmailRepository: this.dependencies.loadUserByEmailRepositorySpy,
+      updateAccessTokenRepository: this.dependencies.updateAccessTokenRepositorySpy,
+      encrypter: this.dependencies.encrypterSpy,
+      tokenGenerator: this.dependencies.tokenGeneratorSpy
+    })
+
+    return {
+      sut: this.sut,
+      ...this.dependencies
+    }
   }
 }
 
 describe('Auth UseCase', () => {
   it('Should return null if invalid email is provided', async () => {
-    const { sut, loadUserByEmailRepositorySpy } = createSutFactory()
+    const { sut, loadUserByEmailRepositorySpy } = new SutFactory().create()
     loadUserByEmailRepositorySpy.user = null
     const accessToken = await sut.execute(INVALID_FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(accessToken).toBeNull()
   })
 
   it('Should return null if invalid password is provided', async () => {
-    const { sut, encrypterSpy } = createSutFactory()
+    const { sut, encrypterSpy } = new SutFactory().create()
     encrypterSpy.isValid = false
     const accessToken = await sut.execute(FAKE_GENERIC_EMAIL, INVALID_FAKE_GENERIC_PASSWORD)
     expect(accessToken).toBeNull()
   })
 
   it('Should return an accessToken if correct credentials are provided', async () => {
-    const { sut } = createSutFactory()
+    const { sut } = new SutFactory().create()
     const accessToken = await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(accessToken).toBe(FAKE_GENERIC_ACCESS_TOKEN)
   })
 
   it('Should call LoadUserByEmailRepository with correct email', async () => {
-    const { sut, loadUserByEmailRepositorySpy } = createSutFactory()
+    const { sut, loadUserByEmailRepositorySpy } = new SutFactory().create()
     await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(FAKE_GENERIC_EMAIL).toBe(loadUserByEmailRepositorySpy.email)
   })
 
   it('Should call Encrypter with correct values', async () => {
-    const { sut, loadUserByEmailRepositorySpy, encrypterSpy } = createSutFactory()
+    const { sut, loadUserByEmailRepositorySpy, encrypterSpy } = new SutFactory().create()
     await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(encrypterSpy.password).toBe(FAKE_GENERIC_PASSWORD)
     expect(encrypterSpy.hashedPassword).toBe(loadUserByEmailRepositorySpy.user.password)
   })
 
   it('Should call TokenGenerator with correct userId', async () => {
-    const { sut, loadUserByEmailRepositorySpy, tokenGeneratorSpy } = createSutFactory()
+    const { sut, loadUserByEmailRepositorySpy, tokenGeneratorSpy } = new SutFactory().create()
     await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(tokenGeneratorSpy.userId).toBe(loadUserByEmailRepositorySpy.user.id)
   })
 
   it('Should call UpdateAccessTokenRepository with correct values', async () => {
-    const { sut, loadUserByEmailRepositorySpy, tokenGeneratorSpy, updateAccessTokenRepositorySpy } = createSutFactory()
+    const { sut, loadUserByEmailRepositorySpy, tokenGeneratorSpy, updateAccessTokenRepositorySpy } = new SutFactory().create()
     await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(updateAccessTokenRepositorySpy.userId).toBe(loadUserByEmailRepositorySpy.user.id)
     expect(updateAccessTokenRepositorySpy.accessToken).toBe(tokenGeneratorSpy.accessToken)
   })
 
   it('Should throw error if no email is provided', () => {
-    const { sut } = createSutFactory()
+    const { sut } = new SutFactory().create()
     const promise = sut.execute(undefined, FAKE_GENERIC_PASSWORD)
     expect(promise).rejects.toThrow(new MissingParamError('email'))
   })
 
   it('Should throw error if no password is provided', () => {
-    const { sut } = createSutFactory()
+    const { sut } = new SutFactory().create()
     const promise = sut.execute(FAKE_GENERIC_EMAIL, undefined)
     expect(promise).rejects.toThrow(new MissingParamError('password'))
   })
@@ -215,7 +184,7 @@ describe('Auth UseCase', () => {
   })
 
   it('Should throw error if no Encrypter is provided', () => {
-    const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
+    const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpyFactory().create()
     const sut = new AuthUseCase({
       loadUserByEmailRepository: loadUserByEmailRepositorySpy
     })
@@ -224,7 +193,7 @@ describe('Auth UseCase', () => {
   })
 
   it('Should throw error if Encrypter has no compare method', () => {
-    const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
+    const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpyFactory().create()
     const sut = new AuthUseCase({
       loadUserByEmailRepository: loadUserByEmailRepositorySpy,
       encrypter: {}
@@ -234,8 +203,8 @@ describe('Auth UseCase', () => {
   })
 
   it('Should throw error if no TokenGenerator is provided', () => {
-    const encrypterSpy = createEncrypterSpyFactory()
-    const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
+    const encrypterSpy = new EncrypterSpyFactory().create()
+    const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpyFactory().create()
     const sut = new AuthUseCase({
       loadUserByEmailRepository: loadUserByEmailRepositorySpy,
       encrypter: encrypterSpy
@@ -245,8 +214,8 @@ describe('Auth UseCase', () => {
   })
 
   it('Should throw error if TokenGenerator has no generate method', () => {
-    const encrypterSpy = createEncrypterSpyFactory()
-    const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
+    const encrypterSpy = new EncrypterSpyFactory().create()
+    const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpyFactory().create()
     const sut = new AuthUseCase({
       loadUserByEmailRepository: loadUserByEmailRepositorySpy,
       encrypter: encrypterSpy,
@@ -257,9 +226,9 @@ describe('Auth UseCase', () => {
   })
 
   it('Should throw error if no UpdateAccessTokenRepository is provided', () => {
-    const encrypterSpy = createEncrypterSpyFactory()
-    const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
-    const tokenGeneratorSpy = createTokenGeneratorSpyFactory()
+    const encrypterSpy = new EncrypterSpyFactory().create()
+    const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpyFactory().create()
+    const tokenGeneratorSpy = new TokenGeneratorSpyFactory().create()
     const sut = new AuthUseCase({
       loadUserByEmailRepository: loadUserByEmailRepositorySpy,
       encrypter: encrypterSpy,
@@ -270,9 +239,9 @@ describe('Auth UseCase', () => {
   })
 
   it('Should throw error if UpdateAccessTokenRepository has no update method', () => {
-    const encrypterSpy = createEncrypterSpyFactory()
-    const loadUserByEmailRepositorySpy = createLoadUserByEmailRepositorySpyFactory()
-    const tokenGeneratorSpy = createTokenGeneratorSpyFactory()
+    const encrypterSpy = new EncrypterSpyFactory().create()
+    const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpyFactory().create()
+    const tokenGeneratorSpy = new TokenGeneratorSpyFactory().create()
     const sut = new AuthUseCase({
       loadUserByEmailRepository: loadUserByEmailRepositorySpy,
       encrypter: encrypterSpy,
@@ -284,25 +253,25 @@ describe('Auth UseCase', () => {
   })
 
   it('Should throw error if LoadUserByEmailRepositorySpy throws error', () => {
-    const { sut } = createSutLoadUserByEmailRepositorySpyFactoryWithError()
+    const { sut } = new SutFactory().create(LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR_SUT)
     const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(promise).rejects.toThrow(new ServerError())
   })
 
   it('Should throw error if Encrypter throws error', () => {
-    const { sut } = createSutEncrypterSpyFactoryWithError()
+    const { sut } = new SutFactory().create(ENCRYPTER_WITH_ERROR_SUT)
     const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(promise).rejects.toThrow(new ServerError())
   })
 
   it('Should throw error if TokenGenerator throws error', () => {
-    const { sut } = createSutTokenGenaratorSpyFactoryWithError()
+    const { sut } = new SutFactory().create(TOKEN_GENERATOR_WITH_ERROR_SUT)
     const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(promise).rejects.toThrow(new ServerError())
   })
 
   it('Should throw error if UpdateAccessTokenRepository throws error', () => {
-    const { sut } = createSutUpdateAccessTokenRepositorySpyFactoryWithError()
+    const { sut } = new SutFactory().create(UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR_SUT)
     const promise = sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD)
     expect(promise).rejects.toThrow(new ServerError())
   })
