@@ -45,6 +45,12 @@ describe('Token Generator', () => {
     expect(token).toBe(FAKE_GENERIC_TOKEN)
   })
 
+  it('Should throw ServerError if no dependency is provided', () => {
+    const sut = new TokenGenerator()
+    const promise = sut.generate(FAKE_GENERIC_ID)
+    expect(promise).rejects.toThrow(new ServerError())
+  })
+
   it('Should throw ServerError if no secret is provided', () => {
     const sut = new TokenGenerator({})
     const promise = sut.generate(FAKE_GENERIC_ID)
