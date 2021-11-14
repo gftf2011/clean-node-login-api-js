@@ -3,24 +3,11 @@ const jwt = require('jsonwebtoken')
 const MissingParamError = require('../../../src/utils/errors/missing-param-error')
 const ServerError = require('../../../src/utils/errors/server-error')
 
+const TokenGenerator = require('../../../src/utils/generators/token-generator')
+
 const FAKE_GENERIC_ID = 'any_id'
 const FAKE_GENERIC_TOKEN = 'any_token'
 const FAKE_GENERIC_SECRET = 'any_secret'
-
-class TokenGenerator {
-  constructor ({ secret } = {}) {
-    this.secret = secret
-  }
-
-  async generate (id) {
-    if (!this.secret) {
-      throw new ServerError()
-    } else if (!id) {
-      throw new MissingParamError('id')
-    }
-    return jwt.sign(id, this.secret)
-  }
-}
 
 const createSutFactory = () => {
   const sut = new TokenGenerator({ secret: FAKE_GENERIC_SECRET })
