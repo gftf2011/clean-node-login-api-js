@@ -9,28 +9,30 @@ const FAKE_GENERIC_ID = 'any_id'
 const FAKE_GENERIC_TOKEN = 'any_token'
 const FAKE_GENERIC_SECRET = 'any_secret'
 
-const createSutFactory = () => {
-  const sut = new TokenGenerator({ secret: FAKE_GENERIC_SECRET })
-  return { sut }
+class SutFactory {
+  create () {
+    this.sut = new TokenGenerator({ secret: FAKE_GENERIC_SECRET })
+    return { sut: this.sut }
+  }
 }
 
 describe('Token Generator', () => {
   it('Should call JWT with correct values', async () => {
-    const { sut } = createSutFactory()
+    const { sut } = new SutFactory().create()
     await sut.generate(FAKE_GENERIC_ID)
     expect(jwt.payload).toBe(FAKE_GENERIC_ID)
     expect(jwt.secret).toBe(sut.secret)
   })
 
   it('Should return "null" if JWT returns "null"', async () => {
-    const { sut } = createSutFactory()
+    const { sut } = new SutFactory().create()
     const token = await sut.generate(FAKE_GENERIC_ID)
     expect(token).toBeNull()
   })
 
   it('Should return a token if JWT returns a token', async () => {
     jwt.token = FAKE_GENERIC_TOKEN
-    const { sut } = createSutFactory()
+    const { sut } = new SutFactory().create()
     const token = await sut.generate(FAKE_GENERIC_ID)
     expect(token).toBe(FAKE_GENERIC_TOKEN)
   })
@@ -48,7 +50,7 @@ describe('Token Generator', () => {
   })
 
   it('Should throw MissingParamError if no id is provided', () => {
-    const { sut } = createSutFactory()
+    const { sut } = new SutFactory().create()
     const promise = sut.generate()
     expect(promise).rejects.toThrow(new MissingParamError('id'))
   })
