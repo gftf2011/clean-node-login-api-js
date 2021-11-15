@@ -1,14 +1,19 @@
 const { MongoClient } = require('mongodb')
 
+const ServerError = require('../../../src/utils/errors/server-error')
+
 const FAKE_GENERIC_EMAIL = 'test@gmail.com'
 const INVALID_FAKE_GENERIC_EMAIL = 'invalid_test@gmail.com'
 
 class LoadUserByEmailRepository {
-  constructor ({ userModel }) {
+  constructor ({ userModel } = {}) {
     this.userModel = userModel
   }
 
   async load (email) {
+    if (!this.userModel) {
+      throw new ServerError()
+    }
     const user = await this.userModel.findOne({ email })
     return user
   }
@@ -48,11 +53,18 @@ describe('LoadUserByEmail Repository', () => {
 
   it('Should return user if an user is found', async () => {
     const { sut, userModel } = new SutFactory().create()
-    await userModel.insertOne({
+    const fakeUserInsert = await userModel.insertOne({
       email: FAKE_GENERIC_EMAIL
     })
+    const fakeUserfound = await userModel.findOne({ _id: fakeUserInsert.insertedId })
     const user = await sut.load(FAKE_GENERIC_EMAIL)
-    expect(user.email).toBe(FAKE_GENERIC_EMAIL)
+    expect(user).toEqual(fakeUserfound)
+  })
+
+  it('Should throw ServerError if no userModel is provided', () => {
+    const sut = new LoadUserByEmailRepository()
+    const promise = sut.load(FAKE_GENERIC_EMAIL)
+    expect(promise).rejects.toThrow(new ServerError())
   })
 
   afterAll(async () => {
