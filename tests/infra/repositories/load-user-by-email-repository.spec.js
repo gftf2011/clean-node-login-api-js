@@ -11,7 +11,7 @@ class LoadUserByEmailRepository {
   }
 
   async load (email) {
-    if (!this.userModel) {
+    if (!this.userModel || !this.userModel.findOne) {
       throw new ServerError()
     }
     const user = await this.userModel.findOne({ email })
@@ -63,6 +63,12 @@ describe('LoadUserByEmail Repository', () => {
 
   it('Should throw ServerError if no userModel is provided', () => {
     const sut = new LoadUserByEmailRepository()
+    const promise = sut.load(FAKE_GENERIC_EMAIL)
+    expect(promise).rejects.toThrow(new ServerError())
+  })
+
+  it('Should throw ServerError if userModel has no findOne method', () => {
+    const sut = new LoadUserByEmailRepository({})
     const promise = sut.load(FAKE_GENERIC_EMAIL)
     expect(promise).rejects.toThrow(new ServerError())
   })
