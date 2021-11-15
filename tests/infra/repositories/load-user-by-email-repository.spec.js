@@ -1,13 +1,13 @@
-const { MongoClient } = require('mongodb')
-
 const ServerError = require('../../../src/utils/errors/server-error')
+
+const MongoHelper = require('../../../src/infra/helpers/mongo-helper')
 
 const LoadUserByEmailRepository = require('../../../src/infra/repositories/load-user-by-email-repository')
 
 const FAKE_GENERIC_EMAIL = 'test@gmail.com'
 const INVALID_FAKE_GENERIC_EMAIL = 'invalid_test@gmail.com'
 
-let connection, db
+let db
 
 class SutFactory {
   create () {
@@ -21,12 +21,11 @@ class SutFactory {
 }
 
 describe('LoadUserByEmail Repository', () => {
+  const mongoHelper = new MongoHelper()
+
   beforeAll(async () => {
-    connection = await MongoClient.connect(process.env.MONGO_URL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    })
-    db = connection.db()
+    await mongoHelper.connect(process.env.MONGO_URL)
+    db = mongoHelper.db
   })
 
   beforeEach(async () => {
@@ -62,6 +61,6 @@ describe('LoadUserByEmail Repository', () => {
   })
 
   afterAll(async () => {
-    await connection.close()
+    await mongoHelper.disconnect()
   })
 })
