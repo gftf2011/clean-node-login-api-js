@@ -5,16 +5,9 @@ const ServerError = require('../../../src/utils/errors/server-error')
 
 const TokenGenerator = require('../../../src/utils/generators/token-generator')
 
-const FAKE_GENERIC_ID = 'any_id'
-const FAKE_GENERIC_TOKEN = 'any_token'
-const FAKE_GENERIC_SECRET = 'any_secret'
+const SutFactory = require('./abstract-factories/sut-factory')
 
-class SutFactory {
-  create () {
-    this.sut = new TokenGenerator({ secret: FAKE_GENERIC_SECRET })
-    return { sut: this.sut }
-  }
-}
+const { FAKE_GENERIC_ID, FAKE_GENERIC_TOKEN } = require('./constants/constants')
 
 describe('Token Generator', () => {
   it('Should call JWT with correct values', async () => {
