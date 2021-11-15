@@ -3,108 +3,23 @@ const ServerError = require('../../../src/utils/errors/server-error')
 
 const AuthUseCase = require('../../../src/domain/use-cases/auth-use-case')
 
-const TokenGeneratorSpy = require('../../../spies/token-generator-spy')
-const EncrypterSpy = require('../../../spies/encrypter-spy')
-const LoadUserByEmailRepositorySpy = require('../../../spies/load-user-by-email-repository-spy')
-const UpdateAccessTokenRepositorySpy = require('../../../spies/update-access-token-repository-spy')
+const SutFactory = require('../helpers/factory-mothods/sut-factory')
 
-const FAKE_GENERIC_ACCESS_TOKEN = 'any_token'
-const FAKE_GENERIC_USER_ID = 'any_user_id'
-const FAKE_GENERIC_EMAIL = 'test@gmail.com'
-const FAKE_GENERIC_PASSWORD = 'any_password'
-const FAKE_HASHED_PASSWORD = 'hashed_password'
-const INVALID_FAKE_GENERIC_EMAIL = 'invalid_test@gmail.com'
-const INVALID_FAKE_GENERIC_PASSWORD = 'invalid_password'
+const LoadUserByEmailRepositorySpyFactory = require('../helpers/abstract-factories/spies/load-user-by-email-repository-spy-factory')
+const EncrypterSpyFactory = require('../helpers/abstract-factories/spies/encrypter-spy-factory')
+const TokenGeneratorSpyFactory = require('../helpers/abstract-factories/spies/token-generator-spy-factory')
 
-class UpdateAccessTokenRepositorySpyFactory {
-  create () {
-    this.updateAccessTokenRepositorySpy = new UpdateAccessTokenRepositorySpy()
-    return this.updateAccessTokenRepositorySpy
-  }
-}
-
-class TokenGeneratorSpyFactory {
-  create () {
-    this.tokenGeneratorSpy = new TokenGeneratorSpy()
-    this.tokenGeneratorSpy.accessToken = FAKE_GENERIC_ACCESS_TOKEN
-    return this.tokenGeneratorSpy
-  }
-}
-
-class EncrypterSpyFactory {
-  create () {
-    this.encrypterSpy = new EncrypterSpy()
-    this.encrypterSpy.isValid = true
-    return this.encrypterSpy
-  }
-}
-
-class LoadUserByEmailRepositorySpyFactory {
-  create () {
-    this.loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy()
-    this.loadUserByEmailRepositorySpy.user = {
-      id: FAKE_GENERIC_USER_ID,
-      password: FAKE_HASHED_PASSWORD
-    }
-    return this.loadUserByEmailRepositorySpy
-  }
-}
-
-class DependenciesFactory {
-  create () {
-    this.updateAccessTokenRepositorySpy = new UpdateAccessTokenRepositorySpyFactory().create()
-    this.encrypterSpy = new EncrypterSpyFactory().create()
-    this.loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpyFactory().create()
-    this.tokenGeneratorSpy = new TokenGeneratorSpyFactory().create()
-    return {
-      updateAccessTokenRepositorySpy: this.updateAccessTokenRepositorySpy,
-      encrypterSpy: this.encrypterSpy,
-      loadUserByEmailRepositorySpy: this.loadUserByEmailRepositorySpy,
-      tokenGeneratorSpy: this.tokenGeneratorSpy
-    }
-  }
-}
-
-const LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR_SUT = 'LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR_SUT'
-const ENCRYPTER_WITH_ERROR_SUT = 'ENCRYPTER_WITH_ERROR_SUT'
-const TOKEN_GENERATOR_WITH_ERROR_SUT = 'TOKEN_GENERATOR_WITH_ERROR_SUT'
-const UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR_SUT = 'UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR_SUT'
-
-class SutFactory {
-  create (type) {
-    this.dependencies = new DependenciesFactory().create()
-
-    if (type === LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR_SUT) {
-      this.dependencies.loadUserByEmailRepositorySpy.load = async () => {
-        throw new ServerError()
-      }
-    } else if (type === ENCRYPTER_WITH_ERROR_SUT) {
-      this.dependencies.encrypterSpy.compare = async () => {
-        throw new ServerError()
-      }
-    } else if (type === TOKEN_GENERATOR_WITH_ERROR_SUT) {
-      this.dependencies.tokenGeneratorSpy.generate = async () => {
-        throw new ServerError()
-      }
-    } else if (type === UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR_SUT) {
-      this.dependencies.updateAccessTokenRepositorySpy.update = async () => {
-        throw new ServerError()
-      }
-    }
-
-    this.sut = new AuthUseCase({
-      loadUserByEmailRepository: this.dependencies.loadUserByEmailRepositorySpy,
-      updateAccessTokenRepository: this.dependencies.updateAccessTokenRepositorySpy,
-      encrypter: this.dependencies.encrypterSpy,
-      tokenGenerator: this.dependencies.tokenGeneratorSpy
-    })
-
-    return {
-      sut: this.sut,
-      ...this.dependencies
-    }
-  }
-}
+const {
+  FAKE_GENERIC_ACCESS_TOKEN,
+  FAKE_GENERIC_EMAIL,
+  FAKE_GENERIC_PASSWORD,
+  INVALID_FAKE_GENERIC_EMAIL,
+  INVALID_FAKE_GENERIC_PASSWORD,
+  LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR_SUT,
+  ENCRYPTER_WITH_ERROR_SUT,
+  TOKEN_GENERATOR_WITH_ERROR_SUT,
+  UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR_SUT
+} = require('../helpers/constants/constants')
 
 describe('Auth UseCase', () => {
   it('Should return null if invalid email is provided', async () => {
