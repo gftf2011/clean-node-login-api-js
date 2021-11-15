@@ -1,4 +1,5 @@
 const ServerError = require('../../../src/utils/errors/server-error')
+const MissingParamError = require('../../../src/utils/errors/missing-param-error')
 
 const MongoHelper = require('../../../src/infra/helpers/mongo-helper')
 
@@ -51,6 +52,12 @@ describe('LoadUserByEmail Repository', () => {
     const { sut } = new SutFactory(db).create(LOAD_USER_BY_EMAIL_REPOSITORY_EMPTY_OBJECT_SUT)
     const promise = sut.load(FAKE_GENERIC_EMAIL)
     expect(promise).rejects.toThrow(new ServerError())
+  })
+
+  it('Should throw MissingParamError if no email is provided', () => {
+    const { sut } = new SutFactory(db).create()
+    const promise = sut.load()
+    expect(promise).rejects.toThrow(new MissingParamError('email'))
   })
 
   afterAll(async () => {
