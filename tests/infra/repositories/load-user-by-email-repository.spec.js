@@ -14,9 +14,20 @@ class LoadUserByEmailRepository {
   }
 }
 
-describe('LoadUserByEmail Repository', () => {
-  let connection, db
+let connection, db
 
+class SutFactory {
+  create () {
+    this.userModel = db.collection('users')
+    this.sut = new LoadUserByEmailRepository({ userModel: this.userModel })
+    return {
+      sut: this.sut,
+      userModel: this.userModel
+    }
+  }
+}
+
+describe('LoadUserByEmail Repository', () => {
   beforeAll(async () => {
     connection = await MongoClient.connect(process.env.MONGO_URL, {
       useNewUrlParser: true,
@@ -30,18 +41,16 @@ describe('LoadUserByEmail Repository', () => {
   })
 
   it('Should return null if no user is found', async () => {
-    const userModel = db.collection('users')
-    const sut = new LoadUserByEmailRepository({ userModel })
+    const { sut } = new SutFactory().create()
     const user = await sut.load(INVALID_FAKE_GENERIC_EMAIL)
     expect(user).toBeNull()
   })
 
   it('Should return user if an user is found', async () => {
-    const userModel = db.collection('users')
+    const { sut, userModel } = new SutFactory().create()
     await userModel.insertOne({
       email: FAKE_GENERIC_EMAIL
     })
-    const sut = new LoadUserByEmailRepository({ userModel })
     const user = await sut.load(FAKE_GENERIC_EMAIL)
     expect(user.email).toBe(FAKE_GENERIC_EMAIL)
   })
