@@ -5,112 +5,23 @@ const MissingParamError = require('../../../src/utils/errors/missing-param-error
 const UnauthorizedUserError = require('../../../src/utils/errors/unauthorized-error')
 const ServerError = require('../../../src/utils/errors/server-error')
 
-const AuthUseCaseSpy = require('../../../spies/auth-use-case-spy')
-const EmailValidatorSpy = require('../../../spies/email-validator-spy')
+const AuthUseCaseSpyFactory = require('../helpers/abstract-factories/spies/auth-use-case-spy-factory')
 
-const FAKE_GENERIC_PASSWORD = 'any_password'
-const FAKE_GENERIC_EMAIL = 'test@gmail.com'
-const FAKE_ACCESS_TOKEN = 'access_token'
-const INVALID_FAKE_ACCESS_TOKEN = null
-const INVALID_FAKE_GENERIC_PASSWORD = 'invalid_password'
-const INVALID_FAKE_GENERIC_EMAIL = 'invalid_test@gmail.com'
+const SutFactory = require('../helpers/factory-methods/sut-factory')
 
-const FAKE_HTTP_REQUEST = {
-  body: {
-    email: FAKE_GENERIC_EMAIL,
-    password: FAKE_GENERIC_PASSWORD
-  }
-}
-const FAKE_HTTP_REQUEST_WITH_INVALID_EMAIL_AND_VALID_PASSWORD = {
-  body: {
-    email: INVALID_FAKE_GENERIC_EMAIL,
-    password: FAKE_GENERIC_PASSWORD
-  }
-}
-const FAKE_HTTP_REQUEST_WITH_INVALID_EMAIL_AND_INVALID_PASSWORD = {
-  body: {
-    email: INVALID_FAKE_GENERIC_EMAIL,
-    password: INVALID_FAKE_GENERIC_PASSWORD
-  }
-}
-const INVALID_FAKE_HTTP_REQUEST_WITH_NO_EMAIL = {
-  body: {
-    password: FAKE_GENERIC_PASSWORD
-  }
-}
-const INVALID_FAKE_HTTP_REQUEST_WITH_NO_PASSWORD = {
-  body: {
-    email: FAKE_GENERIC_EMAIL
-  }
-}
-const INVALID_FAKE_EMPTY_HTTP_REQUEST = {}
-
-class EmailValidatorSpyFactory {
-  create () {
-    this.emailValidatorSpy = new EmailValidatorSpy()
-    this.emailValidatorSpy.isEmailValid = true
-    return this.emailValidatorSpy
-  }
-}
-
-class AuthUseCaseSpyFactory {
-  create () {
-    this.authUseCaseSpy = new AuthUseCaseSpy()
-    this.authUseCaseSpy.accessToken = FAKE_ACCESS_TOKEN
-    return this.authUseCaseSpy
-  }
-}
-
-class DependenciesFactory {
-  create () {
-    this.emailValidatorSpy = new EmailValidatorSpyFactory().create()
-    this.authUseCaseSpy = new AuthUseCaseSpyFactory().create()
-    return {
-      emailValidatorSpy: this.emailValidatorSpy,
-      authUseCaseSpy: this.authUseCaseSpy
-    }
-  }
-}
-
-const AUTH_USE_CASE_WITH_NO_PASSWORD_ERROR_SUT = 'AUTH_USE_CASE_WITH_NO_PASSWORD_ERROR_SUT'
-const AUTH_USE_CASE_WITH_NO_EMAIL_ERROR_SUT = 'AUTH_USE_CASE_WITH_NO_EMAIL_ERROR_SUT'
-const AUTH_USE_CASE_THROWING_SERVER_ERROR_SUT = 'AUTH_USE_CASE_THROWING_SERVER_ERROR_SUT'
-const EMAIL_VALIDATOR_THROWING_ERROR_SUT = 'EMAIL_VALIDATOR_THROWING_ERROR_SUT'
-
-class SutFactory {
-  create (type) {
-    this.dependencies = new DependenciesFactory().create()
-
-    if (type === AUTH_USE_CASE_WITH_NO_PASSWORD_ERROR_SUT) {
-      this.dependencies.authUseCaseSpy.execute = async (email) => {
-        this.dependencies.authUseCaseSpy.email = email
-        throw new MissingParamError('password')
-      }
-    } else if (type === AUTH_USE_CASE_WITH_NO_EMAIL_ERROR_SUT) {
-      this.dependencies.authUseCaseSpy.execute = async () => {
-        throw new MissingParamError('email')
-      }
-    } else if (type === AUTH_USE_CASE_THROWING_SERVER_ERROR_SUT) {
-      this.dependencies.authUseCaseSpy.execute = async () => {
-        throw new ServerError()
-      }
-    } else if (type === EMAIL_VALIDATOR_THROWING_ERROR_SUT) {
-      this.dependencies.emailValidatorSpy.isValid = (_email) => {
-        throw new ServerError()
-      }
-    }
-
-    this.sut = new LoginRouter({
-      authUseCase: this.dependencies.authUseCaseSpy,
-      emailValidator: this.dependencies.emailValidatorSpy
-    })
-
-    return {
-      sut: this.sut,
-      ...this.dependencies
-    }
-  }
-}
+const {
+  INVALID_FAKE_ACCESS_TOKEN,
+  FAKE_HTTP_REQUEST,
+  FAKE_HTTP_REQUEST_WITH_INVALID_EMAIL_AND_VALID_PASSWORD,
+  FAKE_HTTP_REQUEST_WITH_INVALID_EMAIL_AND_INVALID_PASSWORD,
+  INVALID_FAKE_HTTP_REQUEST_WITH_NO_EMAIL,
+  INVALID_FAKE_HTTP_REQUEST_WITH_NO_PASSWORD,
+  INVALID_FAKE_EMPTY_HTTP_REQUEST,
+  AUTH_USE_CASE_WITH_NO_PASSWORD_ERROR_SUT,
+  AUTH_USE_CASE_WITH_NO_EMAIL_ERROR_SUT,
+  AUTH_USE_CASE_THROWING_SERVER_ERROR_SUT,
+  EMAIL_VALIDATOR_THROWING_ERROR_SUT
+} = require('../helpers/constants/constants')
 
 describe('Login Router', () => {
   it('Should call AuthUseCase with correct params', async () => {
