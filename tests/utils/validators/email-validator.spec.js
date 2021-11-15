@@ -2,17 +2,12 @@ const validator = require('validator')
 
 const MissingParamError = require('../../../src/utils/errors/missing-param-error')
 
-const EmailValidator = require('../../../src/utils/validators/email-validator')
+const SutFactory = require('./abstract-factories/sut-factory')
 
-class SutFactory {
-  create () {
-    this.sut = new EmailValidator()
-    return { sut: this.sut }
-  }
-}
-
-const VALID_EMAIL = 'validtest001@gmail.com'
-const INVALID_EMAIL = 'invalidtest001@gmail.com'
+const {
+  VALID_EMAIL,
+  INVALID_EMAIL
+} = require('./constants/constants')
 
 describe('Email Validator', () => {
   it('Should call validator with correct email', () => {
