@@ -2,22 +2,10 @@ const { MongoClient } = require('mongodb')
 
 const ServerError = require('../../../src/utils/errors/server-error')
 
+const LoadUserByEmailRepository = require('../../../src/infra/repositories/load-user-by-email-repository')
+
 const FAKE_GENERIC_EMAIL = 'test@gmail.com'
 const INVALID_FAKE_GENERIC_EMAIL = 'invalid_test@gmail.com'
-
-class LoadUserByEmailRepository {
-  constructor ({ userModel } = {}) {
-    this.userModel = userModel
-  }
-
-  async load (email) {
-    if (!this.userModel || !this.userModel.findOne) {
-      throw new ServerError()
-    }
-    const user = await this.userModel.findOne({ email })
-    return user
-  }
-}
 
 let connection, db
 
