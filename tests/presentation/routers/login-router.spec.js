@@ -4,6 +4,7 @@ const InvalidParamError = require('../../../src/utils/errors/invalid-param-error
 const MissingParamError = require('../../../src/utils/errors/missing-param-error')
 const UnauthorizedUserError = require('../../../src/utils/errors/unauthorized-error')
 const ServerError = require('../../../src/utils/errors/server-error')
+const { MongoNotConnectedError, MongoServerClosedError } = require('mongodb')
 
 const AuthUseCaseSpyFactory = require('../helpers/abstract-factories/spies/auth-use-case-spy-factory')
 
@@ -20,7 +21,9 @@ const {
   AUTH_USE_CASE_WITH_NO_PASSWORD_ERROR_SUT,
   AUTH_USE_CASE_WITH_NO_EMAIL_ERROR_SUT,
   AUTH_USE_CASE_THROWING_SERVER_ERROR_SUT,
-  EMAIL_VALIDATOR_THROWING_ERROR_SUT
+  EMAIL_VALIDATOR_THROWING_ERROR_SUT,
+  AUTH_USE_CASE_THROWING_MONGO_CONNECTION_ERROR_SUT,
+  AUTH_USE_CASE_THROWING_MONGO_CLOSE_ERROR_SUT
 } = require('../helpers/constants/constants')
 
 describe('Login Router', () => {
@@ -175,5 +178,21 @@ describe('Login Router', () => {
     const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
+  })
+
+  it('Should return 500 when AuthUseCase throws MongoNotConnectedError', async () => {
+    const { sut } = new SutFactory().create(AUTH_USE_CASE_THROWING_MONGO_CONNECTION_ERROR_SUT)
+    const httpRequest = FAKE_HTTP_REQUEST
+    const httpResponse = await sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new MongoNotConnectedError('Not possible to connect to MongoDB Driver'))
+  })
+
+  it('Should return 500 when AuthUseCase throws MongoServerClosedError', async () => {
+    const { sut } = new SutFactory().create(AUTH_USE_CASE_THROWING_MONGO_CLOSE_ERROR_SUT)
+    const httpRequest = FAKE_HTTP_REQUEST
+    const httpResponse = await sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new MongoServerClosedError('Not possible to close MongoDB Driver'))
   })
 })
