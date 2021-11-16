@@ -2,7 +2,9 @@ const HttpResponse = require('../helpers/http-response')
 
 const MissingParamError = require('../../utils/errors/missing-param-error')
 const InvalidParamError = require('../../utils/errors/invalid-param-error')
+const ServerError = require('../../utils/errors/server-error')
 
+const { MongoNotConnectedError, MongoServerClosedError } = require('mongodb')
 module.exports = class LoginRouter {
   constructor ({ authUseCase, emailValidator } = {}) {
     this.authUseCase = authUseCase
@@ -30,8 +32,10 @@ module.exports = class LoginRouter {
     } catch (error) {
       if (error instanceof MissingParamError || error instanceof InvalidParamError) {
         return HttpResponse.badRequest(error)
+      } else if (error instanceof MongoNotConnectedError || error instanceof MongoServerClosedError) {
+        return HttpResponse.serverError(error)
       }
-      return HttpResponse.serverError()
+      return HttpResponse.serverError(new ServerError())
     }
   }
 }
