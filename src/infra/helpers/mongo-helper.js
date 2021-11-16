@@ -6,8 +6,8 @@ const Driver = require('./directors/driver')
 
 module.exports = class MongoHelper {
   constructor (args) {
-    this.retryConnect = (!args || !args.attempts) ? 2 : args.attempts
-    this.retryDisconnect = (!args || !args.attempts) ? 2 : args.attempts
+    this.retryConnect = (!args || !args.attempts) ? parseInt(process.env.MONGO_CONNECT_RETRY, 10) : args.attempts
+    this.retryDisconnect = (!args || !args.attempts) ? parseInt(process.env.MONGO_DISCONNECT_RETRY, 10) : args.attempts
   }
 
   async connect (uri, dbName) {
