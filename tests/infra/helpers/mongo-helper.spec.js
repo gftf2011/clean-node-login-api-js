@@ -32,4 +32,9 @@ describe('Mongo Helper', () => {
     const sut = new MongoHelper({ attempts: MONGO_ATTEMPTS_TO_RETRY })
     expect(sut.retryConnect).toBe(MONGO_ATTEMPTS_TO_RETRY)
   })
+
+  it('it Should set retryDisconnect property with correct value when args dependency is provided', () => {
+    const sut = new MongoHelper({ attempts: MONGO_ATTEMPTS_TO_RETRY })
+    expect(sut.retryDisconnect).toBe(MONGO_ATTEMPTS_TO_RETRY)
+  })
 })
