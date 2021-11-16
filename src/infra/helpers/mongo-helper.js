@@ -19,7 +19,7 @@ module.exports = class MongoHelper {
       this.client = builtMongo.client
       this.db = builtMongo.db
     } catch (error) {
-      if (this.retryConnect >= 0) {
+      if (this.retryConnect > 0) {
         this.retryConnect--
 
         await this.connect(uri, dbName)
@@ -33,7 +33,7 @@ module.exports = class MongoHelper {
     try {
       await this.client.close()
     } catch (error) {
-      if (this.retryDisconnect >= 0) {
+      if (this.retryDisconnect > 0) {
         this.retryDisconnect--
 
         await this.disconnect()
