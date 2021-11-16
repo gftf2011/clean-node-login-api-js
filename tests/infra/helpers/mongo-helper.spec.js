@@ -14,7 +14,9 @@ describe('Mongo Helper', () => {
   beforeAll(() => {
     process.env.MONGO_CONNECT_RETRY = '2'
     process.env.MONGO_DISCONNECT_RETRY = '2'
+  })
 
+  beforeEach(() => {
     Driver.mockImplementation(() => {
       return {
         construct: async (_builder) => {
@@ -105,8 +107,36 @@ describe('Mongo Helper', () => {
     expect(sut.client.close).toHaveBeenCalled()
   })
 
+  it('Should call client close method in disconnect after close retry failed once', async () => {
+    Driver.mockImplementation(() => {
+      return {
+        construct: async (_builder) => {
+          return {
+            client: {
+              close: jest.fn().mockImplementationOnce(() => {
+                throw new Error()
+              }).mockImplementationOnce(() => {})
+            },
+            db: {}
+          }
+        }
+      }
+    })
+    const sut = new MongoHelper()
+    const retryConnect = sut.retryConnect
+    const retryDisconnect = sut.retryDisconnect
+    await sut.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME)
+    await sut.disconnect()
+    expect(retryConnect).toBe(parseInt(process.env.MONGO_CONNECT_RETRY, 10))
+    expect(retryDisconnect).toBe(parseInt(process.env.MONGO_DISCONNECT_RETRY, 10))
+    expect(sut.retryConnect).toBe(parseInt(process.env.MONGO_CONNECT_RETRY, 10))
+    expect(sut.retryDisconnect).toBe(parseInt(process.env.MONGO_DISCONNECT_RETRY, 10) - 1)
+    expect(sut.client).toHaveProperty('close')
+    expect(sut.client.close).toHaveBeenCalled()
+  })
+
   it('Should throw MongoNotConnectedError if connection retry fails', async () => {
-    Driver.mockImplementationOnce(() => {
+    Driver.mockImplementation(() => {
       return {
         construct: async (_builder) => {
           throw new Error()
@@ -133,9 +163,9 @@ describe('Mongo Helper', () => {
         construct: async (_builder) => {
           return {
             client: {
-              close: async () => {
+              close: jest.fn().mockImplementation(() => {
                 throw new Error()
-              }
+              })
             },
             db: {}
           }
@@ -155,5 +185,9 @@ describe('Mongo Helper', () => {
       expect(sut.retryDisconnect).toBe(0)
       expect(error).toEqual(new MongoServerClosedError('Not possible to close MongoDB Driver'))
     }
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
   })
 })
