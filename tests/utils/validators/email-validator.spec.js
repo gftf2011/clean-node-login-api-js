@@ -2,12 +2,12 @@ const validator = require('validator')
 
 const MissingParamError = require('../../../src/utils/errors/missing-param-error')
 
-const SutFactory = require('./abstract-factories/sut-factory')
+const SutFactory = require('../helpers/abstract-factories/email-validator-sut-factory')
 
 const {
   VALID_EMAIL,
   INVALID_EMAIL
-} = require('./constants/constants')
+} = require('../helpers/constants')
 
 describe('Email Validator', () => {
   it('Should call validator with correct email', () => {

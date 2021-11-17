@@ -1,6 +1,6 @@
 const AuthUseCaseSpy = require('../../../../../spies/auth-use-case-spy')
 
-const { FAKE_ACCESS_TOKEN } = require('../../constants/constants')
+const { FAKE_ACCESS_TOKEN } = require('../../constants')
 
 module.exports = class AuthUseCaseSpyFactory {
   create () {

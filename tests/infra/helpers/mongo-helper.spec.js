@@ -10,7 +10,7 @@ const {
   MONGO_FAKE_DATABASE_NAME,
   MONGO_HELPER_WITH_EMPTY_ARGS_SUT,
   MONGO_HELPER_WITH_ARGS_SUT
-} = require('../helpers/constants/mongo-helper-constants')
+} = require('../helpers/constants')
 
 jest.mock('../../../src/infra/helpers/directors/driver')
 

@@ -3,7 +3,7 @@ const ServerError = require('../../../src/utils/errors/server-error')
 
 const AuthUseCase = require('../../../src/domain/use-cases/auth-use-case')
 
-const SutFactory = require('../helpers/factory-mothods/sut-factory')
+const SutFactory = require('../helpers/factory-mothods/auth-use-case-sut-factory')
 
 const LoadUserByEmailRepositorySpyFactory = require('../helpers/abstract-factories/spies/load-user-by-email-repository-spy-factory')
 const EncrypterSpyFactory = require('../helpers/abstract-factories/spies/encrypter-spy-factory')
@@ -19,7 +19,7 @@ const {
   ENCRYPTER_WITH_ERROR_SUT,
   TOKEN_GENERATOR_WITH_ERROR_SUT,
   UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR_SUT
-} = require('../helpers/constants/constants')
+} = require('../helpers/constants')
 
 describe('Auth UseCase', () => {
   it('Should return null if invalid email is provided', async () => {

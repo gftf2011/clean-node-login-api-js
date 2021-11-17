@@ -1,6 +1,6 @@
 const LoadUserByEmailRepositorySpy = require('../../../../../spies/load-user-by-email-repository-spy')
 
-const { FAKE_HASHED_PASSWORD, FAKE_GENERIC_USER_ID } = require('../../constants/constants')
+const { FAKE_HASHED_PASSWORD, FAKE_GENERIC_USER_ID } = require('../../constants')
 
 module.exports = class LoadUserByEmailRepositorySpyFactory {
   create () {

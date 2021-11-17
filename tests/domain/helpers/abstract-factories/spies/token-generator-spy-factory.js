@@ -1,6 +1,6 @@
 const TokenGeneratorSpy = require('../../../../../spies/token-generator-spy')
 
-const { FAKE_GENERIC_ACCESS_TOKEN } = require('../../constants/constants')
+const { FAKE_GENERIC_ACCESS_TOKEN } = require('../../constants')
 
 module.exports = class TokenGeneratorSpyFactory {
   create () {

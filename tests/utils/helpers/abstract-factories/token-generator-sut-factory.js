@@ -1,6 +1,6 @@
 const TokenGenerator = require('../../../../src/utils/generators/token-generator')
 
-const { FAKE_GENERIC_SECRET } = require('../constants/constants')
+const { FAKE_GENERIC_SECRET } = require('../constants')
 
 module.exports = class SutFactory {
   create () {
