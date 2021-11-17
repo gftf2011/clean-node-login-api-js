@@ -1,12 +1,16 @@
-const MongoHelper = require('../../../src/infra/helpers/mongo-helper')
-
 const Driver = require('../../../src/infra/helpers/directors/driver')
 
 const { MongoNotConnectedError, MongoServerClosedError } = require('mongodb')
 
-const MONGO_ATTEMPTS_TO_RETRY = 3
-const MONGO_FAKE_URI = 'any_uri'
-const MONGO_FAKE_DATABASE_NAME = 'any_database'
+const SutFactory = require('./factory-methods/mongo-helper-sut-factory')
+
+const {
+  MONGO_ATTEMPTS_TO_RETRY,
+  MONGO_FAKE_URI,
+  MONGO_FAKE_DATABASE_NAME,
+  MONGO_HELPER_WITH_EMPTY_ARGS_SUT,
+  MONGO_HELPER_WITH_ARGS_SUT
+} = require('../helpers/constants/mongo-helper-constants')
 
 jest.mock('../../../src/infra/helpers/directors/driver')
 
@@ -32,37 +36,37 @@ describe('Mongo Helper', () => {
   })
 
   it('Should set retryConnect property with default env value when args dependency is not provided', () => {
-    const sut = new MongoHelper()
+    const { sut } = new SutFactory().create()
     expect(sut.retryConnect).toBe(parseInt(process.env.MONGO_CONNECT_RETRY = '2', 10))
   })
 
   it('Should set retryDisconnect property with default env value when args dependency is not provided', () => {
-    const sut = new MongoHelper()
+    const { sut } = new SutFactory().create()
     expect(sut.retryDisconnect).toBe(parseInt(process.env.MONGO_DISCONNECT_RETRY = '2', 10))
   })
 
   it('Should set retryConnect property with default env value when args dependency is an empty object', () => {
-    const sut = new MongoHelper({})
+    const { sut } = new SutFactory().create(MONGO_HELPER_WITH_EMPTY_ARGS_SUT)
     expect(sut.retryConnect).toBe(parseInt(process.env.MONGO_CONNECT_RETRY = '2', 10))
   })
 
   it('Should set retryDisconnect property with default env value when args dependency is an empty object', () => {
-    const sut = new MongoHelper({})
+    const { sut } = new SutFactory().create(MONGO_HELPER_WITH_EMPTY_ARGS_SUT)
     expect(sut.retryDisconnect).toBe(parseInt(process.env.MONGO_DISCONNECT_RETRY = '2', 10))
   })
 
   it('Should set retryConnect property with correct value when args dependency is provided', () => {
-    const sut = new MongoHelper({ attempts: MONGO_ATTEMPTS_TO_RETRY })
+    const { sut } = new SutFactory().create(MONGO_HELPER_WITH_ARGS_SUT)
     expect(sut.retryConnect).toBe(MONGO_ATTEMPTS_TO_RETRY)
   })
 
   it('Should set retryDisconnect property with correct value when args dependency is provided', () => {
-    const sut = new MongoHelper({ attempts: MONGO_ATTEMPTS_TO_RETRY })
+    const { sut } = new SutFactory().create(MONGO_HELPER_WITH_ARGS_SUT)
     expect(sut.retryDisconnect).toBe(MONGO_ATTEMPTS_TO_RETRY)
   })
 
   it('Should build client and db if connect was called with success', async () => {
-    const sut = new MongoHelper({ attempts: MONGO_ATTEMPTS_TO_RETRY })
+    const { sut } = new SutFactory().create(MONGO_HELPER_WITH_ARGS_SUT)
     await sut.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME)
     expect(sut.client).toHaveProperty('close')
     expect(sut.db).toEqual({})
@@ -87,7 +91,7 @@ describe('Mongo Helper', () => {
         }
       }
     })
-    const sut = new MongoHelper()
+    const { sut } = new SutFactory().create()
     const retryConnect = sut.retryConnect
     const retryDisconnect = sut.retryDisconnect
     await sut.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME)
@@ -100,7 +104,7 @@ describe('Mongo Helper', () => {
   })
 
   it('Should call client close method in disconnect after connect was called with success', async () => {
-    const sut = new MongoHelper({ attempts: MONGO_ATTEMPTS_TO_RETRY })
+    const { sut } = new SutFactory().create(MONGO_HELPER_WITH_ARGS_SUT)
     await sut.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME)
     await sut.disconnect()
     expect(sut.client).toHaveProperty('close')
@@ -122,7 +126,7 @@ describe('Mongo Helper', () => {
         }
       }
     })
-    const sut = new MongoHelper()
+    const { sut } = new SutFactory().create()
     const retryConnect = sut.retryConnect
     const retryDisconnect = sut.retryDisconnect
     await sut.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME)
@@ -143,7 +147,7 @@ describe('Mongo Helper', () => {
         }
       }
     })
-    const sut = new MongoHelper()
+    const { sut } = new SutFactory().create()
     const retryConnect = sut.retryConnect
     const retryDisconnect = sut.retryDisconnect
     try {
@@ -172,7 +176,7 @@ describe('Mongo Helper', () => {
         }
       }
     })
-    const sut = new MongoHelper()
+    const { sut } = new SutFactory().create()
     const retryConnect = sut.retryConnect
     const retryDisconnect = sut.retryDisconnect
     await sut.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME)
