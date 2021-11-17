@@ -1,6 +1,6 @@
 const MongoHelper = require('../../../../src/infra/helpers/mongo-helper')
 
-const { MONGO_ATTEMPTS_TO_RETRY } = require('../constants/mongo-helper-constants')
+const { MONGO_ATTEMPTS_TO_RETRY } = require('../constants')
 
 module.exports = class SutFactory {
   create (type) {

@@ -1,6 +1,6 @@
 const ServerError = require('../../../../src/utils/errors/server-error')
 
-const DependenciesFactory = require('../abstract-factories/dependencies-factory')
+const DependenciesFactory = require('../abstract-factories/auth-use-case-dependencies-factory')
 
 const AuthUseCase = require('../../../../src/domain/use-cases/auth-use-case')
 
@@ -9,7 +9,7 @@ const {
   ENCRYPTER_WITH_ERROR_SUT,
   TOKEN_GENERATOR_WITH_ERROR_SUT,
   UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR_SUT
-} = require('../constants/constants')
+} = require('../constants')
 
 module.exports = class SutFactory {
   create (type) {

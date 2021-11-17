@@ -2,13 +2,13 @@ const bcrypt = require('bcrypt')
 
 const MissingParamError = require('../../src/utils/errors/missing-param-error')
 
-const SutFactory = require('./abstract-factories/sut-factory')
+const SutFactory = require('./helpers/abstract-factories/encrypter-sut-factory')
 
 const {
   FAKE_GENERIC_PASSWORD,
   FAKE_HASHED_PASSWORD,
   FAKE_WRONG_HASHED_PASSWORD
-} = require('./constants/constants')
+} = require('./helpers/constants')
 
 describe('Encrypter', () => {
   it('Should call bcrypt with correct values', async () => {

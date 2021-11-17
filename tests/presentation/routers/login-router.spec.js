@@ -8,7 +8,7 @@ const { MongoNotConnectedError, MongoServerClosedError } = require('mongodb')
 
 const AuthUseCaseSpyFactory = require('../helpers/abstract-factories/spies/auth-use-case-spy-factory')
 
-const SutFactory = require('../helpers/factory-methods/sut-factory')
+const SutFactory = require('../helpers/factory-methods/login-router-sut-factory')
 
 const {
   INVALID_FAKE_ACCESS_TOKEN,
@@ -24,7 +24,7 @@ const {
   EMAIL_VALIDATOR_THROWING_ERROR_SUT,
   AUTH_USE_CASE_THROWING_MONGO_CONNECTION_ERROR_SUT,
   AUTH_USE_CASE_THROWING_MONGO_CLOSE_ERROR_SUT
-} = require('../helpers/constants/constants')
+} = require('../helpers/constants')
 
 describe('Login Router', () => {
   it('Should call AuthUseCase with correct params', async () => {

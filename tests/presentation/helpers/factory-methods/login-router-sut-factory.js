@@ -4,7 +4,7 @@ const MissingParamError = require('../../../../src/utils/errors/missing-param-er
 const ServerError = require('../../../../src/utils/errors/server-error')
 const { MongoNotConnectedError, MongoServerClosedError } = require('mongodb')
 
-const DependenciesFactory = require('../../helpers/abstract-factories/dependencies-factory')
+const DependenciesFactory = require('../abstract-factories/login-router-dependencies-factory')
 
 const {
   AUTH_USE_CASE_WITH_NO_PASSWORD_ERROR_SUT,
@@ -13,7 +13,7 @@ const {
   AUTH_USE_CASE_THROWING_MONGO_CONNECTION_ERROR_SUT,
   AUTH_USE_CASE_THROWING_MONGO_CLOSE_ERROR_SUT,
   EMAIL_VALIDATOR_THROWING_ERROR_SUT
-} = require('../../helpers/constants/constants')
+} = require('../constants')
 
 module.exports = class SutFactory {
   create (type) {

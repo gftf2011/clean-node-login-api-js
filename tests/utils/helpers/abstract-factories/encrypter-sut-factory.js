@@ -1,4 +1,4 @@
-const Encrypter = require('../../../src/utils/encrypter')
+const Encrypter = require('../../../../src/utils/encrypter')
 
 module.exports = class SutFactory {
   create () {

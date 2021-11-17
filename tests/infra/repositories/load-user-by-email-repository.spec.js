@@ -10,7 +10,7 @@ const {
   INVALID_FAKE_GENERIC_EMAIL,
   LOAD_USER_BY_EMAIL_REPOSITORY_EMPTY_SUT,
   LOAD_USER_BY_EMAIL_REPOSITORY_EMPTY_OBJECT_SUT
-} = require('../helpers/constants/load-user-by-email-repository-constants')
+} = require('../helpers/constants')
 
 let db
 
