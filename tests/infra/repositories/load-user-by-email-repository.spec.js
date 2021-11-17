@@ -3,7 +3,7 @@ const MissingParamError = require('../../../src/utils/errors/missing-param-error
 
 const MongoHelper = require('../../../src/infra/helpers/mongo-helper')
 
-const SutFactory = require('../helpers/factory-methods/sut-factory')
+const SutFactory = require('../helpers/factory-methods/load-user-by-email-repository-sut-factory')
 
 const {
   FAKE_GENERIC_EMAIL,
