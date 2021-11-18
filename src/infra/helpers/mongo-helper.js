@@ -2,7 +2,7 @@ const MongoBuilderSingleton = require('./directors/singletons/mongo-builder-sing
 
 const { MongoNotConnectedError, MongoServerClosedError } = require('mongodb')
 
-const Driver = require('./directors/driver')
+const MongoDirector = require('./directors/mongo-director')
 
 module.exports = class MongoHelper {
   constructor (args) {
@@ -14,8 +14,8 @@ module.exports = class MongoHelper {
     try {
       this.uri = uri
       this.dbName = dbName
-      const mongo = new Driver(this.uri, this.dbName)
-      const builtMongo = await mongo.construct(MongoBuilderSingleton.getInstance())
+      const mongo = new MongoDirector()
+      const builtMongo = await mongo.construct(MongoBuilderSingleton.getInstance(this.uri, this.dbName))
       this.client = builtMongo.client
       this.db = builtMongo.db
     } catch (error) {

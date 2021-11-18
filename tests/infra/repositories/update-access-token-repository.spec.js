@@ -3,7 +3,7 @@ const MissingParamError = require('../../../src/utils/errors/missing-param-error
 
 const MongoHelper = require('../../../src/infra/helpers/mongo-helper')
 
-let db, userModel
+let db
 
 class UpdateAccessTokenRepository {
   constructor ({ userModel } = {}) {
@@ -42,7 +42,6 @@ describe('UpdateAccessToken Repository', () => {
   beforeAll(async () => {
     await mongoHelper.connect(process.env.MONGO_URL)
     db = mongoHelper.db
-    userModel = db.collection('users')
   })
 
   beforeEach(async () => {
@@ -50,6 +49,7 @@ describe('UpdateAccessToken Repository', () => {
   })
 
   it('Should update the user with the properly given access token', async () => {
+    const userModel = db.collection('users')
     const sut = new UpdateAccessTokenRepository({ userModel })
     const fakeUserInsert = await userModel.insertOne({
       email: FAKE_GENERIC_EMAIL
@@ -79,12 +79,14 @@ describe('UpdateAccessToken Repository', () => {
   })
 
   it('Should throw MissingParamError if userId was not provided', () => {
+    const userModel = db.collection('users')
     const sut = new UpdateAccessTokenRepository({ userModel })
     const promise = sut.update()
     expect(promise).rejects.toThrow(new MissingParamError('userId'))
   })
 
   it('Should throw MissingParamError if accessToken was not provided', () => {
+    const userModel = db.collection('users')
     const sut = new UpdateAccessTokenRepository({ userModel })
     const promise = sut.update(FAKE_GENERIC_USER_ID)
     expect(promise).rejects.toThrow(new MissingParamError('accessToken'))

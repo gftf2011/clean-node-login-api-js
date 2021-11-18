@@ -22,10 +22,9 @@
     ]
   },
   "scripts": {
-    "test": "jest --watch --silent --verbose --colors",
-    "test:all": "jest --watchAll --silent --verbose --colors",
-    "test:staged": "jest --passWithNoTests --findRelatedTests --silent",
-    "test:ci": "jest --coverage --noStackTrace --silent",
+    "test": "jest --clearCache ; jest --verbose --colors",
+    "test:staged": "jest --clearCache ; jest --passWithNoTests --findRelatedTests --verbose --colors",
+    "test:ci": "jest --clearCache ; jest --coverage --noStackTrace",
     "prepare": "husky install",
     "commit": "cz"
   },

@@ -1,4 +1,4 @@
-const Driver = require('../../../src/infra/helpers/directors/driver')
+const MongoDirector = require('../../../src/infra/helpers/directors/mongo-director')
 
 const { MongoNotConnectedError, MongoServerClosedError } = require('mongodb')
 
@@ -12,7 +12,7 @@ const {
   MONGO_HELPER_WITH_ARGS_SUT
 } = require('../helpers/constants')
 
-jest.mock('../../../src/infra/helpers/directors/driver')
+jest.mock('../../../src/infra/helpers/directors/mongo-director')
 
 describe('Mongo Helper', () => {
   beforeAll(() => {
@@ -21,7 +21,7 @@ describe('Mongo Helper', () => {
   })
 
   beforeEach(() => {
-    Driver.mockImplementation(() => {
+    MongoDirector.mockImplementation(() => {
       return {
         construct: async (_builder) => {
           return {
@@ -73,7 +73,7 @@ describe('Mongo Helper', () => {
   })
 
   it('Should build client and db if connect was called with success after first retry attempt', async () => {
-    Driver.mockImplementationOnce(() => {
+    MongoDirector.mockImplementationOnce(() => {
       return {
         construct: async (_builder) => {
           throw new Error()
@@ -112,7 +112,7 @@ describe('Mongo Helper', () => {
   })
 
   it('Should call client close method in disconnect after close retry failed once', async () => {
-    Driver.mockImplementation(() => {
+    MongoDirector.mockImplementation(() => {
       return {
         construct: async (_builder) => {
           return {
@@ -140,7 +140,7 @@ describe('Mongo Helper', () => {
   })
 
   it('Should throw MongoNotConnectedError if connection retry fails', async () => {
-    Driver.mockImplementation(() => {
+    MongoDirector.mockImplementation(() => {
       return {
         construct: async (_builder) => {
           throw new Error()
@@ -162,7 +162,7 @@ describe('Mongo Helper', () => {
   })
 
   it('Should throw MongoServerClosedError if disconnection retry fails', async () => {
-    Driver.mockImplementation(() => {
+    MongoDirector.mockImplementation(() => {
       return {
         construct: async (_builder) => {
           return {
