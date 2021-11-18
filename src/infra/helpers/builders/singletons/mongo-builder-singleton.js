@@ -1,4 +1,4 @@
-const MongoBuilder = require('../builders/mongo-builder')
+const MongoBuilder = require('../mongo-builder')
 
 module.exports = {
   createInstance (uri, dbName) {

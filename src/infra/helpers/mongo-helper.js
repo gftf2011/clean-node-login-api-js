@@ -1,8 +1,8 @@
-const MongoBuilderSingleton = require('./directors/singletons/mongo-builder-singleton')
+const MongoBuilderSingleton = require('./builders/singletons/mongo-builder-singleton')
 
 const { MongoNotConnectedError, MongoServerClosedError } = require('mongodb')
 
-const MongoDirector = require('./directors/mongo-director')
+const MongoDirector = require('./builders/mongo-director')
 
 module.exports = class MongoHelper {
   constructor (args) {
