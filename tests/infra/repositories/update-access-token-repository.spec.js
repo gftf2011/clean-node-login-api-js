@@ -1,4 +1,5 @@
 const ServerError = require('../../../src/utils/errors/server-error')
+const MissingParamError = require('../../../src/utils/errors/missing-param-error')
 
 const MongoHelper = require('../../../src/infra/helpers/mongo-helper')
 
@@ -10,8 +11,10 @@ class UpdateAccessTokenRepository {
   }
 
   async update (userId, accessToken) {
-    if (!this.userModel) {
+    if (!this.userModel || !this.userModel.updateOne) {
       throw new ServerError()
+    } else if (!userId) {
+      throw new MissingParamError('userId')
     }
     await this.userModel.updateOne({
       _id: userId
@@ -65,6 +68,18 @@ describe('UpdateAccessToken Repository', () => {
     const sut = new UpdateAccessTokenRepository({})
     const promise = sut.update(FAKE_GENERIC_USER_ID, FAKE_GENERIC_ACCESS_TOKEN)
     expect(promise).rejects.toThrow(new ServerError())
+  })
+
+  it('Should throw ServerError if userModel provided has no updateOne method', () => {
+    const sut = new UpdateAccessTokenRepository({ userModel: {} })
+    const promise = sut.update(FAKE_GENERIC_USER_ID, FAKE_GENERIC_ACCESS_TOKEN)
+    expect(promise).rejects.toThrow(new ServerError())
+  })
+
+  it('Should throw MissingParamError if userId was provided', () => {
+    const sut = new UpdateAccessTokenRepository({ userModel })
+    const promise = sut.update()
+    expect(promise).rejects.toThrow(new MissingParamError('userId'))
   })
 
   afterAll(async () => {
