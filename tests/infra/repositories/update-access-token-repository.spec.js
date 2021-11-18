@@ -3,6 +3,8 @@ const MissingParamError = require('../../../src/utils/errors/missing-param-error
 
 const MongoHelper = require('../../../src/infra/helpers/mongo-helper')
 
+const UpdateAccessTokenRepository = require('../../../src/infra/repositories/update-access-token-repository')
+
 let db
 
 const FAKE_GENERIC_USER_ID = 'any_user_id'
@@ -13,30 +15,6 @@ const FAKE_GENERIC_ACCESS_TOKEN = 'any_token'
 const UPDATE_ACCESS_TOKEN_REPOSITORY_EMPTY_SUT = 'UPDATE_ACCESS_TOKEN_REPOSITORY_EMPTY_SUT'
 const UPDATE_ACCESS_TOKEN_REPOSITORY_EMPTY_OBJECT_SUT = 'UPDATE_ACCESS_TOKEN_REPOSITORY_EMPTY_OBJECT_SUT'
 const UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_EMPTY_USER_MODEL_OBJECT_SUT = 'UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_EMPTY_USER_MODEL_OBJECT_SUT'
-
-class UpdateAccessTokenRepository {
-  constructor ({ userModel } = {}) {
-    this.userModel = userModel
-  }
-
-  async update (userId, accessToken) {
-    if (!this.userModel || !this.userModel.updateOne) {
-      throw new ServerError()
-    } else if (!userId) {
-      throw new MissingParamError('userId')
-    } else if (!accessToken) {
-      throw new MissingParamError('accessToken')
-    }
-    await this.userModel.updateOne({
-      _id: userId
-    },
-    {
-      $set: {
-        accessToken
-      }
-    })
-  }
-}
 
 class SutFactory {
   constructor (db) {
