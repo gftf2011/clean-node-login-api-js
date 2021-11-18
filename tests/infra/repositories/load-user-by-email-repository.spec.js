@@ -7,6 +7,7 @@ const SutFactory = require('../helpers/factory-methods/load-user-by-email-reposi
 
 const {
   FAKE_GENERIC_EMAIL,
+  FAKE_GENERIC_PASSWORD,
   INVALID_FAKE_GENERIC_EMAIL,
   LOAD_USER_BY_EMAIL_REPOSITORY_EMPTY_SUT,
   LOAD_USER_BY_EMAIL_REPOSITORY_EMPTY_OBJECT_SUT
@@ -38,7 +39,8 @@ describe('LoadUserByEmail Repository', () => {
   it('Should return user if an user is found', async () => {
     const { sut, userModel } = new SutFactory(db).create()
     const fakeUserInsert = await userModel.insertOne({
-      email: FAKE_GENERIC_EMAIL
+      email: FAKE_GENERIC_EMAIL,
+      password: FAKE_GENERIC_PASSWORD
     })
     const fakeUserfound = await userModel.findOne({ _id: fakeUserInsert.insertedId })
     const user = await sut.load(FAKE_GENERIC_EMAIL)
