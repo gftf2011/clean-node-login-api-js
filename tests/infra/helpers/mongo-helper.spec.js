@@ -1,4 +1,4 @@
-const MongoDirector = require('../../../src/infra/helpers/directors/mongo-director')
+const MongoDirector = require('../../../src/infra/helpers/builders/mongo-director')
 
 const { MongoNotConnectedError, MongoServerClosedError } = require('mongodb')
 
@@ -12,7 +12,7 @@ const {
   MONGO_HELPER_WITH_ARGS_SUT
 } = require('../helpers/constants')
 
-jest.mock('../../../src/infra/helpers/directors/mongo-director')
+jest.mock('../../../src/infra/helpers/builders/mongo-director')
 
 describe('Mongo Helper', () => {
   beforeAll(() => {
