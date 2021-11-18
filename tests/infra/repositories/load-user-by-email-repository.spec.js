@@ -10,7 +10,8 @@ const {
   FAKE_GENERIC_PASSWORD,
   INVALID_FAKE_GENERIC_EMAIL,
   LOAD_USER_BY_EMAIL_REPOSITORY_EMPTY_SUT,
-  LOAD_USER_BY_EMAIL_REPOSITORY_EMPTY_OBJECT_SUT
+  LOAD_USER_BY_EMAIL_REPOSITORY_EMPTY_OBJECT_SUT,
+  LOAD_USER_BY_EMAIL_REPOSITORY_WITH_EMPTY_USER_MODEL_OBJECT_SUT
 } = require('../helpers/constants')
 
 let db
@@ -53,8 +54,14 @@ describe('LoadUserByEmail Repository', () => {
     expect(promise).rejects.toThrow(new ServerError())
   })
 
-  it('Should throw ServerError if userModel has no findOne method', () => {
+  it('Should throw ServerError if userModel has been provided in the dependencies as undefined', () => {
     const { sut } = new SutFactory(db).create(LOAD_USER_BY_EMAIL_REPOSITORY_EMPTY_OBJECT_SUT)
+    const promise = sut.load(FAKE_GENERIC_EMAIL)
+    expect(promise).rejects.toThrow(new ServerError())
+  })
+
+  it('Should throw ServerError if userModel has no findOne method', () => {
+    const { sut } = new SutFactory(db).create(LOAD_USER_BY_EMAIL_REPOSITORY_WITH_EMPTY_USER_MODEL_OBJECT_SUT)
     const promise = sut.load(FAKE_GENERIC_EMAIL)
     expect(promise).rejects.toThrow(new ServerError())
   })

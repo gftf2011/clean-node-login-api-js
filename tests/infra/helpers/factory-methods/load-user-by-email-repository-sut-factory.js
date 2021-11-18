@@ -2,7 +2,8 @@ const LoadUserByEmailRepository = require('../../../../src/infra/repositories/lo
 
 const {
   LOAD_USER_BY_EMAIL_REPOSITORY_EMPTY_SUT,
-  LOAD_USER_BY_EMAIL_REPOSITORY_EMPTY_OBJECT_SUT
+  LOAD_USER_BY_EMAIL_REPOSITORY_EMPTY_OBJECT_SUT,
+  LOAD_USER_BY_EMAIL_REPOSITORY_WITH_EMPTY_USER_MODEL_OBJECT_SUT
 } = require('../constants')
 
 module.exports = class SutFactory {
@@ -17,6 +18,8 @@ module.exports = class SutFactory {
       this.sut = new LoadUserByEmailRepository()
     } else if (type === LOAD_USER_BY_EMAIL_REPOSITORY_EMPTY_OBJECT_SUT) {
       this.sut = new LoadUserByEmailRepository({})
+    } else if (type === LOAD_USER_BY_EMAIL_REPOSITORY_WITH_EMPTY_USER_MODEL_OBJECT_SUT) {
+      this.sut = new LoadUserByEmailRepository({ userModel: {} })
     } else {
       this.sut = new LoadUserByEmailRepository({ userModel: this.userModel })
     }
