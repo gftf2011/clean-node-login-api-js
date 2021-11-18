@@ -1,3 +1,5 @@
+const ServerError = require('../../../src/utils/errors/server-error')
+
 const MongoHelper = require('../../../src/infra/helpers/mongo-helper')
 
 let db, userModel
@@ -8,6 +10,9 @@ class UpdateAccessTokenRepository {
   }
 
   async update (userId, accessToken) {
+    if (!this.userModel) {
+      throw new ServerError()
+    }
     await this.userModel.updateOne({
       _id: userId
     },
@@ -19,6 +24,7 @@ class UpdateAccessTokenRepository {
   }
 }
 
+const FAKE_GENERIC_USER_ID = 'any_user_id'
 const FAKE_GENERIC_EMAIL = 'test@gmail.com'
 const FAKE_GENERIC_ACCESS_TOKEN = 'any_token'
 
@@ -47,6 +53,18 @@ describe('UpdateAccessToken Repository', () => {
     await sut.update(userFound._id, FAKE_GENERIC_ACCESS_TOKEN)
     const userFoundUpdated = await userModel.findOne({ _id: userFound._id })
     expect(userFoundUpdated.accessToken).toBe(FAKE_GENERIC_ACCESS_TOKEN)
+  })
+
+  it('Should throw ServerError if no dependency is provided', () => {
+    const sut = new UpdateAccessTokenRepository()
+    const promise = sut.update(FAKE_GENERIC_USER_ID, FAKE_GENERIC_ACCESS_TOKEN)
+    expect(promise).rejects.toThrow(new ServerError())
+  })
+
+  it('Should throw ServerError if no userModel is provided', () => {
+    const sut = new UpdateAccessTokenRepository({})
+    const promise = sut.update(FAKE_GENERIC_USER_ID, FAKE_GENERIC_ACCESS_TOKEN)
+    expect(promise).rejects.toThrow(new ServerError())
   })
 
   afterAll(async () => {
