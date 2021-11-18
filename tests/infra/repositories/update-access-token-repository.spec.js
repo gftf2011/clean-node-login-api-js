@@ -5,6 +5,15 @@ const MongoHelper = require('../../../src/infra/helpers/mongo-helper')
 
 let db
 
+const FAKE_GENERIC_USER_ID = 'any_user_id'
+const FAKE_GENERIC_EMAIL = 'test@gmail.com'
+const FAKE_GENERIC_PASSWORD = 'any_password'
+const FAKE_GENERIC_ACCESS_TOKEN = 'any_token'
+
+const UPDATE_ACCESS_TOKEN_REPOSITORY_EMPTY_SUT = 'UPDATE_ACCESS_TOKEN_REPOSITORY_EMPTY_SUT'
+const UPDATE_ACCESS_TOKEN_REPOSITORY_EMPTY_OBJECT_SUT = 'UPDATE_ACCESS_TOKEN_REPOSITORY_EMPTY_OBJECT_SUT'
+const UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_EMPTY_USER_MODEL_OBJECT_SUT = 'UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_EMPTY_USER_MODEL_OBJECT_SUT'
+
 class UpdateAccessTokenRepository {
   constructor ({ userModel } = {}) {
     this.userModel = userModel
@@ -29,9 +38,30 @@ class UpdateAccessTokenRepository {
   }
 }
 
-const FAKE_GENERIC_USER_ID = 'any_user_id'
-const FAKE_GENERIC_EMAIL = 'test@gmail.com'
-const FAKE_GENERIC_ACCESS_TOKEN = 'any_token'
+class SutFactory {
+  constructor (db) {
+    this.db = db
+  }
+
+  create (type) {
+    this.userModel = this.db.collection('users')
+
+    if (type === UPDATE_ACCESS_TOKEN_REPOSITORY_EMPTY_SUT) {
+      this.sut = new UpdateAccessTokenRepository()
+    } else if (type === UPDATE_ACCESS_TOKEN_REPOSITORY_EMPTY_OBJECT_SUT) {
+      this.sut = new UpdateAccessTokenRepository({})
+    } else if (type === UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_EMPTY_USER_MODEL_OBJECT_SUT) {
+      this.sut = new UpdateAccessTokenRepository({ userModel: {} })
+    } else {
+      this.sut = new UpdateAccessTokenRepository({ userModel: this.userModel })
+    }
+
+    return {
+      sut: this.sut,
+      userModel: this.userModel
+    }
+  }
+}
 
 describe('UpdateAccessToken Repository', () => {
   process.env.MONGO_CONNECT_RETRY = '2'
@@ -50,9 +80,10 @@ describe('UpdateAccessToken Repository', () => {
 
   it('Should update the user with the properly given access token', async () => {
     const userModel = db.collection('users')
-    const sut = new UpdateAccessTokenRepository({ userModel })
+    const { sut } = new SutFactory(db).create()
     const fakeUserInsert = await userModel.insertOne({
-      email: FAKE_GENERIC_EMAIL
+      email: FAKE_GENERIC_EMAIL,
+      password: FAKE_GENERIC_PASSWORD
     })
     const userFound = await userModel.findOne({ _id: fakeUserInsert.insertedId })
     await sut.update(userFound._id, FAKE_GENERIC_ACCESS_TOKEN)
@@ -61,19 +92,19 @@ describe('UpdateAccessToken Repository', () => {
   })
 
   it('Should throw ServerError if no dependency is provided', () => {
-    const sut = new UpdateAccessTokenRepository()
+    const { sut } = new SutFactory(db).create(UPDATE_ACCESS_TOKEN_REPOSITORY_EMPTY_SUT)
     const promise = sut.update(FAKE_GENERIC_USER_ID, FAKE_GENERIC_ACCESS_TOKEN)
     expect(promise).rejects.toThrow(new ServerError())
   })
 
   it('Should throw ServerError if no userModel is provided', () => {
-    const sut = new UpdateAccessTokenRepository({})
+    const { sut } = new SutFactory(db).create(UPDATE_ACCESS_TOKEN_REPOSITORY_EMPTY_OBJECT_SUT)
     const promise = sut.update(FAKE_GENERIC_USER_ID, FAKE_GENERIC_ACCESS_TOKEN)
     expect(promise).rejects.toThrow(new ServerError())
   })
 
   it('Should throw ServerError if userModel provided has no updateOne method', () => {
-    const sut = new UpdateAccessTokenRepository({ userModel: {} })
+    const { sut } = new SutFactory(db).create(UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_EMPTY_USER_MODEL_OBJECT_SUT)
     const promise = sut.update(FAKE_GENERIC_USER_ID, FAKE_GENERIC_ACCESS_TOKEN)
     expect(promise).rejects.toThrow(new ServerError())
   })
