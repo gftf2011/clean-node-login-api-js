@@ -11,4 +11,13 @@ describe('App Setup', () => {
 
     expect(response.headers['x-powered-by']).toBeUndefined()
   })
+
+  it('Should enable CORS', async () => {
+    app.get('/api/enable-cors', (_req, res) => {
+      res.send('')
+    })
+    const response = await request(app).get('/api/enable-cors')
+
+    expect(response.headers['access-control-allow-origin']).toBe('*')
+  })
 })
