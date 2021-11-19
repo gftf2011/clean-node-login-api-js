@@ -1,4 +1,4 @@
-const app = require('./config/app')
+const app = require('./server/app')
 
 app.listen(3333, () => {
   console.log('Server Running')

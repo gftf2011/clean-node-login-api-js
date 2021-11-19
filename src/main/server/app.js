@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 
-const setup = require('./setup')
+const setup = require('../config/setup')
 
 setup(app)
 
