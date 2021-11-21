@@ -1,15 +1,15 @@
-const MongoBuilder = require('../mongo-builder')
+const MongoBuilder = require('../mongo-builder');
 
 module.exports = {
-  createInstance (uri, dbName) {
-    this.instance = new MongoBuilder(uri, dbName)
-    return this.instance
+  createInstance(uri, dbName) {
+    this.instance = new MongoBuilder(uri, dbName);
+    return this.instance;
   },
 
-  getInstance (uri, dbName) {
+  getInstance(uri, dbName) {
     if (!this.instance) {
-      this.instance = this.createInstance(uri, dbName)
+      this.instance = this.createInstance(uri, dbName);
     }
-    return this.instance
-  }
-}
+    return this.instance;
+  },
+};

@@ -1,31 +1,31 @@
-const UnauthorizedUserError = require('../../utils/errors/unauthorized-error')
+const UnauthorizedUserError = require('../../utils/errors/unauthorized-error');
 
 module.exports = class HttpResponse {
-  static success (data) {
+  static success(data) {
     return {
       statusCode: 200,
-      body: data
-    }
+      body: data,
+    };
   }
 
-  static badRequest (error) {
+  static badRequest(error) {
     return {
       statusCode: 400,
-      body: error
-    }
+      body: error,
+    };
   }
 
-  static unauthorized () {
+  static unauthorized() {
     return {
       statusCode: 401,
-      body: new UnauthorizedUserError()
-    }
+      body: new UnauthorizedUserError(),
+    };
   }
 
-  static serverError (error) {
+  static serverError(error) {
     return {
       statusCode: 500,
-      body: error
-    }
+      body: error,
+    };
   }
-}
+};

@@ -1,8 +1,9 @@
-const express = require('express')
-const app = express()
+const express = require('express');
 
-const setup = require('../config/setup')
+const app = express();
 
-setup(app)
+const setup = require('../config/setup');
 
-module.exports = app
+setup(app);
+
+module.exports = app;

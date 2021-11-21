@@ -1,9 +1,9 @@
-const ServerError = require('../../../src/utils/errors/server-error')
-const MissingParamError = require('../../../src/utils/errors/missing-param-error')
+const ServerError = require('../../../src/utils/errors/server-error');
+const MissingParamError = require('../../../src/utils/errors/missing-param-error');
 
-const MongoHelper = require('../../../src/infra/helpers/mongo-helper')
+const MongoHelper = require('../../../src/infra/helpers/mongo-helper');
 
-const SutFactory = require('../helpers/factory-methods/load-user-by-email-repository-sut-factory')
+const SutFactory = require('../helpers/factory-methods/load-user-by-email-repository-sut-factory');
 
 const {
   FAKE_GENERIC_EMAIL,
@@ -11,68 +11,76 @@ const {
   INVALID_FAKE_GENERIC_EMAIL,
   LOAD_USER_BY_EMAIL_REPOSITORY_EMPTY_SUT,
   LOAD_USER_BY_EMAIL_REPOSITORY_EMPTY_OBJECT_SUT,
-  LOAD_USER_BY_EMAIL_REPOSITORY_WITH_EMPTY_USER_MODEL_OBJECT_SUT
-} = require('../helpers/constants')
+  LOAD_USER_BY_EMAIL_REPOSITORY_WITH_EMPTY_USER_MODEL_OBJECT_SUT,
+} = require('../helpers/constants');
 
-let db
+let db;
 
 describe('LoadUserByEmail Repository', () => {
-  process.env.MONGO_CONNECT_RETRY = '2'
-  process.env.MONGO_DISCONNECT_RETRY = '2'
+  process.env.MONGO_CONNECT_RETRY = '2';
+  process.env.MONGO_DISCONNECT_RETRY = '2';
 
-  const mongoHelper = new MongoHelper()
+  const mongoHelper = new MongoHelper();
 
   beforeAll(async () => {
-    await mongoHelper.connect(process.env.MONGO_URL)
-    db = mongoHelper.db
-  })
+    await mongoHelper.connect(process.env.MONGO_URL);
+    db = mongoHelper.db;
+  });
 
   beforeEach(async () => {
-    await db.collection('users').deleteMany()
-  })
+    await db.collection('users').deleteMany();
+  });
 
   it('Should return null if no user is found', async () => {
-    const { sut } = new SutFactory(db).create()
-    const user = await sut.load(INVALID_FAKE_GENERIC_EMAIL)
-    expect(user).toBeNull()
-  })
+    const { sut } = new SutFactory(db).create();
+    const user = await sut.load(INVALID_FAKE_GENERIC_EMAIL);
+    expect(user).toBeNull();
+  });
 
   it('Should return user if an user is found', async () => {
-    const { sut, userModel } = new SutFactory(db).create()
+    const { sut, userModel } = new SutFactory(db).create();
     const fakeUserInsert = await userModel.insertOne({
       email: FAKE_GENERIC_EMAIL,
-      password: FAKE_GENERIC_PASSWORD
-    })
-    const fakeUserfound = await userModel.findOne({ _id: fakeUserInsert.insertedId })
-    const user = await sut.load(FAKE_GENERIC_EMAIL)
-    expect(user).toEqual(fakeUserfound)
-  })
+      password: FAKE_GENERIC_PASSWORD,
+    });
+    const fakeUserfound = await userModel.findOne({
+      _id: fakeUserInsert.insertedId,
+    });
+    const user = await sut.load(FAKE_GENERIC_EMAIL);
+    expect(user).toEqual(fakeUserfound);
+  });
 
-  it('Should throw ServerError if no userModel is provided', () => {
-    const { sut } = new SutFactory(db).create(LOAD_USER_BY_EMAIL_REPOSITORY_EMPTY_SUT)
-    const promise = sut.load(FAKE_GENERIC_EMAIL)
-    expect(promise).rejects.toThrow(new ServerError())
-  })
+  it('Should throw ServerError if no userModel is provided', async () => {
+    const { sut } = new SutFactory(db).create(
+      LOAD_USER_BY_EMAIL_REPOSITORY_EMPTY_SUT,
+    );
+    const promise = sut.load(FAKE_GENERIC_EMAIL);
+    await expect(promise).rejects.toThrow(new ServerError());
+  });
 
-  it('Should throw ServerError if userModel has been provided in the dependencies as undefined', () => {
-    const { sut } = new SutFactory(db).create(LOAD_USER_BY_EMAIL_REPOSITORY_EMPTY_OBJECT_SUT)
-    const promise = sut.load(FAKE_GENERIC_EMAIL)
-    expect(promise).rejects.toThrow(new ServerError())
-  })
+  it('Should throw ServerError if userModel has been provided in the dependencies as undefined', async () => {
+    const { sut } = new SutFactory(db).create(
+      LOAD_USER_BY_EMAIL_REPOSITORY_EMPTY_OBJECT_SUT,
+    );
+    const promise = sut.load(FAKE_GENERIC_EMAIL);
+    await expect(promise).rejects.toThrow(new ServerError());
+  });
 
-  it('Should throw ServerError if userModel has no findOne method', () => {
-    const { sut } = new SutFactory(db).create(LOAD_USER_BY_EMAIL_REPOSITORY_WITH_EMPTY_USER_MODEL_OBJECT_SUT)
-    const promise = sut.load(FAKE_GENERIC_EMAIL)
-    expect(promise).rejects.toThrow(new ServerError())
-  })
+  it('Should throw ServerError if userModel has no findOne method', async () => {
+    const { sut } = new SutFactory(db).create(
+      LOAD_USER_BY_EMAIL_REPOSITORY_WITH_EMPTY_USER_MODEL_OBJECT_SUT,
+    );
+    const promise = sut.load(FAKE_GENERIC_EMAIL);
+    await expect(promise).rejects.toThrow(new ServerError());
+  });
 
-  it('Should throw MissingParamError if no email is provided', () => {
-    const { sut } = new SutFactory(db).create()
-    const promise = sut.load()
-    expect(promise).rejects.toThrow(new MissingParamError('email'))
-  })
+  it('Should throw MissingParamError if no email is provided', async () => {
+    const { sut } = new SutFactory(db).create();
+    const promise = sut.load();
+    await expect(promise).rejects.toThrow(new MissingParamError('email'));
+  });
 
   afterAll(async () => {
-    await mongoHelper.disconnect()
-  })
-})
+    await mongoHelper.disconnect();
+  });
+});
