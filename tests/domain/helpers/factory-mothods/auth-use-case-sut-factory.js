@@ -16,19 +16,19 @@ module.exports = class SutFactory {
     this.dependencies = new DependenciesFactory().create();
 
     if (type === LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR_SUT) {
-      this.dependencies.loadUserByEmailRepositorySpy.load = async () => {
+      this.dependencies.loadUserByEmailRepositorySpy.load = () => {
         throw new ServerError();
       };
     } else if (type === ENCRYPTER_WITH_ERROR_SUT) {
-      this.dependencies.encrypterSpy.compare = async () => {
+      this.dependencies.encrypterSpy.compare = () => {
         throw new ServerError();
       };
     } else if (type === TOKEN_GENERATOR_WITH_ERROR_SUT) {
-      this.dependencies.tokenGeneratorSpy.generate = async () => {
+      this.dependencies.tokenGeneratorSpy.generate = () => {
         throw new ServerError();
       };
     } else if (type === UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR_SUT) {
-      this.dependencies.updateAccessTokenRepositorySpy.update = async () => {
+      this.dependencies.updateAccessTokenRepositorySpy.update = () => {
         throw new ServerError();
       };
     }
