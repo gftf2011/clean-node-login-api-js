@@ -1,27 +1,27 @@
-const { MongoClient } = require('mongodb')
+const { MongoClient } = require('mongodb');
 
 module.exports = class MongoBuilder {
-  constructor (uri, dbName) {
-    this.uri = uri
-    this.dbName = dbName
+  constructor(uri, dbName) {
+    this.uri = uri;
+    this.dbName = dbName;
   }
 
-  async setConnection () {
+  async setConnection() {
     this.client = await MongoClient.connect(this.uri, {
       useNewUrlParser: true,
-      useUnifiedTopology: true
-    })
+      useUnifiedTopology: true,
+    });
   }
 
-  setDatabase () {
-    this.db = this.client.db(this.dbName)
+  setDatabase() {
+    this.db = this.client.db(this.dbName);
   }
 
-  getProduct () {
+  getProduct() {
     const result = {
       client: this.client,
-      db: this.db
-    }
-    return result
+      db: this.db,
+    };
+    return result;
   }
-}
+};

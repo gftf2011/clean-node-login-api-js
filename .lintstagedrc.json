@@ -1,6 +1,6 @@
 {
   "*.js": [
-    "standard --fix",
+    "npx eslint --fix . --ext .js",
     "npm run test:staged",
     "git add"
   ]

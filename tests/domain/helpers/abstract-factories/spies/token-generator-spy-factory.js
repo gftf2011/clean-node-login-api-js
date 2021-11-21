@@ -1,11 +1,11 @@
-const TokenGeneratorSpy = require('../../../../../spies/token-generator-spy')
+const TokenGeneratorSpy = require('../../../../../spies/token-generator-spy');
 
-const { FAKE_GENERIC_ACCESS_TOKEN } = require('../../constants')
+const { FAKE_GENERIC_ACCESS_TOKEN } = require('../../constants');
 
 module.exports = class TokenGeneratorSpyFactory {
-  create () {
-    this.tokenGeneratorSpy = new TokenGeneratorSpy()
-    this.tokenGeneratorSpy.accessToken = FAKE_GENERIC_ACCESS_TOKEN
-    return this.tokenGeneratorSpy
+  create() {
+    this.tokenGeneratorSpy = new TokenGeneratorSpy();
+    this.tokenGeneratorSpy.accessToken = FAKE_GENERIC_ACCESS_TOKEN;
+    return this.tokenGeneratorSpy;
   }
-}
+};
