@@ -36,8 +36,8 @@
     "test:all": "jest --clearCache ; jest --watchAll --colors --noStackTrace --passWithNoTests --runInBand",
     "test:unit": "jest --clearCache ; jest --colors --noStackTrace --passWithNoTests --runInBand --watch -c jest-unit-config.js",
     "test:integration": "jest --clearCache ; jest --colors --noStackTrace --passWithNoTests --runInBand --watch -c jest-integration-config.js",
-    "test:staged": "jest --clearCache ; jest --silent --passWithNoTests --findRelatedTests --verbose --colors",
-    "test:ci": "jest --clearCache ; jest --coverage --noStackTrace",
+    "test:staged": "jest --clearCache ; jest --silent --passWithNoTests --findRelatedTests --verbose --colors --runInBand",
+    "test:ci": "jest --clearCache ; jest --coverage --noStackTrace --runInBand",
     "prepare": "husky install",
     "commit": "cz"
   },
