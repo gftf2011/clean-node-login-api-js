@@ -187,8 +187,8 @@ module.exports = {
   // verbose: undefined,
 
   // An array of regexp patterns that are matched against all source file paths before re-running tests in watch mode
-  watchPathIgnorePatterns: ['globalConfig']
+  watchPathIgnorePatterns: ['globalConfig'],
 
   // Whether to use watchman for file crawling
   // watchman: true,
-}
+};

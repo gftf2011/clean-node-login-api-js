@@ -1,8 +1,8 @@
-const Encrypter = require('../../../../src/utils/encrypter')
+const Encrypter = require('../../../../src/utils/encrypter');
 
 module.exports = class SutFactory {
-  create () {
-    this.sut = new Encrypter()
-    return { sut: this.sut }
+  create() {
+    this.sut = new Encrypter();
+    return { sut: this.sut };
   }
-}
+};

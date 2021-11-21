@@ -11,16 +11,17 @@
     "commitizen": "^4.2.4",
     "commitlint": "^14.1.0",
     "cz-conventional-changelog": "3.3.0",
+    "eslint": "^8.2.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jest": "^25.2.4",
+    "eslint-plugin-prettier": "^4.0.0",
     "husky": "^7.0.0",
     "jest": "^27.3.1",
     "lint-staged": "^11.2.6",
-    "standard": "^16.0.4",
+    "prettier": "^2.4.1",
     "supertest": "^6.1.6"
-  },
-  "standard": {
-    "env": [
-      "jest"
-    ]
   },
   "scripts": {
     "start": "node src/main/index.js",

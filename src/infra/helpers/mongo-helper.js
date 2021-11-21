@@ -1,45 +1,56 @@
-const MongoBuilderSingleton = require('./builders/singletons/mongo-builder-singleton')
+const { MongoNotConnectedError, MongoServerClosedError } = require('mongodb');
+const MongoBuilderSingleton = require('./builders/singletons/mongo-builder-singleton');
 
-const { MongoNotConnectedError, MongoServerClosedError } = require('mongodb')
-
-const MongoDirector = require('./builders/mongo-director')
+const MongoDirector = require('./builders/mongo-director');
 
 module.exports = class MongoHelper {
-  constructor (args) {
-    this.retryConnect = (!args || !args.attempts) ? parseInt(process.env.MONGO_CONNECT_RETRY, 10) : args.attempts
-    this.retryDisconnect = (!args || !args.attempts) ? parseInt(process.env.MONGO_DISCONNECT_RETRY, 10) : args.attempts
+  constructor(args) {
+    this.retryConnect =
+      !args || !args.attempts
+        ? parseInt(process.env.MONGO_CONNECT_RETRY, 10)
+        : args.attempts;
+    this.retryDisconnect =
+      !args || !args.attempts
+        ? parseInt(process.env.MONGO_DISCONNECT_RETRY, 10)
+        : args.attempts;
   }
 
-  async connect (uri, dbName) {
+  async connect(uri, dbName) {
     try {
-      this.uri = uri
-      this.dbName = dbName
-      const mongo = new MongoDirector()
-      const builtMongo = await mongo.construct(MongoBuilderSingleton.getInstance(this.uri, this.dbName))
-      this.client = builtMongo.client
-      this.db = builtMongo.db
+      this.uri = uri;
+      this.dbName = dbName;
+      const mongo = new MongoDirector();
+      const builtMongo = await mongo.construct(
+        MongoBuilderSingleton.getInstance(this.uri, this.dbName),
+      );
+      this.client = builtMongo.client;
+      this.db = builtMongo.db;
     } catch (error) {
       if (this.retryConnect > 0) {
-        this.retryConnect--
+        this.retryConnect--;
 
-        await this.connect(uri, dbName)
+        await this.connect(uri, dbName);
       } else {
-        throw new MongoNotConnectedError('Not possible to connect to MongoDB Driver')
+        throw new MongoNotConnectedError(
+          'Not possible to connect to MongoDB Driver',
+        );
       }
     }
   }
 
-  async disconnect () {
+  async disconnect() {
     try {
-      await this.client.close()
+      await this.client.close();
     } catch (error) {
       if (this.retryDisconnect > 0) {
-        this.retryDisconnect--
+        this.retryDisconnect--;
 
-        await this.disconnect()
+        await this.disconnect();
       } else {
-        throw new MongoServerClosedError('Not possible to close MongoDB Driver')
+        throw new MongoServerClosedError(
+          'Not possible to close MongoDB Driver',
+        );
       }
     }
   }
-}
+};
