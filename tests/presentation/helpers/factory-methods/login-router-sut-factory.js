@@ -20,16 +20,16 @@ module.exports = class SutFactory {
     this.dependencies = new DependenciesFactory().create();
 
     if (type === AUTH_USE_CASE_WITH_NO_PASSWORD_ERROR_SUT) {
-      this.dependencies.authUseCaseSpy.execute = async email => {
+      this.dependencies.authUseCaseSpy.execute = email => {
         this.dependencies.authUseCaseSpy.email = email;
         throw new MissingParamError('password');
       };
     } else if (type === AUTH_USE_CASE_WITH_NO_EMAIL_ERROR_SUT) {
-      this.dependencies.authUseCaseSpy.execute = async () => {
+      this.dependencies.authUseCaseSpy.execute = () => {
         throw new MissingParamError('email');
       };
     } else if (type === AUTH_USE_CASE_THROWING_SERVER_ERROR_SUT) {
-      this.dependencies.authUseCaseSpy.execute = async () => {
+      this.dependencies.authUseCaseSpy.execute = () => {
         throw new ServerError();
       };
     } else if (type === EMAIL_VALIDATOR_THROWING_ERROR_SUT) {
@@ -37,13 +37,13 @@ module.exports = class SutFactory {
         throw new ServerError();
       };
     } else if (type === AUTH_USE_CASE_THROWING_MONGO_CONNECTION_ERROR_SUT) {
-      this.dependencies.authUseCaseSpy.execute = async () => {
+      this.dependencies.authUseCaseSpy.execute = () => {
         throw new MongoNotConnectedError(
           'Not possible to connect to MongoDB Driver',
         );
       };
     } else if (type === AUTH_USE_CASE_THROWING_MONGO_CLOSE_ERROR_SUT) {
-      this.dependencies.authUseCaseSpy.execute = async () => {
+      this.dependencies.authUseCaseSpy.execute = () => {
         throw new MongoServerClosedError(
           'Not possible to close MongoDB Driver',
         );
