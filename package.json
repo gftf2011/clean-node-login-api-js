@@ -6,6 +6,12 @@
   "author": "Gabriel Ferraz <gftf2011@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@babel/cli": "^7.16.0",
+    "@babel/core": "^7.16.0",
+    "@babel/node": "^7.16.0",
+    "@babel/plugin-transform-runtime": "^7.16.4",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.16.4",
     "@commitlint/config-conventional": "^14.1.0",
     "@shelf/jest-mongodb": "^2.1.0",
     "commitizen": "^4.2.4",
@@ -24,6 +30,7 @@
     "supertest": "^6.1.6"
   },
   "scripts": {
+    "build": "npx babel src/** -d dist",
     "start": "node src/main/index.js",
     "test": "jest --clearCache ; jest --colors --noStackTrace --passWithNoTests --runInBand",
     "test:all": "jest --clearCache ; jest --watchAll --colors --noStackTrace --passWithNoTests --runInBand",
@@ -40,6 +47,7 @@
     }
   },
   "dependencies": {
+    "@babel/runtime": "^7.16.3",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
