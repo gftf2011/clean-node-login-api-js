@@ -1,6 +1,8 @@
 const app = require('../../src/main/server/app');
+const loader = require('../../src/main/loader/load');
 
 jest.mock('../../src/main/server/app');
+jest.mock('../../src/main/loader/load', () => jest.fn());
 
 describe('Index', () => {
   it('Should call listen method to start server', () => {
@@ -11,10 +13,13 @@ describe('Index', () => {
         }
       },
     }));
+    loader.mockImplementation(() => Promise.resolve());
     const listen = jest.spyOn(app, 'listen');
     // eslint-disable-next-line global-require
     require('../../src/main');
-    expect(listen).toHaveBeenCalledTimes(1);
+    return loader().then(() => {
+      expect(listen).toHaveBeenCalledTimes(1);
+    });
   });
 
   afterEach(() => {
