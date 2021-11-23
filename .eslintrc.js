@@ -20,6 +20,7 @@ module.exports = {
     'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     'no-underscore-dangle': ['error', { allow: ['_id'] }],
     'no-console': ['error', { allow: ['log'] }],
+    'import/no-dynamic-require': 'off',
     'jest/expect-expect': 'off',
   },
 };
