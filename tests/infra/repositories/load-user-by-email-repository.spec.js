@@ -20,11 +20,11 @@ describe('LoadUserByEmail Repository', () => {
   process.env.MONGO_CONNECT_RETRY = '2';
   process.env.MONGO_DISCONNECT_RETRY = '2';
 
-  const mongoHelper = new MongoHelper();
+  const mongoHelper = MongoHelper;
 
   beforeAll(async () => {
     await mongoHelper.connect(process.env.MONGO_URL);
-    db = mongoHelper.db;
+    db = mongoHelper.getDb();
   });
 
   beforeEach(async () => {

@@ -3,6 +3,7 @@ const loader = require('../../src/main/loader/load');
 
 jest.mock('../../src/main/server/app');
 jest.mock('../../src/main/loader/load', () => jest.fn());
+jest.mock('../../src/main/config/routes', () => jest.fn());
 
 describe('Index', () => {
   it('Should call listen method to start server', () => {

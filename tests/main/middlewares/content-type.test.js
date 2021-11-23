@@ -1,5 +1,7 @@
 const request = require('supertest');
 
+jest.mock('../../../src/main/config/routes', () => jest.fn());
+
 describe('Content-Type Middleware', () => {
   let app;
 
