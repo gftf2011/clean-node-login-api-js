@@ -1,15 +1,12 @@
 const { MongoNotConnectedError, MongoServerClosedError } = require('mongodb');
 const NoError = require('./errors/no-error');
 const MongoDirector = require('../../../src/infra/helpers/builders/mongo-director');
-
-const SutFactory = require('./factory-methods/mongo-helper-sut-factory');
+const MongoHelper = require('../../../src/infra/helpers/mongo-helper');
 
 const {
   MONGO_ATTEMPTS_TO_RETRY,
   MONGO_FAKE_URI,
   MONGO_FAKE_DATABASE_NAME,
-  MONGO_HELPER_WITH_EMPTY_ARGS_SUT,
-  MONGO_HELPER_WITH_ARGS_SUT,
 } = require('./constants');
 
 jest.mock('../../../src/infra/helpers/builders/mongo-director');
@@ -25,7 +22,7 @@ const getError = async call => {
 };
 
 describe('Mongo Helper', () => {
-  beforeAll(() => {
+  beforeAll(async () => {
     process.env.MONGO_CONNECT_RETRY = '2';
     process.env.MONGO_DISCONNECT_RETRY = '2';
   });
@@ -46,53 +43,42 @@ describe('Mongo Helper', () => {
   });
 
   it('Should set retryConnect property with default env value when args dependency is not provided', () => {
-    const { sut } = new SutFactory().create();
-    expect(sut.retryConnect).toBe(
+    MongoHelper.setRetryConnection();
+    expect(MongoHelper.getRetryConnect()).toBe(
       parseInt((process.env.MONGO_CONNECT_RETRY = '2'), 10),
     );
   });
 
   it('Should set retryDisconnect property with default env value when args dependency is not provided', () => {
-    const { sut } = new SutFactory().create();
-    expect(sut.retryDisconnect).toBe(
-      parseInt((process.env.MONGO_DISCONNECT_RETRY = '2'), 10),
-    );
-  });
-
-  it('Should set retryConnect property with default env value when args dependency is an empty object', () => {
-    const { sut } = new SutFactory().create(MONGO_HELPER_WITH_EMPTY_ARGS_SUT);
-    expect(sut.retryConnect).toBe(
-      parseInt((process.env.MONGO_CONNECT_RETRY = '2'), 10),
-    );
-  });
-
-  it('Should set retryDisconnect property with default env value when args dependency is an empty object', () => {
-    const { sut } = new SutFactory().create(MONGO_HELPER_WITH_EMPTY_ARGS_SUT);
-    expect(sut.retryDisconnect).toBe(
+    MongoHelper.setRetryDisconnection();
+    expect(MongoHelper.getRetryDisconnect()).toBe(
       parseInt((process.env.MONGO_DISCONNECT_RETRY = '2'), 10),
     );
   });
 
   it('Should set retryConnect property with correct value when args dependency is provided', () => {
-    const { sut } = new SutFactory().create(MONGO_HELPER_WITH_ARGS_SUT);
-    expect(sut.retryConnect).toBe(MONGO_ATTEMPTS_TO_RETRY);
+    MongoHelper.setRetryConnection(MONGO_ATTEMPTS_TO_RETRY);
+    expect(MongoHelper.getRetryConnect()).toBe(MONGO_ATTEMPTS_TO_RETRY);
   });
 
   it('Should set retryDisconnect property with correct value when args dependency is provided', () => {
-    const { sut } = new SutFactory().create(MONGO_HELPER_WITH_ARGS_SUT);
-    expect(sut.retryDisconnect).toBe(MONGO_ATTEMPTS_TO_RETRY);
+    MongoHelper.setRetryDisconnection(MONGO_ATTEMPTS_TO_RETRY);
+    expect(MongoHelper.getRetryDisconnect()).toBe(MONGO_ATTEMPTS_TO_RETRY);
   });
 
   it('Should build client and db if connect was called with success', async () => {
-    const { sut } = new SutFactory().create(MONGO_HELPER_WITH_ARGS_SUT);
+    MongoHelper.setRetryConnection(MONGO_ATTEMPTS_TO_RETRY);
+    MongoHelper.setRetryDisconnection(MONGO_ATTEMPTS_TO_RETRY);
     const connectionError = await getError(async () =>
-      sut.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME),
+      MongoHelper.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME),
     );
-    const disconnectionError = await getError(async () => sut.disconnect());
+    const disconnectionError = await getError(async () =>
+      MongoHelper.disconnect(),
+    );
     expect(connectionError).toEqual(new NoError());
     expect(disconnectionError).toEqual(new NoError());
-    expect(sut.client).toHaveProperty('close');
-    expect(sut.db).toEqual({});
+    expect(MongoHelper.getClient()).toHaveProperty('close');
+    expect(MongoHelper.getDb()).toEqual({});
   });
 
   it('Should build client and db if connect was called with success after first retry attempt', async () => {
@@ -114,39 +100,45 @@ describe('Mongo Helper', () => {
         },
       };
     });
-    const { sut } = new SutFactory().create();
-    const { retryConnect } = sut;
-    const { retryDisconnect } = sut;
+    MongoHelper.setRetryConnection();
+    MongoHelper.setRetryDisconnection();
+    const retryConnect = MongoHelper.getRetryConnect();
+    const retryDisconnect = MongoHelper.getRetryDisconnect();
     const connectionError = await getError(async () =>
-      sut.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME),
+      MongoHelper.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME),
     );
-    const disconnectionError = await getError(async () => sut.disconnect());
+    const disconnectionError = await getError(async () =>
+      MongoHelper.disconnect(),
+    );
     expect(connectionError).toEqual(new NoError());
     expect(disconnectionError).toEqual(new NoError());
     expect(retryConnect).toBe(parseInt(process.env.MONGO_CONNECT_RETRY, 10));
     expect(retryDisconnect).toBe(
       parseInt(process.env.MONGO_DISCONNECT_RETRY, 10),
     );
-    expect(sut.retryConnect).toBe(
+    expect(MongoHelper.getRetryConnect()).toBe(
       parseInt(process.env.MONGO_CONNECT_RETRY, 10) - 1,
     );
-    expect(sut.retryDisconnect).toBe(
+    expect(MongoHelper.getRetryDisconnect()).toBe(
       parseInt(process.env.MONGO_DISCONNECT_RETRY, 10),
     );
-    expect(sut.client).toHaveProperty('close');
-    expect(sut.db).toEqual({});
+    expect(MongoHelper.getClient()).toHaveProperty('close');
+    expect(MongoHelper.getDb()).toEqual({});
   });
 
   it('Should call client close method in disconnect after connect was called with success', async () => {
-    const { sut } = new SutFactory().create(MONGO_HELPER_WITH_ARGS_SUT);
+    MongoHelper.setRetryConnection(MONGO_ATTEMPTS_TO_RETRY);
+    MongoHelper.setRetryDisconnection(MONGO_ATTEMPTS_TO_RETRY);
     const connectionError = await getError(async () =>
-      sut.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME),
+      MongoHelper.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME),
     );
-    const disconnectionError = await getError(async () => sut.disconnect());
+    const disconnectionError = await getError(async () =>
+      MongoHelper.disconnect(),
+    );
     expect(connectionError).toEqual(new NoError());
     expect(disconnectionError).toEqual(new NoError());
-    expect(sut.client).toHaveProperty('close');
-    expect(sut.client.close).toHaveBeenCalled();
+    expect(MongoHelper.getClient()).toHaveProperty('close');
+    expect(MongoHelper.getClient().close).toHaveBeenCalled();
   });
 
   it('Should call client close method in disconnect after close retry failed once', async () => {
@@ -167,27 +159,30 @@ describe('Mongo Helper', () => {
         },
       };
     });
-    const { sut } = new SutFactory().create();
-    const { retryConnect } = sut;
-    const { retryDisconnect } = sut;
+    MongoHelper.setRetryConnection();
+    MongoHelper.setRetryDisconnection();
+    const retryConnect = MongoHelper.getRetryConnect();
+    const retryDisconnect = MongoHelper.getRetryDisconnect();
     const connectionError = await getError(async () =>
-      sut.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME),
+      MongoHelper.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME),
     );
-    const disconnectionError = await getError(async () => sut.disconnect());
+    const disconnectionError = await getError(async () =>
+      MongoHelper.disconnect(),
+    );
     expect(connectionError).toEqual(new NoError());
     expect(disconnectionError).toEqual(new NoError());
     expect(retryConnect).toBe(parseInt(process.env.MONGO_CONNECT_RETRY, 10));
     expect(retryDisconnect).toBe(
       parseInt(process.env.MONGO_DISCONNECT_RETRY, 10),
     );
-    expect(sut.retryConnect).toBe(
+    expect(MongoHelper.getRetryConnect()).toBe(
       parseInt(process.env.MONGO_CONNECT_RETRY, 10),
     );
-    expect(sut.retryDisconnect).toBe(
+    expect(MongoHelper.getRetryDisconnect()).toBe(
       parseInt(process.env.MONGO_DISCONNECT_RETRY, 10) - 1,
     );
-    expect(sut.client).toHaveProperty('close');
-    expect(sut.client.close).toHaveBeenCalled();
+    expect(MongoHelper.getClient()).toHaveProperty('close');
+    expect(MongoHelper.getClient().close).toHaveBeenCalled();
   });
 
   it('Should throw MongoNotConnectedError if connection retry fails', async () => {
@@ -198,18 +193,19 @@ describe('Mongo Helper', () => {
         },
       };
     });
-    const { sut } = new SutFactory().create();
-    const { retryConnect } = sut;
-    const { retryDisconnect } = sut;
+    MongoHelper.setRetryConnection();
+    MongoHelper.setRetryDisconnection();
+    const retryConnect = MongoHelper.getRetryConnect();
+    const retryDisconnect = MongoHelper.getRetryDisconnect();
     const connectionError = await getError(async () =>
-      sut.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME),
+      MongoHelper.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME),
     );
     expect(retryConnect).toBe(parseInt(process.env.MONGO_CONNECT_RETRY, 10));
     expect(retryDisconnect).toBe(
       parseInt(process.env.MONGO_DISCONNECT_RETRY, 10),
     );
-    expect(sut.retryConnect).toBe(0);
-    expect(sut.retryDisconnect).toBe(
+    expect(MongoHelper.getRetryConnect()).toBe(0);
+    expect(MongoHelper.getRetryDisconnect()).toBe(
       parseInt(process.env.MONGO_DISCONNECT_RETRY, 10),
     );
     expect(connectionError).toEqual(
@@ -232,22 +228,25 @@ describe('Mongo Helper', () => {
         },
       };
     });
-    const { sut } = new SutFactory().create();
-    const { retryConnect } = sut;
-    const { retryDisconnect } = sut;
+    MongoHelper.setRetryConnection();
+    MongoHelper.setRetryDisconnection();
+    const retryConnect = MongoHelper.getRetryConnect();
+    const retryDisconnect = MongoHelper.getRetryDisconnect();
     const connectionError = await getError(async () =>
-      sut.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME),
+      MongoHelper.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME),
     );
-    const disconnectionError = await getError(async () => sut.disconnect());
+    const disconnectionError = await getError(async () =>
+      MongoHelper.disconnect(),
+    );
     expect(connectionError).toEqual(new NoError());
     expect(retryConnect).toBe(parseInt(process.env.MONGO_CONNECT_RETRY, 10));
     expect(retryDisconnect).toBe(
       parseInt(process.env.MONGO_DISCONNECT_RETRY, 10),
     );
-    expect(sut.retryConnect).toBe(
+    expect(MongoHelper.getRetryConnect()).toBe(
       parseInt(process.env.MONGO_DISCONNECT_RETRY, 10),
     );
-    expect(sut.retryDisconnect).toBe(0);
+    expect(MongoHelper.getRetryDisconnect()).toBe(0);
     expect(disconnectionError).toEqual(
       new MongoServerClosedError('Not possible to close MongoDB Driver'),
     );

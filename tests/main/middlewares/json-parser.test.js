@@ -1,5 +1,7 @@
 const request = require('supertest');
 
+jest.mock('../../../src/main/config/routes', () => jest.fn());
+
 const app = require('../../../src/main/server/app');
 
 describe('JSON Parser Middleware', () => {
