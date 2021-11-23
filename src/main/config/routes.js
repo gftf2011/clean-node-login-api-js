@@ -4,7 +4,7 @@ const { sync } = require('fast-glob');
 
 module.exports = app => {
   app.use('/api', router);
-  sync('**/src/main/routes/**/*.js').forEach(file => {
+  sync('**/src/main/routes/**/*route.js').forEach(file => {
     require(`../../../${file}`)(router);
   });
 };
