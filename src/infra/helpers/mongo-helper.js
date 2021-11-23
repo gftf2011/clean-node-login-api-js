@@ -3,17 +3,34 @@ const MongoBuilderSingleton = require('./builders/singletons/mongo-builder-singl
 
 const MongoDirector = require('./builders/mongo-director');
 
-module.exports = class MongoHelper {
-  constructor(args) {
-    this.retryConnect =
-      !args || !args.attempts
-        ? parseInt(process.env.MONGO_CONNECT_RETRY, 10)
-        : args.attempts;
-    this.retryDisconnect =
-      !args || !args.attempts
-        ? parseInt(process.env.MONGO_DISCONNECT_RETRY, 10)
-        : args.attempts;
-  }
+module.exports = {
+  setRetryConnection(retryConnect) {
+    this.retryConnect = !retryConnect
+      ? parseInt(process.env.MONGO_CONNECT_RETRY, 10)
+      : retryConnect;
+  },
+
+  setRetryDisconnection(retryDisconnect) {
+    this.retryDisconnect = !retryDisconnect
+      ? parseInt(process.env.MONGO_DISCONNECT_RETRY, 10)
+      : retryDisconnect;
+  },
+
+  getRetryConnect() {
+    return this.retryConnect;
+  },
+
+  getRetryDisconnect() {
+    return this.retryDisconnect;
+  },
+
+  getClient() {
+    return this.client;
+  },
+
+  getDb() {
+    return this.db;
+  },
 
   async connect(uri, dbName) {
     try {
@@ -36,7 +53,7 @@ module.exports = class MongoHelper {
         );
       }
     }
-  }
+  },
 
   async disconnect() {
     try {
@@ -52,5 +69,5 @@ module.exports = class MongoHelper {
         );
       }
     }
-  }
+  },
 };
