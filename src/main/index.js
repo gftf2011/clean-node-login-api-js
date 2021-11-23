@@ -1,5 +1,13 @@
 const app = require('./server/app');
 
-app.listen(3333, () => {
-  console.log('Server Running');
-});
+const loader = require('./loader/load');
+
+loader()
+  .then(() => {
+    app.listen(3333, () => {
+      console.log('Server Running');
+    });
+  })
+  .catch(error => {
+    console.log(error);
+  });

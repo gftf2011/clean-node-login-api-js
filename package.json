@@ -32,7 +32,7 @@
   "scripts": {
     "build": "npx babel src/** -d dist",
     "start": "node src/main/index.js",
-    "test": "jest --clearCache ; jest --colors --noStackTrace --passWithNoTests --runInBand",
+    "test": "jest --clearCache ; jest --colors --noStackTrace --passWithNoTests --detectOpenHandles",
     "test:all": "jest --clearCache ; jest --watchAll --colors --noStackTrace --passWithNoTests --runInBand",
     "test:unit": "jest --clearCache ; jest --colors --noStackTrace --passWithNoTests --runInBand --watch -c jest-unit-config.js",
     "test:integration": "jest --clearCache ; jest --colors --noStackTrace --passWithNoTests --runInBand --watch -c jest-integration-config.js",
