@@ -71,7 +71,9 @@ describe('Auth UseCase', () => {
     const { sut, loadUserByEmailRepositorySpy, tokenGeneratorSpy } =
       new SutFactory().create();
     await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD);
-    expect(tokenGeneratorSpy.userId).toBe(loadUserByEmailRepositorySpy.user.id);
+    expect(tokenGeneratorSpy.userId).toBe(
+      loadUserByEmailRepositorySpy.user._id,
+    );
   });
 
   it('Should call UpdateAccessTokenRepository with correct values', async () => {
@@ -83,7 +85,7 @@ describe('Auth UseCase', () => {
     } = new SutFactory().create();
     await sut.execute(FAKE_GENERIC_EMAIL, FAKE_GENERIC_PASSWORD);
     expect(updateAccessTokenRepositorySpy.userId).toBe(
-      loadUserByEmailRepositorySpy.user.id,
+      loadUserByEmailRepositorySpy.user._id,
     );
     expect(updateAccessTokenRepositorySpy.accessToken).toBe(
       tokenGeneratorSpy.accessToken,
