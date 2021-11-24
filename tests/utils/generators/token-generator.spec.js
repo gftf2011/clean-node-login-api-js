@@ -13,7 +13,7 @@ describe('Token Generator', () => {
   it('Should call JWT with correct values', async () => {
     const { sut } = new SutFactory().create();
     await sut.generate(FAKE_GENERIC_ID);
-    expect(jwt.payload).toBe(FAKE_GENERIC_ID);
+    expect(jwt.payload).toEqual({ _id: FAKE_GENERIC_ID });
     expect(jwt.secret).toBe(sut.secret);
   });
 
