@@ -5,7 +5,7 @@ module.exports = {
       skipMD5: true,
     },
     instance: {
-      dbName: 'clean_node_login_api',
+      dbName: 'clean-node-login-api-js',
     },
     autoStart: false,
   },
