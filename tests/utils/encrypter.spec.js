@@ -4,6 +4,15 @@ const MissingParamError = require('../../src/utils/errors/missing-param-error');
 
 const SutFactory = require('./helpers/abstract-factories/encrypter-sut-factory');
 
+jest.mock('bcrypt', () => ({
+  isValid: true,
+  async compare(value, hashValue) {
+    this.value = value;
+    this.hashValue = hashValue;
+    return this.isValid;
+  },
+}));
+
 const {
   FAKE_GENERIC_PASSWORD,
   FAKE_HASHED_PASSWORD,

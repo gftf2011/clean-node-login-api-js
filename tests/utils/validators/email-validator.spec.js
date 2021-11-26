@@ -6,6 +6,15 @@ const SutFactory = require('../helpers/abstract-factories/email-validator-sut-fa
 
 const { VALID_EMAIL, INVALID_EMAIL } = require('../helpers/constants');
 
+jest.mock('validator', () => ({
+  isEmailValid: true,
+  email: '',
+  isEmail(email) {
+    this.email = email;
+    return this.isEmailValid;
+  },
+}));
+
 describe('Email Validator', () => {
   it('Should call validator with correct email', () => {
     const { sut } = new SutFactory().create();
