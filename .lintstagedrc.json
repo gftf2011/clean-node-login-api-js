@@ -1,5 +1,6 @@
 {
   "*.js": [
+    "npm run snyk:test",
     "npx eslint --fix . --ext .js",
     "npm run test:staged",
     "git add"

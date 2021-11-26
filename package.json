@@ -26,6 +26,7 @@
     "jest": "^27.3.1",
     "lint-staged": "^11.2.6",
     "prettier": "^2.4.1",
+    "snyk": "^1.773.0",
     "supertest": "^6.1.6"
   },
   "scripts": {
@@ -37,13 +38,15 @@
     "docker:test:run": "npm run build:test && npm run docker:up && npm run test",
     "build": "npx babel src/** -d dist",
     "start": "node src/main/index.js",
+    "snyk:test": "npx snyk test",
     "test": "jest --clearCache ; jest --colors --noStackTrace --passWithNoTests --detectOpenHandles",
     "test:all": "jest --clearCache ; jest --watchAll --colors --noStackTrace --passWithNoTests --runInBand",
     "test:unit": "jest --clearCache ; jest --colors --noStackTrace --passWithNoTests --runInBand --watch -c jest-unit-config.js",
     "test:integration": "jest --clearCache ; jest --colors --noStackTrace --passWithNoTests --runInBand --watch -c jest-integration-config.js",
     "test:staged": "jest --clearCache ; jest --silent --passWithNoTests --findRelatedTests --verbose --colors --runInBand",
     "test:ci": "jest --clearCache ; jest --coverage --noStackTrace --runInBand",
-    "prepare": "husky install",
+    "husky:prepare": "npx husky install",
+    "snyk:prepare": "npx snyk auth",
     "commit": "cz"
   },
   "config": {
