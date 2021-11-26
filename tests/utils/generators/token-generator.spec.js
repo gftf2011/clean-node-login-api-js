@@ -9,6 +9,15 @@ const SutFactory = require('../helpers/abstract-factories/token-generator-sut-fa
 
 const { FAKE_GENERIC_ID, FAKE_GENERIC_TOKEN } = require('../helpers/constants');
 
+jest.mock('jsonwebtoken', () => ({
+  token: null,
+  sign(payload, secret) {
+    this.payload = payload;
+    this.secret = secret;
+    return this.token;
+  },
+}));
+
 describe('Token Generator', () => {
   it('Should call JWT with correct values', async () => {
     const { sut } = new SutFactory().create();
