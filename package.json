@@ -13,7 +13,6 @@
     "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "^7.16.4",
     "@commitlint/config-conventional": "^14.1.0",
-    "@shelf/jest-mongodb": "^2.1.0",
     "commitizen": "^4.2.4",
     "commitlint": "^14.1.0",
     "cz-conventional-changelog": "3.3.0",
@@ -31,6 +30,9 @@
   },
   "scripts": {
     "docker:build:dev": "rm -rf .env && cat .env.dev >> .env && docker-compose up -d",
+    "docker:build:dev:run": "npm run docker:build:dev && npm run start",
+    "docker:build:test": "rm -rf .env && cat .env.test >> .env && docker-compose up -d",
+    "docker:build:test:run": "npm run docker:build:test && npm run test",
     "build": "npx babel src/** -d dist",
     "start": "node src/main/index.js",
     "test": "jest --clearCache ; jest --colors --noStackTrace --passWithNoTests --detectOpenHandles",
