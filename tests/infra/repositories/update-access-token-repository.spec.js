@@ -1,3 +1,5 @@
+require('../../../src/main/bootstrap');
+
 const ServerError = require('../../../src/utils/errors/server-error');
 const MissingParamError = require('../../../src/utils/errors/missing-param-error');
 
@@ -26,7 +28,10 @@ describe('UpdateAccessToken Repository', () => {
   const mongoHelper = MongoHelper;
 
   beforeAll(async () => {
-    await mongoHelper.connect(process.env.MONGO_URL);
+    await mongoHelper.connect(
+      process.env.MONGO_URL,
+      process.env.MONGO_INITDB_DATABASE,
+    );
     db = mongoHelper.getDb();
   });
 

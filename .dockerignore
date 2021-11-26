@@ -1,5 +1,4 @@
 node_modules/
 coverage/
 dist/
-globalConfig.json
 yarn.lock
