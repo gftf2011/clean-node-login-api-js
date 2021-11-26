@@ -1,7 +1,10 @@
 {
   "*.js": [
     "npx eslint --fix . --ext .js",
+    "npm run build:test",
+    "npm run docker:up",
     "npm run test:staged",
+    "npm run docker:down",
     "git add"
   ]
 }
