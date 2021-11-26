@@ -1,0 +1,50 @@
+const request = require('supertest');
+const bcrypt = require('bcrypt');
+
+const MongoHelper = require('../../../src/infra/helpers/mongo-helper');
+
+const app = require('../../../src/main/server/app');
+const routes = require('../../../src/main/config/routes');
+
+require('../../../src/main/bootstrap');
+
+const FAKE_GENERIC_EMAIL = 'test@gmail.com';
+const FAKE_GENERIC_PASSWORD = 'any_password';
+
+describe('Login Routes', () => {
+  let db;
+  let userModel;
+
+  beforeAll(async () => {
+    await MongoHelper.connect(
+      process.env.MONGO_URL,
+      process.env.MONGO_INITDB_DATABASE,
+    );
+    db = MongoHelper.getDb();
+    userModel = db.collection('users');
+    routes(app);
+  });
+
+  it('Should return 200 when valid credentials are provided', async () => {
+    const hashedPassword = await bcrypt.hash(FAKE_GENERIC_PASSWORD, 8);
+    await userModel.insertOne({
+      email: FAKE_GENERIC_EMAIL,
+      password: hashedPassword,
+    });
+    await request(app)
+      .post('/api/login')
+      .send({
+        email: FAKE_GENERIC_EMAIL,
+        password: FAKE_GENERIC_PASSWORD,
+      })
+      .expect(200);
+  });
+
+  afterEach(async () => {
+    await userModel.deleteMany();
+  });
+
+  afterAll(async () => {
+    await MongoHelper.disconnect();
+  });
+});
