@@ -4,13 +4,14 @@ const MissingParamError = require('../../utils/errors/missing-param-error');
 const InvalidParamError = require('../../utils/errors/invalid-param-error');
 
 module.exports = class SignUpRouter {
-  constructor({ emailValidator } = {}) {
+  constructor({ emailValidator, cpfValidator } = {}) {
     this.emailValidator = emailValidator;
+    this.cpfValidator = cpfValidator;
   }
 
   // eslint-disable-next-line consistent-return
   async route(httpRequest) {
-    const { email, password } = httpRequest.body;
+    const { email, password, cpf } = httpRequest.body;
     if (!email) {
       return HttpResponse.badRequest(new MissingParamError('email'));
     }
@@ -19,6 +20,12 @@ module.exports = class SignUpRouter {
     }
     if (!password) {
       return HttpResponse.badRequest(new MissingParamError('password'));
+    }
+    if (!cpf) {
+      return HttpResponse.badRequest(new MissingParamError('cpf'));
+    }
+    if (!this.cpfValidator.isValid(cpf)) {
+      return HttpResponse.badRequest(new InvalidParamError('cpf'));
     }
   }
 };
