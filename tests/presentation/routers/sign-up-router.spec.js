@@ -6,6 +6,7 @@ const {
   INVALID_FAKE_SIGN_UP_HTTP_REQUEST_WITH_NO_PASSWORD,
   INVALID_FAKE_SIGN_UP_HTTP_REQUEST_WITH_NO_CPF,
   FAKE_SIGN_UP_HTTP_REQUEST_WITH_INVALID_EMAIL,
+  FAKE_SIGN_UP_HTTP_REQUEST_WITH_INVALID_CPF,
 } = require('../helpers/constants');
 
 const SutFactory = require('../helpers/factory-methods/sign-up-router-sut-factory');
@@ -46,5 +47,15 @@ describe('SignUp Router', () => {
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError('cpf'));
+  });
+
+  it('Should return 400 if cpf provided is not valid', async () => {
+    const { sut, cpfValidatorSpy } = new SutFactory().create();
+    cpfValidatorSpy.isCpfValid = false;
+    const httpRequest = FAKE_SIGN_UP_HTTP_REQUEST_WITH_INVALID_CPF;
+    await sut.route(httpRequest);
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new InvalidParamError('cpf'));
   });
 });

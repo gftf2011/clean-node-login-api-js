@@ -1,6 +1,6 @@
 module.exports = class CpfValidatorSpy {
   isValid(cpf) {
-    this.email = cpf;
+    this.cpf = cpf;
     return this.isCpfValid;
   }
 };
