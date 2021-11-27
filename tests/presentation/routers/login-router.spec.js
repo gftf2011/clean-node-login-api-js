@@ -122,7 +122,7 @@ describe('Login Router', () => {
     expect(httpResponse.body).toEqual(new ServerError());
   });
 
-  it('Should return 500 if no "httpRequest" has no "body"', async () => {
+  it('Should return 500 if "httpRequest" has no "body"', async () => {
     const { sut } = new SutFactory().create();
     const httpRequest = INVALID_FAKE_EMPTY_HTTP_REQUEST;
     const httpResponse = await sut.route(httpRequest);
