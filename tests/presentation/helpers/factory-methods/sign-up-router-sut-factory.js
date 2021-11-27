@@ -9,6 +9,7 @@ module.exports = class SutFactory {
     this.sut = new SignUpRouter({
       emailValidator: this.dependencies.emailValidatorSpy,
       cpfValidator: this.dependencies.cpfValidatorSpy,
+      signUpUseCase: this.dependencies.signUpUseCaseSpy,
     });
 
     return {
