@@ -1,6 +1,7 @@
 const MissingParamError = require('../../../src/utils/errors/missing-param-error');
 const InvalidParamError = require('../../../src/utils/errors/invalid-param-error');
 const ForbiddenUserRegistrationError = require('../../../src/utils/errors/forbidden-user-registration-error');
+const ServerError = require('../../../src/utils/errors/server-error');
 
 const {
   FAKE_HTTP_REQUEST_WITH_EMAIL_ALREADY_INSERTED,
@@ -90,5 +91,12 @@ describe('SignUp Router', () => {
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(403);
     expect(httpResponse.body).toEqual(new ForbiddenUserRegistrationError());
+  });
+
+  it('Should return 500 if no "httpRequest" is provided', async () => {
+    const { sut } = new SutFactory().create();
+    const httpResponse = await sut.route();
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
   });
 });

@@ -2,6 +2,7 @@ const HttpResponse = require('../helpers/http-response');
 
 const MissingParamError = require('../../utils/errors/missing-param-error');
 const InvalidParamError = require('../../utils/errors/invalid-param-error');
+const ServerError = require('../../utils/errors/server-error');
 
 module.exports = class SignUpRouter {
   constructor({ emailValidator, cpfValidator, signUpUseCase } = {}) {
@@ -44,7 +45,8 @@ module.exports = class SignUpRouter {
         return HttpResponse.forbiddenUserRegistrationError();
       }
       return HttpResponse.success({ accessToken });
-      // eslint-disable-next-line no-empty
-    } catch (error) {}
+    } catch (error) {
+      return HttpResponse.serverError(new ServerError());
+    }
   }
 };
