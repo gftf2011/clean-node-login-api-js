@@ -11,7 +11,7 @@ module.exports = class SignUpRouter {
 
   // eslint-disable-next-line consistent-return
   async route(httpRequest) {
-    const { email, password, cpf } = httpRequest.body;
+    const { email, password, cpf, name } = httpRequest.body;
     if (!email) {
       return HttpResponse.badRequest(new MissingParamError('email'));
     }
@@ -26,6 +26,9 @@ module.exports = class SignUpRouter {
     }
     if (!this.cpfValidator.isValid(cpf)) {
       return HttpResponse.badRequest(new InvalidParamError('cpf'));
+    }
+    if (!name) {
+      return HttpResponse.badRequest(new MissingParamError('name'));
     }
   }
 };
