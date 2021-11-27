@@ -40,6 +40,9 @@ module.exports = class SignUpRouter {
       };
       // accessToken is temporary, will be replaced by an object of existent User in the database
       const accessToken = await this.signUpUseCase.execute(user);
+      if (!accessToken) {
+        return HttpResponse.forbiddenUserRegistrationError();
+      }
       return HttpResponse.success({ accessToken });
       // eslint-disable-next-line no-empty
     } catch (error) {}

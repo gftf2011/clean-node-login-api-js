@@ -1,7 +1,10 @@
 const MissingParamError = require('../../../src/utils/errors/missing-param-error');
 const InvalidParamError = require('../../../src/utils/errors/invalid-param-error');
+const ForbiddenUserRegistrationError = require('../../../src/utils/errors/forbidden-user-registration-error');
 
 const {
+  FAKE_HTTP_REQUEST_WITH_EMAIL_ALREADY_INSERTED,
+  INVALID_FAKE_ACCESS_TOKEN,
   FAKE_SIGN_UP_HTTP_REQUEST,
   INVALID_FAKE_SIGN_UP_HTTP_REQUEST_WITH_NO_EMAIL,
   INVALID_FAKE_SIGN_UP_HTTP_REQUEST_WITH_NO_PASSWORD,
@@ -77,5 +80,15 @@ describe('SignUp Router', () => {
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError('name'));
+  });
+
+  it('Should return 403 if SignUpUseCase returns null accessToken', async () => {
+    const { sut, signUpUseCaseSpy } = new SutFactory().create();
+    signUpUseCaseSpy.accessToken = INVALID_FAKE_ACCESS_TOKEN;
+    const httpRequest = FAKE_HTTP_REQUEST_WITH_EMAIL_ALREADY_INSERTED;
+    await sut.route(httpRequest);
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(403);
+    expect(httpResponse.body).toEqual(new ForbiddenUserRegistrationError());
   });
 });
