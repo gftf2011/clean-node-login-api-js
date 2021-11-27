@@ -2,6 +2,7 @@ const MissingParamError = require('../../../src/utils/errors/missing-param-error
 const InvalidParamError = require('../../../src/utils/errors/invalid-param-error');
 
 const {
+  FAKE_SIGN_UP_HTTP_REQUEST,
   INVALID_FAKE_SIGN_UP_HTTP_REQUEST_WITH_NO_EMAIL,
   INVALID_FAKE_SIGN_UP_HTTP_REQUEST_WITH_NO_PASSWORD,
   INVALID_FAKE_SIGN_UP_HTTP_REQUEST_WITH_NO_CPF,
@@ -13,6 +14,15 @@ const {
 const SutFactory = require('../helpers/factory-methods/sign-up-router-sut-factory');
 
 describe('SignUp Router', () => {
+  it('Should return 200 if SignUpUseCase returns accessToken', async () => {
+    const { sut, signUpUseCaseSpy } = new SutFactory().create();
+    const httpRequest = FAKE_SIGN_UP_HTTP_REQUEST;
+    await sut.route(httpRequest);
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(200);
+    expect(httpResponse.body.accessToken).toBe(signUpUseCaseSpy.accessToken);
+  });
+
   it('Should return 400 if email is not provided', async () => {
     const { sut } = new SutFactory().create();
     const httpRequest = INVALID_FAKE_SIGN_UP_HTTP_REQUEST_WITH_NO_EMAIL;
