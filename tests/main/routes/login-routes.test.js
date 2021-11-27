@@ -9,6 +9,8 @@ const routes = require('../../../src/main/config/routes');
 require('../../../src/main/bootstrap');
 
 const FAKE_GENERIC_EMAIL = 'test@gmail.com';
+const FAKE_GENERIC_EMAIL2 = 'test2@gmail.com';
+const FAKE_INVALID_EMAIL = 'any_email';
 const FAKE_GENERIC_PASSWORD = 'any_password';
 
 describe('Login Routes', () => {
@@ -38,6 +40,66 @@ describe('Login Routes', () => {
         password: FAKE_GENERIC_PASSWORD,
       })
       .expect(200);
+  });
+
+  it('Should return 400 when email is not provided', async () => {
+    await request(app)
+      .post('/api/login')
+      .send({
+        password: FAKE_GENERIC_PASSWORD,
+      })
+      .expect(400);
+  });
+
+  it('Should return 400 when password is not provided', async () => {
+    await request(app)
+      .post('/api/login')
+      .send({
+        email: FAKE_GENERIC_EMAIL,
+      })
+      .expect(400);
+  });
+
+  it('Should return 400 when email provided is not valid', async () => {
+    await userModel.insertOne({
+      email: FAKE_GENERIC_EMAIL,
+      password: FAKE_GENERIC_PASSWORD,
+    });
+    await request(app)
+      .post('/api/login')
+      .send({
+        email: FAKE_INVALID_EMAIL,
+        password: FAKE_GENERIC_PASSWORD,
+      })
+      .expect(400);
+  });
+
+  it('Should return 401 when password does not match with user found', async () => {
+    await userModel.insertOne({
+      email: FAKE_GENERIC_EMAIL,
+      password: FAKE_GENERIC_PASSWORD,
+    });
+    await request(app)
+      .post('/api/login')
+      .send({
+        email: FAKE_GENERIC_EMAIL,
+        password: FAKE_GENERIC_PASSWORD,
+      })
+      .expect(401);
+  });
+
+  it('Should return 401 when email does not exists', async () => {
+    await userModel.insertOne({
+      email: FAKE_GENERIC_EMAIL,
+      password: FAKE_GENERIC_PASSWORD,
+    });
+    await request(app)
+      .post('/api/login')
+      .send({
+        email: FAKE_GENERIC_EMAIL2,
+        password: FAKE_GENERIC_PASSWORD,
+      })
+      .expect(401);
   });
 
   afterEach(async () => {
