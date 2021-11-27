@@ -28,7 +28,7 @@ module.exports = class LoginRouter {
       // accessToken is temporary, will be replaced by an object of existent User in the database
       const accessToken = await this.authUseCase.execute(email, password);
       if (!accessToken) {
-        return HttpResponse.unauthorized();
+        return HttpResponse.unauthorizedUser();
       }
       return HttpResponse.success({ accessToken });
     } catch (error) {

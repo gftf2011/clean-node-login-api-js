@@ -3,7 +3,7 @@ const LoginRouter = require('../../../src/presentation/routers/login-router');
 
 const InvalidParamError = require('../../../src/utils/errors/invalid-param-error');
 const MissingParamError = require('../../../src/utils/errors/missing-param-error');
-const UnauthorizedUserError = require('../../../src/utils/errors/unauthorized-error');
+const UnauthorizedUserError = require('../../../src/utils/errors/unauthorized-user-error');
 const ServerError = require('../../../src/utils/errors/server-error');
 
 const AuthUseCaseSpyFactory = require('../helpers/abstract-factories/spies/auth-use-case-spy-factory');

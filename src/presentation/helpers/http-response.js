@@ -1,4 +1,5 @@
-const UnauthorizedUserError = require('../../utils/errors/unauthorized-error');
+const UnauthorizedUserError = require('../../utils/errors/unauthorized-user-error');
+const ForbiddenUserRegistrationError = require('../../utils/errors/forbidden-user-registration-error');
 
 module.exports = class HttpResponse {
   static success(data) {
@@ -15,10 +16,17 @@ module.exports = class HttpResponse {
     };
   }
 
-  static unauthorized() {
+  static unauthorizedUser() {
     return {
       statusCode: 401,
       body: new UnauthorizedUserError(),
+    };
+  }
+
+  static forbiddenUserRegistrationError() {
+    return {
+      statusCode: 403,
+      body: new ForbiddenUserRegistrationError(),
     };
   }
 
