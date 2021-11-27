@@ -5,6 +5,7 @@ const {
   INVALID_FAKE_SIGN_UP_HTTP_REQUEST_WITH_NO_EMAIL,
   INVALID_FAKE_SIGN_UP_HTTP_REQUEST_WITH_NO_PASSWORD,
   INVALID_FAKE_SIGN_UP_HTTP_REQUEST_WITH_NO_CPF,
+  INVALID_FAKE_SIGN_UP_HTTP_REQUEST_WITH_NO_NAME,
   FAKE_SIGN_UP_HTTP_REQUEST_WITH_INVALID_EMAIL,
   FAKE_SIGN_UP_HTTP_REQUEST_WITH_INVALID_CPF,
 } = require('../helpers/constants');
@@ -57,5 +58,14 @@ describe('SignUp Router', () => {
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new InvalidParamError('cpf'));
+  });
+
+  it('Should return 400 if name is not provided', async () => {
+    const { sut } = new SutFactory().create();
+    const httpRequest = INVALID_FAKE_SIGN_UP_HTTP_REQUEST_WITH_NO_NAME;
+    await sut.route(httpRequest);
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new MissingParamError('name'));
   });
 });
