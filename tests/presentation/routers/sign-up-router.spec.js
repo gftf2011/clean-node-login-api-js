@@ -6,6 +6,7 @@ const ServerError = require('../../../src/utils/errors/server-error');
 const {
   FAKE_HTTP_REQUEST_WITH_EMAIL_ALREADY_INSERTED,
   INVALID_FAKE_ACCESS_TOKEN,
+  INVALID_FAKE_EMPTY_HTTP_REQUEST,
   FAKE_SIGN_UP_HTTP_REQUEST,
   INVALID_FAKE_SIGN_UP_HTTP_REQUEST_WITH_NO_EMAIL,
   INVALID_FAKE_SIGN_UP_HTTP_REQUEST_WITH_NO_PASSWORD,
@@ -96,6 +97,14 @@ describe('SignUp Router', () => {
   it('Should return 500 if no "httpRequest" is provided', async () => {
     const { sut } = new SutFactory().create();
     const httpResponse = await sut.route();
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
+  });
+
+  it('Should return 500 if "httpRequest" has no "body"', async () => {
+    const { sut } = new SutFactory().create();
+    const httpRequest = INVALID_FAKE_EMPTY_HTTP_REQUEST;
+    const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
   });
