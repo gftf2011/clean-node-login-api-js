@@ -8,10 +8,12 @@ const routes = require('../../../src/main/config/routes');
 
 require('../../../src/main/bootstrap');
 
-const FAKE_GENERIC_EMAIL = 'test@gmail.com';
-const FAKE_GENERIC_EMAIL2 = 'test2@gmail.com';
-const FAKE_INVALID_EMAIL = 'any_email';
-const FAKE_GENERIC_PASSWORD = 'any_password';
+const {
+  FAKE_GENERIC_EMAIL,
+  FAKE_GENERIC_EMAIL2,
+  FAKE_GENERIC_PASSWORD,
+  FAKE_INVALID_EMAIL,
+} = require('./helpers/constants');
 
 describe('Login Routes', () => {
   let db;
