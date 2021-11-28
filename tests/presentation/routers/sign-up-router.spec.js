@@ -126,4 +126,12 @@ describe('SignUp Router', () => {
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
   });
+
+  it('Should return 500 if emailValidator has no execute method', async () => {
+    const sut = new SignUpRouter({ emailValidator: {} });
+    const httpRequest = FAKE_SIGN_UP_HTTP_REQUEST;
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
+  });
 });
