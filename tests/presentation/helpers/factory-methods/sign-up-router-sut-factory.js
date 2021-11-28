@@ -7,6 +7,7 @@ const DependenciesFactory = require('../abstract-factories/sign-up-router-depend
 const {
   EMAIL_VALIDATOR_THROWING_ERROR_SUT,
   CPF_VALIDATOR_THROWING_ERROR_SUT,
+  SIGN_UP_USE_CASE_THROWING_SERVER_ERROR_SUT,
 } = require('../constants');
 
 module.exports = class SutFactory {
@@ -20,6 +21,11 @@ module.exports = class SutFactory {
     }
     if (type === CPF_VALIDATOR_THROWING_ERROR_SUT) {
       this.dependencies.cpfValidatorSpy.isValid = _email => {
+        throw new ServerError();
+      };
+    }
+    if (type === SIGN_UP_USE_CASE_THROWING_SERVER_ERROR_SUT) {
+      this.dependencies.signUpUseCaseSpy.execute = () => {
         throw new ServerError();
       };
     }
