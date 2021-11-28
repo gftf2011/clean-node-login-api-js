@@ -6,6 +6,7 @@ const ServerError = require('../../../src/utils/errors/server-error');
 const SignUpRouter = require('../../../src/presentation/routers/sign-up-router');
 
 const EmailValidatorSpyFactory = require('../helpers/abstract-factories/spies/email-validator-spy-factory');
+const CpfValidatorSpyFactory = require('../helpers/abstract-factories/spies/cpf-validator-spy-factory');
 
 const {
   FAKE_HTTP_REQUEST_WITH_EMAIL_ALREADY_INSERTED,
@@ -129,7 +130,7 @@ describe('SignUp Router', () => {
     expect(httpResponse.body).toEqual(new ServerError());
   });
 
-  it('Should return 500 if emailValidator has no execute method', async () => {
+  it('Should return 500 if emailValidator has no isValid method', async () => {
     const sut = new SignUpRouter({ emailValidator: {} });
     const httpRequest = FAKE_SIGN_UP_HTTP_REQUEST;
     const httpResponse = await sut.route(httpRequest);
@@ -137,11 +138,25 @@ describe('SignUp Router', () => {
     expect(httpResponse.body).toEqual(new ServerError());
   });
 
-  it('Should return 500 if cpfValidator has no execute method', async () => {
+  it('Should return 500 if cpfValidator has no isValid method', async () => {
     const emailValidatorSpy = new EmailValidatorSpyFactory().create();
     const sut = new SignUpRouter({
       emailValidator: emailValidatorSpy,
       cpfValidator: {},
+    });
+    const httpRequest = FAKE_SIGN_UP_HTTP_REQUEST;
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
+  });
+
+  it('Should return 500 if signUpUseCase has no execute method', async () => {
+    const emailValidatorSpy = new EmailValidatorSpyFactory().create();
+    const cpfValidatorSpy = new CpfValidatorSpyFactory().create();
+    const sut = new SignUpRouter({
+      emailValidator: emailValidatorSpy,
+      cpfValidator: cpfValidatorSpy,
+      signUpUseCase: {},
     });
     const httpRequest = FAKE_SIGN_UP_HTTP_REQUEST;
     const httpResponse = await sut.route(httpRequest);
