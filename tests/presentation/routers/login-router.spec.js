@@ -6,7 +6,6 @@ const MissingParamError = require('../../../src/utils/errors/missing-param-error
 const UnauthorizedUserError = require('../../../src/utils/errors/unauthorized-user-error');
 const ServerError = require('../../../src/utils/errors/server-error');
 
-// const AuthUseCaseSpyFactory = require('../helpers/abstract-factories/spies/auth-use-case-spy-factory');
 const EmailValidatorSpyFactory = require('../helpers/abstract-factories/spies/email-validator-spy-factory');
 
 const SutFactory = require('../helpers/factory-methods/login-router-sut-factory');

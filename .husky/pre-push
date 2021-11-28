@@ -5,3 +5,4 @@ npm run build:test
 npm run docker:up
 npm run test:ci
 npm run docker:down
+npm run docker:delete:volumes
