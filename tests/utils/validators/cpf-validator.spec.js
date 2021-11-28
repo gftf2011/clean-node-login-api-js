@@ -2,7 +2,7 @@ const { cpf: cpfValidator } = require('cpf-cnpj-validator');
 
 const SutFactory = require('../helpers/abstract-factories/cpf-validator-sut-factory');
 
-const { VALID_CPF } = require('../helpers/constants');
+const { VALID_CPF, INVALID_CPF } = require('../helpers/constants');
 
 jest.mock('cpf-cnpj-validator', () => ({
   cpf: {
@@ -26,5 +26,12 @@ describe('CPF Validator', () => {
     const { sut } = new SutFactory().create();
     const isCpfValid = sut.isValid(VALID_CPF);
     expect(isCpfValid).toBe(true);
+  });
+
+  it('Should return "false" if validator returns "false"', () => {
+    cpfValidator.isCpfValid = false;
+    const { sut } = new SutFactory().create();
+    const isCpfValid = sut.isValid(INVALID_CPF);
+    expect(isCpfValid).toBe(false);
   });
 });
