@@ -44,6 +44,13 @@ describe('SignUp Router', () => {
     expect(httpRequest.body.email).toBe(emailValidatorSpy.email);
   });
 
+  it('Should call CpfValidator with correct cpf', async () => {
+    const { sut, cpfValidatorSpy } = new SutFactory().create();
+    const httpRequest = FAKE_SIGN_UP_HTTP_REQUEST;
+    await sut.route(httpRequest);
+    expect(httpRequest.body.cpf).toBe(cpfValidatorSpy.cpf);
+  });
+
   it('Should return 200 if SignUpUseCase returns accessToken', async () => {
     const { sut, signUpUseCaseSpy } = new SutFactory().create();
     const httpRequest = FAKE_SIGN_UP_HTTP_REQUEST;
