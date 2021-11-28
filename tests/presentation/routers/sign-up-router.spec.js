@@ -27,6 +27,16 @@ const {
 const SutFactory = require('../helpers/factory-methods/sign-up-router-sut-factory');
 
 describe('SignUp Router', () => {
+  it('Should call SignUpUseCase with correct params', async () => {
+    const { sut, signUpUseCaseSpy } = new SutFactory().create();
+    const httpRequest = FAKE_SIGN_UP_HTTP_REQUEST;
+    await sut.route(httpRequest);
+    expect(signUpUseCaseSpy.email).toBe(httpRequest.body.email);
+    expect(signUpUseCaseSpy.password).toBe(httpRequest.body.password);
+    expect(signUpUseCaseSpy.name).toBe(httpRequest.body.name);
+    expect(signUpUseCaseSpy.cpf).toBe(httpRequest.body.cpf);
+  });
+
   it('Should return 200 if SignUpUseCase returns accessToken', async () => {
     const { sut, signUpUseCaseSpy } = new SutFactory().create();
     const httpRequest = FAKE_SIGN_UP_HTTP_REQUEST;
