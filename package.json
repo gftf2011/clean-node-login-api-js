@@ -32,7 +32,7 @@
   "scripts": {
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
-    "docker:delete:volumes": "docker volume prune",
+    "docker:delete:volumes": "docker volume prune -f",
     "build:dev": "rm -rf .env && cat .env.dev >> .env",
     "build:test": "rm -rf .env && cat .env.test >> .env",
     "docker:dev:run": "npm run build:dev && npm run docker:up && npm run start",
