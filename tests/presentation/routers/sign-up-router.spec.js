@@ -3,6 +3,8 @@ const InvalidParamError = require('../../../src/utils/errors/invalid-param-error
 const ForbiddenUserRegistrationError = require('../../../src/utils/errors/forbidden-user-registration-error');
 const ServerError = require('../../../src/utils/errors/server-error');
 
+const SignUpRouter = require('../../../src/presentation/routers/sign-up-router');
+
 const {
   FAKE_HTTP_REQUEST_WITH_EMAIL_ALREADY_INSERTED,
   INVALID_FAKE_ACCESS_TOKEN,
@@ -104,6 +106,14 @@ describe('SignUp Router', () => {
   it('Should return 500 if "httpRequest" has no "body"', async () => {
     const { sut } = new SutFactory().create();
     const httpRequest = INVALID_FAKE_EMPTY_HTTP_REQUEST;
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
+  });
+
+  it('Should return 500 if SignUpRouter receives no dependencies', async () => {
+    const sut = new SignUpRouter();
+    const httpRequest = FAKE_SIGN_UP_HTTP_REQUEST;
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
