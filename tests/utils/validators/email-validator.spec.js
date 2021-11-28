@@ -23,7 +23,6 @@ describe('Email Validator', () => {
   });
 
   it('Should return "true" if validator returns "true"', () => {
-    validator.isEmailValid = true;
     const { sut } = new SutFactory().create();
     const isEmailValid = sut.isValid(VALID_EMAIL);
     expect(isEmailValid).toBe(true);

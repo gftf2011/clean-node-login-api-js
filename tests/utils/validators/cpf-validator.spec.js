@@ -21,4 +21,10 @@ describe('CPF Validator', () => {
     sut.isValid(VALID_CPF);
     expect(cpfValidator.cpf).toBe(VALID_CPF);
   });
+
+  it('Should return "true" if validator returns "true"', () => {
+    const { sut } = new SutFactory().create();
+    const isCpfValid = sut.isValid(VALID_CPF);
+    expect(isCpfValid).toBe(true);
+  });
 });
