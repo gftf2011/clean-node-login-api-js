@@ -6,3 +6,4 @@ npm run build:test
 npm run docker:up
 npx lint-staged
 npm run docker:down
+npm run docker:delete:volumes
