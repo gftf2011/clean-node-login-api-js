@@ -1,3 +1,4 @@
+const VALID_CPF = 'valid_cpf';
 const VALID_EMAIL = 'validtest001@gmail.com';
 const INVALID_EMAIL = 'invalidtest001@gmail.com';
 
@@ -10,6 +11,7 @@ const FAKE_GENERIC_TOKEN = 'any_token';
 const FAKE_GENERIC_SECRET = 'any_secret';
 
 module.exports = {
+  VALID_CPF,
   VALID_EMAIL,
   INVALID_EMAIL,
   FAKE_GENERIC_PASSWORD,
