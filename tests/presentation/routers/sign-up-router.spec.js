@@ -9,6 +9,7 @@ const EmailValidatorSpyFactory = require('../helpers/abstract-factories/spies/em
 const CpfValidatorSpyFactory = require('../helpers/abstract-factories/spies/cpf-validator-spy-factory');
 
 const {
+  EMAIL_VALIDATOR_THROWING_ERROR_SUT,
   FAKE_HTTP_REQUEST_WITH_EMAIL_ALREADY_INSERTED,
   INVALID_FAKE_ACCESS_TOKEN,
   INVALID_FAKE_EMPTY_HTTP_REQUEST,
@@ -158,6 +159,14 @@ describe('SignUp Router', () => {
       cpfValidator: cpfValidatorSpy,
       signUpUseCase: {},
     });
+    const httpRequest = FAKE_SIGN_UP_HTTP_REQUEST;
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
+  });
+
+  it('Should return 500 if EmailValidator throws an error', async () => {
+    const { sut } = new SutFactory().create(EMAIL_VALIDATOR_THROWING_ERROR_SUT);
     const httpRequest = FAKE_SIGN_UP_HTTP_REQUEST;
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
