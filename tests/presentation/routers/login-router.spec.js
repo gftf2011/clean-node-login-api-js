@@ -6,7 +6,8 @@ const MissingParamError = require('../../../src/utils/errors/missing-param-error
 const UnauthorizedUserError = require('../../../src/utils/errors/unauthorized-user-error');
 const ServerError = require('../../../src/utils/errors/server-error');
 
-const AuthUseCaseSpyFactory = require('../helpers/abstract-factories/spies/auth-use-case-spy-factory');
+// const AuthUseCaseSpyFactory = require('../helpers/abstract-factories/spies/auth-use-case-spy-factory');
+const EmailValidatorSpyFactory = require('../helpers/abstract-factories/spies/email-validator-spy-factory');
 
 const SutFactory = require('../helpers/factory-methods/login-router-sut-factory');
 
@@ -130,7 +131,7 @@ describe('Login Router', () => {
     expect(httpResponse.body).toEqual(new ServerError());
   });
 
-  it('Should return 500 if AuthUseCase is not provided', async () => {
+  it('Should return 500 if EmailValidator is not provided', async () => {
     const sut = new LoginRouter({});
     const httpRequest = FAKE_HTTP_REQUEST;
     const httpResponse = await sut.route(httpRequest);
@@ -138,18 +139,9 @@ describe('Login Router', () => {
     expect(httpResponse.body).toEqual(new ServerError());
   });
 
-  it('Should return 500 if AuthUseCase has no execute method', async () => {
-    const sut = new LoginRouter({ authUseCase: {} });
-    const httpRequest = FAKE_HTTP_REQUEST;
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new ServerError());
-  });
-
-  it('Should return 500 if EmailValidator is not provided', async () => {
-    const authUseCaseSpy = new AuthUseCaseSpyFactory().create();
+  it('Should return 500 if EmailValidator has no isValid method', async () => {
     const sut = new LoginRouter({
-      authUseCase: authUseCaseSpy,
+      emailValidator: {},
     });
     const httpRequest = FAKE_HTTP_REQUEST;
     const httpResponse = await sut.route(httpRequest);
@@ -157,11 +149,22 @@ describe('Login Router', () => {
     expect(httpResponse.body).toEqual(new ServerError());
   });
 
-  it('Should return 500 if EmailValidator has no isValid method', async () => {
-    const authUseCaseSpy = new AuthUseCaseSpyFactory().create();
+  it('Should return 500 if AuthUseCase is not provided', async () => {
+    const emailValidatorSpy = new EmailValidatorSpyFactory().create();
     const sut = new LoginRouter({
-      authUseCase: authUseCaseSpy,
-      emailValidator: {},
+      emailValidator: emailValidatorSpy,
+    });
+    const httpRequest = FAKE_HTTP_REQUEST;
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
+  });
+
+  it('Should return 500 if AuthUseCase has no execute method', async () => {
+    const emailValidatorSpy = new EmailValidatorSpyFactory().create();
+    const sut = new LoginRouter({
+      emailValidator: emailValidatorSpy,
+      authUseCase: {},
     });
     const httpRequest = FAKE_HTTP_REQUEST;
     const httpResponse = await sut.route(httpRequest);
