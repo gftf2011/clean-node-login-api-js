@@ -1,5 +1,7 @@
 const { cpf: cpfValidator } = require('cpf-cnpj-validator');
 
+const MissingParamError = require('../../../src/utils/errors/missing-param-error');
+
 const SutFactory = require('../helpers/abstract-factories/cpf-validator-sut-factory');
 
 const { VALID_CPF, INVALID_CPF } = require('../helpers/constants');
@@ -33,5 +35,12 @@ describe('CPF Validator', () => {
     const { sut } = new SutFactory().create();
     const isCpfValid = sut.isValid(INVALID_CPF);
     expect(isCpfValid).toBe(false);
+  });
+
+  it('Should throws MissingParamError if no cpf is provided', () => {
+    const { sut } = new SutFactory().create();
+    expect(() => {
+      sut.isValid();
+    }).toThrow(new MissingParamError('cpf'));
   });
 });
