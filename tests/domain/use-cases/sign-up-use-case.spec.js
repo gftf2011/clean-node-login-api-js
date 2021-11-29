@@ -12,6 +12,7 @@ const EncrypterSpyFactory = require('../helpers/abstract-factories/spies/encrypt
 const LoadUserByEmailRepositorySpyFactory = require('../helpers/abstract-factories/spies/load-user-by-email-repository-spy-factory');
 const InsertUserRepositorySpyFactory = require('../helpers/abstract-factories/spies/insert-user-repository-spy-factory');
 const TokenGeneratorSpyFactory = require('../helpers/abstract-factories/spies/token-generator-spy-factory');
+const UpdateAccessTokenRepositorySpyFactory = require('../helpers/abstract-factories/spies/update-access-token-repository-spy-factory');
 
 const {
   FAKE_GENERIC_USER,
@@ -28,22 +29,27 @@ class DependenciesFactory {
     this.insertUserRepositorySpy =
       new InsertUserRepositorySpyFactory().create();
     this.tokenGeneratorSpy = new TokenGeneratorSpyFactory().create();
+    this.updateAccessTokenRepositorySpy =
+      new UpdateAccessTokenRepositorySpyFactory().create();
     return {
       encrypterSpy: this.encrypterSpy,
       loadUserByEmailRepositorySpy: this.loadUserByEmailRepositorySpy,
       insertUserRepositorySpy: this.insertUserRepositorySpy,
       tokenGeneratorSpy: this.tokenGeneratorSpy,
+      updateAccessTokenRepositorySpy: this.updateAccessTokenRepositorySpy,
     };
   }
 }
 
 class SignUpUseCase {
   constructor({
+    updateAccessTokenRepository,
     loadUserByEmailRepository,
     insertUserRepository,
     tokenGenerator,
     encrypter,
   } = {}) {
+    this.updateAccessTokenRepository = updateAccessTokenRepository;
     this.loadUserByEmailRepository = loadUserByEmailRepository;
     this.insertUserRepository = insertUserRepository;
     this.tokenGenerator = tokenGenerator;
@@ -63,6 +69,7 @@ class SignUpUseCase {
     };
     const userId = await this.insertUserRepository.insert(newUser);
     const accessToken = await this.tokenGenerator.generate(userId);
+    await this.updateAccessTokenRepository.update(userId, accessToken);
     return accessToken;
   }
 }
@@ -72,6 +79,8 @@ class SutFactory {
     this.dependencies = new DependenciesFactory().create();
 
     this.sut = new SignUpUseCase({
+      updateAccessTokenRepository:
+        this.dependencies.updateAccessTokenRepositorySpy,
       loadUserByEmailRepository: this.dependencies.loadUserByEmailRepositorySpy,
       insertUserRepository: this.dependencies.insertUserRepositorySpy,
       encrypter: this.dependencies.encrypterSpy,
@@ -125,7 +134,7 @@ describe('SignUp UseCase', () => {
     insertUserRepositorySpy.userId = FAKE_GENERIC_USER_ID;
     tokenGeneratorSpy.accessToken = FAKE_GENERIC_ACCESS_TOKEN;
     await sut.execute(FAKE_GENERIC_USER);
-    expect(tokenGeneratorSpy.userId).toEqual(FAKE_GENERIC_USER_ID);
+    expect(tokenGeneratorSpy.userId).toBe(FAKE_GENERIC_USER_ID);
   });
 
   it('Should call LoadUserByEmailRepository load method with correct value', async () => {
@@ -141,7 +150,29 @@ describe('SignUp UseCase', () => {
     insertUserRepositorySpy.userId = FAKE_GENERIC_USER_ID;
     tokenGeneratorSpy.accessToken = FAKE_GENERIC_ACCESS_TOKEN;
     await sut.execute(FAKE_GENERIC_USER);
-    expect(loadUserByEmailRepositorySpy.email).toEqual(FAKE_GENERIC_USER.email);
+    expect(loadUserByEmailRepositorySpy.email).toBe(FAKE_GENERIC_USER.email);
+  });
+
+  it('Should call UpdateAccessTokenRepository update method with correct values', async () => {
+    const {
+      sut,
+      encrypterSpy,
+      loadUserByEmailRepositorySpy,
+      insertUserRepositorySpy,
+      tokenGeneratorSpy,
+      updateAccessTokenRepositorySpy,
+    } = new SutFactory().create();
+    loadUserByEmailRepositorySpy.user = null;
+    encrypterSpy.hashedPassword = FAKE_HASHED_PASSWORD;
+    insertUserRepositorySpy.userId = FAKE_GENERIC_USER_ID;
+    tokenGeneratorSpy.accessToken = FAKE_GENERIC_ACCESS_TOKEN;
+    await sut.execute(FAKE_GENERIC_USER);
+    expect(updateAccessTokenRepositorySpy.userId).toBe(
+      insertUserRepositorySpy.userId,
+    );
+    expect(updateAccessTokenRepositorySpy.accessToken).toBe(
+      tokenGeneratorSpy.accessToken,
+    );
   });
 
   it('Should return null if user already exists in database', async () => {
