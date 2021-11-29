@@ -3,8 +3,7 @@
 // SE existir retorna erro
 // SE não existir continue com o fluxo
 // Encriptar a senha do usuário
-// Criar o usuário na base de dados
-// Procurar pelo usuário para conseguir o ID
+// Criar o usuário na base de dados e retornar o ID
 // Gerar o token de acesso
 // Fazer o update na base do usuário
 // E retornar o token de acesso
@@ -12,10 +11,13 @@
 const EncrypterSpyFactory = require('../helpers/abstract-factories/spies/encrypter-spy-factory');
 const LoadUserByEmailRepositorySpyFactory = require('../helpers/abstract-factories/spies/load-user-by-email-repository-spy-factory');
 const InsertUserRepositorySpyFactory = require('../helpers/abstract-factories/spies/insert-user-repository-spy-factory');
+const TokenGeneratorSpyFactory = require('../helpers/abstract-factories/spies/token-generator-spy-factory');
 
 const {
   FAKE_GENERIC_USER,
   FAKE_HASHED_PASSWORD,
+  FAKE_GENERIC_USER_ID,
+  FAKE_GENERIC_ACCESS_TOKEN,
 } = require('../helpers/constants');
 
 class DependenciesFactory {
@@ -25,10 +27,12 @@ class DependenciesFactory {
       new LoadUserByEmailRepositorySpyFactory().create();
     this.insertUserRepositorySpy =
       new InsertUserRepositorySpyFactory().create();
+    this.tokenGeneratorSpy = new TokenGeneratorSpyFactory().create();
     return {
       encrypterSpy: this.encrypterSpy,
       loadUserByEmailRepositorySpy: this.loadUserByEmailRepositorySpy,
       insertUserRepositorySpy: this.insertUserRepositorySpy,
+      tokenGeneratorSpy: this.tokenGeneratorSpy,
     };
   }
 }
@@ -37,10 +41,12 @@ class SignUpUseCase {
   constructor({
     loadUserByEmailRepository,
     insertUserRepository,
+    tokenGenerator,
     encrypter,
   } = {}) {
     this.loadUserByEmailRepository = loadUserByEmailRepository;
     this.insertUserRepository = insertUserRepository;
+    this.tokenGenerator = tokenGenerator;
     this.encrypter = encrypter;
   }
 
@@ -51,12 +57,13 @@ class SignUpUseCase {
       return null;
     }
     const hashedPassword = await this.encrypter.hash(user.password);
-    // eslint-disable-next-line no-unused-vars
     const newUser = {
       ...user,
       password: hashedPassword,
     };
-    await this.insertUserRepository.insert(newUser);
+    const userId = await this.insertUserRepository.insert(newUser);
+    const accessToken = await this.tokenGenerator.generate(userId);
+    return accessToken;
   }
 }
 
@@ -68,6 +75,7 @@ class SutFactory {
       loadUserByEmailRepository: this.dependencies.loadUserByEmailRepositorySpy,
       insertUserRepository: this.dependencies.insertUserRepositorySpy,
       encrypter: this.dependencies.encrypterSpy,
+      tokenGenerator: this.dependencies.tokenGeneratorSpy,
     });
 
     return {
@@ -109,5 +117,21 @@ describe('SignUp UseCase', () => {
     loadUserByEmailRepositorySpy.user = {};
     const accessToken = await sut.execute(FAKE_GENERIC_USER);
     expect(accessToken).toBeNull();
+  });
+
+  it('Should return accessToken if correct credentials are provided', async () => {
+    const {
+      sut,
+      encrypterSpy,
+      loadUserByEmailRepositorySpy,
+      insertUserRepositorySpy,
+      tokenGeneratorSpy,
+    } = new SutFactory().create();
+    loadUserByEmailRepositorySpy.user = null;
+    encrypterSpy.hashedPassword = FAKE_HASHED_PASSWORD;
+    insertUserRepositorySpy.userId = FAKE_GENERIC_USER_ID;
+    tokenGeneratorSpy.accessToken = FAKE_GENERIC_ACCESS_TOKEN;
+    const accessToken = await sut.execute(FAKE_GENERIC_USER);
+    expect(accessToken).toEqual(FAKE_GENERIC_ACCESS_TOKEN);
   });
 });
