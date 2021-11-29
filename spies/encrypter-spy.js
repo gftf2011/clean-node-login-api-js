@@ -4,4 +4,9 @@ module.exports = class EncrypterSpy {
     this.hashedPassword = hashedPassword;
     return this.isValid;
   }
+
+  async hash(password) {
+    this.password = password;
+    return this.hashedPassword;
+  }
 };
