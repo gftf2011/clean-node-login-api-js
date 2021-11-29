@@ -72,4 +72,10 @@ describe('Encrypter', () => {
     const promise = sut.compare(FAKE_GENERIC_PASSWORD);
     await expect(promise).rejects.toThrow(new MissingParamError('hashValue'));
   });
+
+  it('Should throw MissingParamError if no value is provided in hash method', async () => {
+    const { sut } = new SutFactory().create();
+    const promise = sut.hash();
+    await expect(promise).rejects.toThrow(new MissingParamError('value'));
+  });
 });
