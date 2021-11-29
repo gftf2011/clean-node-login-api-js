@@ -61,6 +61,13 @@ describe('Encrypter', () => {
     expect(isValid).toBe(false);
   });
 
+  it('Should return hashedPassword if bcrypt hash method returns hashedPassword', async () => {
+    bcrypt.hashValue = FAKE_HASHED_PASSWORD;
+    const { sut } = new SutFactory().create();
+    const hashedPasword = await sut.hash(FAKE_GENERIC_PASSWORD);
+    expect(hashedPasword).toBe(FAKE_HASHED_PASSWORD);
+  });
+
   it('Should throw MissingParamError if no value is provided in compare method', async () => {
     const { sut } = new SutFactory().create();
     const promise = sut.compare();
