@@ -8,23 +8,30 @@
 // Fazer o update na base do usuário
 // E retornar o token de acesso
 
+const EncrypterSpyFactory = require('../helpers/abstract-factories/spies/encrypter-spy-factory');
 const LoadUserByEmailRepositorySpyFactory = require('../helpers/abstract-factories/spies/load-user-by-email-repository-spy-factory');
 
-const { FAKE_GENERIC_USER } = require('../helpers/constants');
+const {
+  FAKE_GENERIC_USER,
+  FAKE_HASHED_PASSWORD,
+} = require('../helpers/constants');
 
 class DependenciesFactory {
   create() {
+    this.encrypterSpy = new EncrypterSpyFactory().create();
     this.loadUserByEmailRepositorySpy =
       new LoadUserByEmailRepositorySpyFactory().create();
     return {
+      encrypterSpy: this.encrypterSpy,
       loadUserByEmailRepositorySpy: this.loadUserByEmailRepositorySpy,
     };
   }
 }
 
 class SignUpUseCase {
-  constructor({ loadUserByEmailRepository } = {}) {
+  constructor({ loadUserByEmailRepository, encrypter } = {}) {
     this.loadUserByEmailRepository = loadUserByEmailRepository;
+    this.encrypter = encrypter;
   }
 
   // eslint-disable-next-line consistent-return
@@ -33,6 +40,12 @@ class SignUpUseCase {
     if (userFound) {
       return null;
     }
+    const hashedPassword = await this.encrypter.hash(user.password);
+    // eslint-disable-next-line no-unused-vars
+    const newUser = {
+      ...user,
+      password: hashedPassword,
+    };
   }
 }
 
@@ -42,6 +55,7 @@ class SutFactory {
 
     this.sut = new SignUpUseCase({
       loadUserByEmailRepository: this.dependencies.loadUserByEmailRepositorySpy,
+      encrypter: this.dependencies.encrypterSpy,
     });
 
     return {
@@ -52,6 +66,16 @@ class SutFactory {
 }
 
 describe('SignUp UseCase', () => {
+  it('Should call Encrypter hash method with correct value', async () => {
+    const { sut, encrypterSpy, loadUserByEmailRepositorySpy } =
+      new SutFactory().create();
+    loadUserByEmailRepositorySpy.user = null;
+    encrypterSpy.hashedPassword = FAKE_HASHED_PASSWORD;
+    await sut.execute(FAKE_GENERIC_USER);
+    expect(encrypterSpy.password).toBe(FAKE_GENERIC_USER.password);
+    expect(encrypterSpy.hashedPassword).toBe(FAKE_HASHED_PASSWORD);
+  });
+
   it('Should return null if user already exists in database', async () => {
     const { sut, loadUserByEmailRepositorySpy } = new SutFactory().create();
     loadUserByEmailRepositorySpy.user = {};
