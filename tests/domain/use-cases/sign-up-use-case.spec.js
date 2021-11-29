@@ -112,6 +112,22 @@ describe('SignUp UseCase', () => {
     });
   });
 
+  it('Should call TokenGenerator generate method with correct value', async () => {
+    const {
+      sut,
+      encrypterSpy,
+      loadUserByEmailRepositorySpy,
+      insertUserRepositorySpy,
+      tokenGeneratorSpy,
+    } = new SutFactory().create();
+    loadUserByEmailRepositorySpy.user = null;
+    encrypterSpy.hashedPassword = FAKE_HASHED_PASSWORD;
+    insertUserRepositorySpy.userId = FAKE_GENERIC_USER_ID;
+    tokenGeneratorSpy.accessToken = FAKE_GENERIC_ACCESS_TOKEN;
+    await sut.execute(FAKE_GENERIC_USER);
+    expect(tokenGeneratorSpy.userId).toEqual(FAKE_GENERIC_USER_ID);
+  });
+
   it('Should return null if user already exists in database', async () => {
     const { sut, loadUserByEmailRepositorySpy } = new SutFactory().create();
     loadUserByEmailRepositorySpy.user = {};
