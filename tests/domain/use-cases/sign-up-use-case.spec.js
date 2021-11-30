@@ -57,12 +57,12 @@ class SignUpUseCase {
     this.encrypter = encrypter;
   }
 
-  // eslint-disable-next-line consistent-return
   async execute(user) {
     if (
       !this.loadUserByEmailRepository ||
       !this.loadUserByEmailRepository.load ||
-      !this.encrypter
+      !this.encrypter ||
+      !this.encrypter.hash
     ) {
       throw new ServerError();
     }
@@ -126,6 +126,17 @@ describe('SignUp UseCase', () => {
       new LoadUserByEmailRepositorySpyFactory().create();
     const sut = new SignUpUseCase({
       loadUserByEmailRepository: loadUserByEmailRepositorySpy,
+    });
+    const promise = sut.execute(FAKE_GENERIC_USER);
+    await expect(promise).rejects.toThrow(new ServerError());
+  });
+
+  it('Should throw error if no Encrypter hash method is provided', async () => {
+    const loadUserByEmailRepositorySpy =
+      new LoadUserByEmailRepositorySpyFactory().create();
+    const sut = new SignUpUseCase({
+      loadUserByEmailRepository: loadUserByEmailRepositorySpy,
+      encrypter: {},
     });
     const promise = sut.execute(FAKE_GENERIC_USER);
     await expect(promise).rejects.toThrow(new ServerError());
