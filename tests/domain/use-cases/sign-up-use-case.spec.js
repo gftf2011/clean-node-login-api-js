@@ -105,6 +105,12 @@ describe('SignUp UseCase', () => {
     await expect(promise).rejects.toThrow(new ServerError());
   });
 
+  it('Should throw error if no LoadUserByEmailRepository is provided', async () => {
+    const sut = new SignUpUseCase({});
+    const promise = sut.execute(FAKE_GENERIC_USER);
+    await expect(promise).rejects.toThrow(new ServerError());
+  });
+
   it('Should call Encrypter hash method with correct value', async () => {
     const { sut, encrypterSpy, loadUserByEmailRepositorySpy } =
       new SutFactory().create();
