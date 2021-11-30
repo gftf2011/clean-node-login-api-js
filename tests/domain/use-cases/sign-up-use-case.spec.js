@@ -66,7 +66,8 @@ class SignUpUseCase {
       !this.insertUserRepository ||
       !this.insertUserRepository.insert ||
       !this.tokenGenerator ||
-      !this.tokenGenerator.generate
+      !this.tokenGenerator.generate ||
+      !this.updateAccessTokenRepository
     ) {
       throw new ServerError();
     }
@@ -197,6 +198,23 @@ describe('SignUp UseCase', () => {
       encrypter: encrypterSpy,
       insertUserRepository: insertUserRepositorySpy,
       tokenGenerator: {},
+    });
+    const promise = sut.execute(FAKE_GENERIC_USER);
+    await expect(promise).rejects.toThrow(new ServerError());
+  });
+
+  it('Should throw error if no UpdateAccessTokenRepository is provided', async () => {
+    const tokenGeneratorSpy = new TokenGeneratorSpyFactory().create();
+    const encrypterSpy = new EncrypterSpyFactory().create();
+    const insertUserRepositorySpy =
+      new InsertUserRepositorySpyFactory().create();
+    const loadUserByEmailRepositorySpy =
+      new LoadUserByEmailRepositorySpyFactory().create();
+    const sut = new SignUpUseCase({
+      loadUserByEmailRepository: loadUserByEmailRepositorySpy,
+      encrypter: encrypterSpy,
+      insertUserRepository: insertUserRepositorySpy,
+      tokenGenerator: tokenGeneratorSpy,
     });
     const promise = sut.execute(FAKE_GENERIC_USER);
     await expect(promise).rejects.toThrow(new ServerError());
