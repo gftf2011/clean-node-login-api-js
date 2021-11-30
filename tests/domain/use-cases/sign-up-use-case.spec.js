@@ -59,7 +59,10 @@ class SignUpUseCase {
 
   // eslint-disable-next-line consistent-return
   async execute(user) {
-    if (!this.loadUserByEmailRepository) {
+    if (
+      !this.loadUserByEmailRepository ||
+      !this.loadUserByEmailRepository.load
+    ) {
       throw new ServerError();
     }
     const userFound = await this.loadUserByEmailRepository.load(user.email);
@@ -107,6 +110,12 @@ describe('SignUp UseCase', () => {
 
   it('Should throw error if no LoadUserByEmailRepository is provided', async () => {
     const sut = new SignUpUseCase({});
+    const promise = sut.execute(FAKE_GENERIC_USER);
+    await expect(promise).rejects.toThrow(new ServerError());
+  });
+
+  it('Should throw error if no LoadUserByEmailRepository load method is provided', async () => {
+    const sut = new SignUpUseCase({ loadUserByEmailRepository: {} });
     const promise = sut.execute(FAKE_GENERIC_USER);
     await expect(promise).rejects.toThrow(new ServerError());
   });
