@@ -3,6 +3,7 @@
 
 npm run snyk:test
 npm run build:test
+npm run build:docker:test
 npm run docker:up
 npx lint-staged
 npm run docker:down

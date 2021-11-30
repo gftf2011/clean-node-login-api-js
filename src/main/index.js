@@ -9,7 +9,7 @@ const routes = require('./config/routes');
 loader()
   .then(() => {
     routes(app);
-    app.listen(3333, () => {
+    app.listen(process.env.APPLICATION_PORT || 3333, () => {
       console.log('Server Running');
     });
   })

@@ -2,6 +2,7 @@
 . "$(dirname "$0")/_/husky.sh"
 
 npm run build:test
+npm run build:docker:test
 npm run docker:up
 npm run test:ci
 npm run docker:down
