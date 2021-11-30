@@ -7,6 +7,7 @@
 // Gerar o token de acesso
 // Fazer o update na base do usuário
 // E retornar o token de acesso
+const ServerError = require('../../../src/utils/errors/server-error');
 
 const EncrypterSpyFactory = require('../helpers/abstract-factories/spies/encrypter-spy-factory');
 const LoadUserByEmailRepositorySpyFactory = require('../helpers/abstract-factories/spies/load-user-by-email-repository-spy-factory');
@@ -58,6 +59,9 @@ class SignUpUseCase {
 
   // eslint-disable-next-line consistent-return
   async execute(user) {
+    if (!this.loadUserByEmailRepository) {
+      throw new ServerError();
+    }
     const userFound = await this.loadUserByEmailRepository.load(user.email);
     if (userFound) {
       return null;
@@ -95,6 +99,12 @@ class SutFactory {
 }
 
 describe('SignUp UseCase', () => {
+  it('Should throw error if no dependency is provided', async () => {
+    const sut = new SignUpUseCase();
+    const promise = sut.execute(FAKE_GENERIC_USER);
+    await expect(promise).rejects.toThrow(new ServerError());
+  });
+
   it('Should call Encrypter hash method with correct value', async () => {
     const { sut, encrypterSpy, loadUserByEmailRepositorySpy } =
       new SutFactory().create();
