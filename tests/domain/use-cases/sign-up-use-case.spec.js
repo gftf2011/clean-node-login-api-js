@@ -62,7 +62,8 @@ class SignUpUseCase {
       !this.loadUserByEmailRepository ||
       !this.loadUserByEmailRepository.load ||
       !this.encrypter ||
-      !this.encrypter.hash
+      !this.encrypter.hash ||
+      !this.insertUserRepository
     ) {
       throw new ServerError();
     }
@@ -137,6 +138,18 @@ describe('SignUp UseCase', () => {
     const sut = new SignUpUseCase({
       loadUserByEmailRepository: loadUserByEmailRepositorySpy,
       encrypter: {},
+    });
+    const promise = sut.execute(FAKE_GENERIC_USER);
+    await expect(promise).rejects.toThrow(new ServerError());
+  });
+
+  it('Should throw error if no InsertUserRepository is provided', async () => {
+    const encrypterSpy = new EncrypterSpyFactory().create();
+    const loadUserByEmailRepositorySpy =
+      new LoadUserByEmailRepositorySpyFactory().create();
+    const sut = new SignUpUseCase({
+      loadUserByEmailRepository: loadUserByEmailRepositorySpy,
+      encrypter: encrypterSpy,
     });
     const promise = sut.execute(FAKE_GENERIC_USER);
     await expect(promise).rejects.toThrow(new ServerError());
