@@ -107,3 +107,6 @@ dist
 docker-compose.yml
 !docker/dev/docker-compose.yml
 !docker/test/docker-compose.yml
+
+# Cache
+cache/
