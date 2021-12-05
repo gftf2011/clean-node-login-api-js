@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const faker = require('faker');
 
 const MissingParamError = require('../../src/utils/errors/missing-param-error');
 
@@ -18,54 +19,51 @@ jest.mock('bcrypt', () => ({
   },
 }));
 
-const {
-  SALT_ROUNDS,
-  FAKE_GENERIC_PASSWORD,
-  FAKE_HASHED_PASSWORD,
-  FAKE_WRONG_HASHED_PASSWORD,
-} = require('./helpers/constants');
-
 describe('Encrypter', () => {
   it('Should call bcrypt compare method with correct values', async () => {
+    const fakePassword = faker.internet.password(10, true);
+    const fakeHashPassword = faker.internet.password(64, false);
     const { sut } = new SutFactory().create();
-    await sut.compare(FAKE_GENERIC_PASSWORD, FAKE_HASHED_PASSWORD);
-    expect(bcrypt.value).toBe(FAKE_GENERIC_PASSWORD);
-    expect(bcrypt.hashValue).toBe(FAKE_HASHED_PASSWORD);
+    await sut.compare(fakePassword, fakeHashPassword);
+    expect(bcrypt.value).toBe(fakePassword);
+    expect(bcrypt.hashValue).toBe(fakeHashPassword);
   });
 
   it('Should call bcrypt hash method with correct values', async () => {
+    const fakePassword = faker.internet.password(10, true);
+    const fakeHashPassword = faker.internet.password(64, false);
     const { sut } = new SutFactory().create();
-    bcrypt.hashValue = FAKE_HASHED_PASSWORD;
-    await sut.hash(FAKE_GENERIC_PASSWORD);
-    expect(bcrypt.value).toBe(FAKE_GENERIC_PASSWORD);
-    expect(bcrypt.salt).toBe(SALT_ROUNDS);
-    expect(bcrypt.hashValue).toBe(FAKE_HASHED_PASSWORD);
+    bcrypt.hashValue = fakeHashPassword;
+    await sut.hash(fakePassword);
+    expect(bcrypt.value).toBe(fakePassword);
+    expect(bcrypt.salt).toBe(12);
+    expect(bcrypt.hashValue).toBe(fakeHashPassword);
   });
 
   it('Should return "true" if bcrypt compare method returns "true"', async () => {
+    const fakePassword = faker.internet.password(10, true);
+    const fakeHashPassword = faker.internet.password(64, false);
     const { sut } = new SutFactory().create();
-    const isValid = await sut.compare(
-      FAKE_GENERIC_PASSWORD,
-      FAKE_HASHED_PASSWORD,
-    );
+    const isValid = await sut.compare(fakePassword, fakeHashPassword);
     expect(isValid).toBe(true);
   });
 
   it('Should return "false" if bcrypt compare method returns "false"', async () => {
     bcrypt.isValid = false;
+    const fakePassword = faker.internet.password(10, true);
+    const fakeHashPassword = faker.internet.password(64, false);
     const { sut } = new SutFactory().create();
-    const isValid = await sut.compare(
-      FAKE_GENERIC_PASSWORD,
-      FAKE_WRONG_HASHED_PASSWORD,
-    );
+    const isValid = await sut.compare(fakePassword, fakeHashPassword);
     expect(isValid).toBe(false);
   });
 
   it('Should return hashedPassword if bcrypt hash method returns hashedPassword', async () => {
-    bcrypt.hashValue = FAKE_HASHED_PASSWORD;
+    const fakePassword = faker.internet.password(10, true);
+    const fakeHashPassword = faker.internet.password(64, false);
+    bcrypt.hashValue = fakeHashPassword;
     const { sut } = new SutFactory().create();
-    const hashedPasword = await sut.hash(FAKE_GENERIC_PASSWORD);
-    expect(hashedPasword).toBe(FAKE_HASHED_PASSWORD);
+    const hashedPasword = await sut.hash(fakePassword);
+    expect(hashedPasword).toBe(fakeHashPassword);
   });
 
   it('Should throw MissingParamError if no value is provided in compare method', async () => {
@@ -75,8 +73,9 @@ describe('Encrypter', () => {
   });
 
   it('Should throw MissingParamError if no hashValue is provided in compare method', async () => {
+    const fakePassword = faker.internet.password(10, true);
     const { sut } = new SutFactory().create();
-    const promise = sut.compare(FAKE_GENERIC_PASSWORD);
+    const promise = sut.compare(fakePassword);
     await expect(promise).rejects.toThrow(new MissingParamError('hashValue'));
   });
 
