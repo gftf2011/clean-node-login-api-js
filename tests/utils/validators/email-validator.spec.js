@@ -1,10 +1,9 @@
 const validator = require('validator');
+const faker = require('faker');
 
 const MissingParamError = require('../../../src/utils/errors/missing-param-error');
 
 const SutFactory = require('../helpers/abstract-factories/email-validator-sut-factory');
-
-const { VALID_EMAIL, INVALID_EMAIL } = require('../helpers/constants');
 
 jest.mock('validator', () => ({
   isEmailValid: true,
@@ -17,21 +16,28 @@ jest.mock('validator', () => ({
 
 describe('Email Validator', () => {
   it('Should call validator with correct email', () => {
+    const fakeEmail = faker.internet.email();
     const { sut } = new SutFactory().create();
-    sut.isValid(VALID_EMAIL);
-    expect(validator.email).toBe(VALID_EMAIL);
+    sut.isValid(fakeEmail);
+    expect(validator.email).toBe(fakeEmail);
   });
 
   it('Should return "true" if validator returns "true"', () => {
+    const fakeEmail = faker.internet.email();
     const { sut } = new SutFactory().create();
-    const isEmailValid = sut.isValid(VALID_EMAIL);
+    const isEmailValid = sut.isValid(fakeEmail);
     expect(isEmailValid).toBe(true);
   });
 
   it('Should return "false" if validator returns "false"', () => {
+    const fakeEmail = faker.internet.email(
+      faker.name.firstName(),
+      faker.name.lastName(),
+      '',
+    );
     validator.isEmailValid = false;
     const { sut } = new SutFactory().create();
-    const isEmailValid = sut.isValid(INVALID_EMAIL);
+    const isEmailValid = sut.isValid(fakeEmail);
     expect(isEmailValid).toBe(false);
   });
 
