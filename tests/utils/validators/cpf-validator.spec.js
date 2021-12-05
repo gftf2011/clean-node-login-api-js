@@ -1,10 +1,9 @@
 const { cpf: cpfValidator } = require('cpf-cnpj-validator');
+const faker = require('faker-br');
 
 const MissingParamError = require('../../../src/utils/errors/missing-param-error');
 
 const SutFactory = require('../helpers/abstract-factories/cpf-validator-sut-factory');
-
-const { VALID_CPF, INVALID_CPF } = require('../helpers/constants');
 
 jest.mock('cpf-cnpj-validator', () => ({
   cpf: {
@@ -19,21 +18,24 @@ jest.mock('cpf-cnpj-validator', () => ({
 
 describe('CPF Validator', () => {
   it('Should call validator with correct cpf', () => {
+    const fakeCpf = faker.br.cpf();
     const { sut } = new SutFactory().create();
-    sut.isValid(VALID_CPF);
-    expect(cpfValidator.cpf).toBe(VALID_CPF);
+    sut.isValid(fakeCpf);
+    expect(cpfValidator.cpf).toBe(fakeCpf);
   });
 
   it('Should return "true" if validator returns "true"', () => {
+    const fakeCpf = faker.br.cpf();
     const { sut } = new SutFactory().create();
-    const isCpfValid = sut.isValid(VALID_CPF);
+    const isCpfValid = sut.isValid(fakeCpf);
     expect(isCpfValid).toBe(true);
   });
 
   it('Should return "false" if validator returns "false"', () => {
     cpfValidator.isCpfValid = false;
+    const fakeCpf = faker.br.cpf();
     const { sut } = new SutFactory().create();
-    const isCpfValid = sut.isValid(INVALID_CPF);
+    const isCpfValid = sut.isValid(fakeCpf);
     expect(isCpfValid).toBe(false);
   });
 
