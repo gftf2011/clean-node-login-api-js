@@ -13,8 +13,9 @@ const {
   FAKE_GENERIC_USER_ID,
   FAKE_GENERIC_ACCESS_TOKEN,
   SIGN_UP_USE_CASE_SUT_LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR,
-  SIGN_UP_USE_CASE_SUT_ENCRYPTER_WITH_ERROR_SUT,
-  SIGN_UP_USE_CASE_SUT_INSERT_USER_REPOSITORY_WITH_ERROR_SUT,
+  SIGN_UP_USE_CASE_SUT_ENCRYPTER_WITH_ERROR,
+  SIGN_UP_USE_CASE_SUT_INSERT_USER_REPOSITORY_WITH_ERROR,
+  SIGN_UP_USE_CASE_SUT_TOKEN_GENERATOR_WITH_ERROR,
 } = require('../helpers/constants');
 
 class DependenciesFactory {
@@ -93,14 +94,18 @@ class SutFactory {
       this.dependencies.loadUserByEmailRepositorySpy.load = () => {
         throw new ServerError();
       };
-    } else if (type === SIGN_UP_USE_CASE_SUT_ENCRYPTER_WITH_ERROR_SUT) {
+    } else if (type === SIGN_UP_USE_CASE_SUT_ENCRYPTER_WITH_ERROR) {
       this.dependencies.encrypterSpy.hash = () => {
         throw new ServerError();
       };
     } else if (
-      type === SIGN_UP_USE_CASE_SUT_INSERT_USER_REPOSITORY_WITH_ERROR_SUT
+      type === SIGN_UP_USE_CASE_SUT_INSERT_USER_REPOSITORY_WITH_ERROR
     ) {
       this.dependencies.insertUserRepositorySpy.insert = () => {
+        throw new ServerError();
+      };
+    } else if (type === SIGN_UP_USE_CASE_SUT_TOKEN_GENERATOR_WITH_ERROR) {
+      this.dependencies.tokenGeneratorSpy.generate = () => {
         throw new ServerError();
       };
     }
@@ -365,7 +370,7 @@ describe('SignUp UseCase', () => {
 
   it('Should throw error if Encrypter throws error', async () => {
     const { sut, loadUserByEmailRepositorySpy } = new SutFactory().create(
-      SIGN_UP_USE_CASE_SUT_ENCRYPTER_WITH_ERROR_SUT,
+      SIGN_UP_USE_CASE_SUT_ENCRYPTER_WITH_ERROR,
     );
     loadUserByEmailRepositorySpy.user = null;
     const promise = sut.execute(FAKE_GENERIC_USER);
@@ -375,10 +380,26 @@ describe('SignUp UseCase', () => {
   it('Should throw error if InsertUserRepository throws error', async () => {
     const { sut, encrypterSpy, loadUserByEmailRepositorySpy } =
       new SutFactory().create(
-        SIGN_UP_USE_CASE_SUT_INSERT_USER_REPOSITORY_WITH_ERROR_SUT,
+        SIGN_UP_USE_CASE_SUT_INSERT_USER_REPOSITORY_WITH_ERROR,
       );
     loadUserByEmailRepositorySpy.user = null;
     encrypterSpy.hashedPassword = FAKE_HASHED_PASSWORD;
+    const promise = sut.execute(FAKE_GENERIC_USER);
+    await expect(promise).rejects.toThrow(new ServerError());
+  });
+
+  it('Should throw error if TokenGenerator throws error', async () => {
+    const {
+      sut,
+      encrypterSpy,
+      loadUserByEmailRepositorySpy,
+      insertUserRepositorySpy,
+    } = new SutFactory().create(
+      SIGN_UP_USE_CASE_SUT_TOKEN_GENERATOR_WITH_ERROR,
+    );
+    loadUserByEmailRepositorySpy.user = null;
+    encrypterSpy.hashedPassword = FAKE_HASHED_PASSWORD;
+    insertUserRepositorySpy.userId = FAKE_GENERIC_USER_ID;
     const promise = sut.execute(FAKE_GENERIC_USER);
     await expect(promise).rejects.toThrow(new ServerError());
   });
