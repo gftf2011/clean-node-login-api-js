@@ -1,12 +1,4 @@
 /* eslint-disable max-classes-per-file */
-// Procurar um usuário se ele já existir
-// SE existir retorna erro
-// SE não existir continue com o fluxo
-// Encriptar a senha do usuário
-// Criar o usuário na base de dados e retornar o ID
-// Gerar o token de acesso
-// Fazer o update na base do usuário
-// E retornar o token de acesso
 const ServerError = require('../../../src/utils/errors/server-error');
 
 const EncrypterSpyFactory = require('../helpers/abstract-factories/spies/encrypter-spy-factory');
@@ -20,6 +12,7 @@ const {
   FAKE_HASHED_PASSWORD,
   FAKE_GENERIC_USER_ID,
   FAKE_GENERIC_ACCESS_TOKEN,
+  SIGN_UP_USE_CASE_SUT_LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR,
 } = require('../helpers/constants');
 
 class DependenciesFactory {
@@ -89,8 +82,16 @@ class SignUpUseCase {
 }
 
 class SutFactory {
-  create(_type) {
+  create(type) {
     this.dependencies = new DependenciesFactory().create();
+
+    if (
+      type === SIGN_UP_USE_CASE_SUT_LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR
+    ) {
+      this.dependencies.loadUserByEmailRepositorySpy.load = () => {
+        throw new ServerError();
+      };
+    }
 
     this.sut = new SignUpUseCase({
       updateAccessTokenRepository:
@@ -340,5 +341,13 @@ describe('SignUp UseCase', () => {
     tokenGeneratorSpy.accessToken = FAKE_GENERIC_ACCESS_TOKEN;
     const accessToken = await sut.execute(FAKE_GENERIC_USER);
     expect(accessToken).toEqual(FAKE_GENERIC_ACCESS_TOKEN);
+  });
+
+  it('Should throw error if LoadUserByEmailRepository throws error', async () => {
+    const { sut } = new SutFactory().create(
+      SIGN_UP_USE_CASE_SUT_LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR,
+    );
+    const promise = sut.execute(FAKE_GENERIC_USER);
+    await expect(promise).rejects.toThrow(new ServerError());
   });
 });

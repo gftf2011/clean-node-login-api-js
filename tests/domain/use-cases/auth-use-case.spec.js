@@ -197,7 +197,7 @@ describe('Auth UseCase', () => {
     await expect(promise).rejects.toThrow(new ServerError());
   });
 
-  it('Should throw error if LoadUserByEmailRepositorySpy throws error', async () => {
+  it('Should throw error if LoadUserByEmailRepository throws error', async () => {
     const { sut } = new SutFactory().create(
       LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR_SUT,
     );
