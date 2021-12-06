@@ -16,6 +16,7 @@ const {
   SIGN_UP_USE_CASE_SUT_ENCRYPTER_WITH_ERROR,
   SIGN_UP_USE_CASE_SUT_INSERT_USER_REPOSITORY_WITH_ERROR,
   SIGN_UP_USE_CASE_SUT_TOKEN_GENERATOR_WITH_ERROR,
+  SIGN_UP_USE_CASE_SUT_UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR,
 } = require('../helpers/constants');
 
 class DependenciesFactory {
@@ -106,6 +107,12 @@ class SutFactory {
       };
     } else if (type === SIGN_UP_USE_CASE_SUT_TOKEN_GENERATOR_WITH_ERROR) {
       this.dependencies.tokenGeneratorSpy.generate = () => {
+        throw new ServerError();
+      };
+    } else if (
+      type === SIGN_UP_USE_CASE_SUT_UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR
+    ) {
+      this.dependencies.updateAccessTokenRepositorySpy.update = () => {
         throw new ServerError();
       };
     }
@@ -400,6 +407,24 @@ describe('SignUp UseCase', () => {
     loadUserByEmailRepositorySpy.user = null;
     encrypterSpy.hashedPassword = FAKE_HASHED_PASSWORD;
     insertUserRepositorySpy.userId = FAKE_GENERIC_USER_ID;
+    const promise = sut.execute(FAKE_GENERIC_USER);
+    await expect(promise).rejects.toThrow(new ServerError());
+  });
+
+  it('Should throw error if UpdateAccessTokenRepository throws error', async () => {
+    const {
+      sut,
+      encrypterSpy,
+      loadUserByEmailRepositorySpy,
+      insertUserRepositorySpy,
+      tokenGeneratorSpy,
+    } = new SutFactory().create(
+      SIGN_UP_USE_CASE_SUT_UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR,
+    );
+    loadUserByEmailRepositorySpy.user = null;
+    encrypterSpy.hashedPassword = FAKE_HASHED_PASSWORD;
+    insertUserRepositorySpy.userId = FAKE_GENERIC_USER_ID;
+    tokenGeneratorSpy.accessToken = FAKE_GENERIC_ACCESS_TOKEN;
     const promise = sut.execute(FAKE_GENERIC_USER);
     await expect(promise).rejects.toThrow(new ServerError());
   });
