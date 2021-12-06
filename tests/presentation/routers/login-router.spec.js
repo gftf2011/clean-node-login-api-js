@@ -62,6 +62,7 @@ describe('Login Router', () => {
 
   it('Should return 200 when valid credentials are provided', async () => {
     const { sut, authUseCaseSpy } = new SutFactory().create();
+    authUseCaseSpy.accessToken = faker.datatype.uuid();
     const httpRequest = {
       body: {
         email: faker.internet.email(),
