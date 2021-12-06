@@ -1,13 +1,10 @@
+const faker = require('faker');
 const { MongoNotConnectedError, MongoServerClosedError } = require('mongodb');
 const NoError = require('./errors/no-error');
 const MongoDirector = require('../../../src/infra/helpers/builders/mongo-director');
 const MongoHelper = require('../../../src/infra/helpers/mongo-helper');
 
-const {
-  MONGO_ATTEMPTS_TO_RETRY,
-  MONGO_FAKE_URI,
-  MONGO_FAKE_DATABASE_NAME,
-} = require('./constants');
+const { MONGO_ATTEMPTS_TO_RETRY } = require('./constants');
 
 jest.mock('../../../src/infra/helpers/builders/mongo-director');
 
@@ -67,10 +64,12 @@ describe('Mongo Helper', () => {
   });
 
   it('Should build client and db if connect was called with success', async () => {
+    const fakeUrl = faker.internet.url();
+    const fakeDb = faker.lorem.word(10);
     MongoHelper.setRetryConnection(MONGO_ATTEMPTS_TO_RETRY);
     MongoHelper.setRetryDisconnection(MONGO_ATTEMPTS_TO_RETRY);
     const connectionError = await getError(async () =>
-      MongoHelper.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME),
+      MongoHelper.connect(fakeUrl, fakeDb),
     );
     const disconnectionError = await getError(async () =>
       MongoHelper.disconnect(),
@@ -102,10 +101,12 @@ describe('Mongo Helper', () => {
     });
     MongoHelper.setRetryConnection();
     MongoHelper.setRetryDisconnection();
+    const fakeUrl = faker.internet.url();
+    const fakeDb = faker.lorem.word(10);
     const retryConnect = MongoHelper.getRetryConnect();
     const retryDisconnect = MongoHelper.getRetryDisconnect();
     const connectionError = await getError(async () =>
-      MongoHelper.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME),
+      MongoHelper.connect(fakeUrl, fakeDb),
     );
     const disconnectionError = await getError(async () =>
       MongoHelper.disconnect(),
@@ -129,8 +130,10 @@ describe('Mongo Helper', () => {
   it('Should call client close method in disconnect after connect was called with success', async () => {
     MongoHelper.setRetryConnection(MONGO_ATTEMPTS_TO_RETRY);
     MongoHelper.setRetryDisconnection(MONGO_ATTEMPTS_TO_RETRY);
+    const fakeUrl = faker.internet.url();
+    const fakeDb = faker.lorem.word(10);
     const connectionError = await getError(async () =>
-      MongoHelper.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME),
+      MongoHelper.connect(fakeUrl, fakeDb),
     );
     const disconnectionError = await getError(async () =>
       MongoHelper.disconnect(),
@@ -161,10 +164,12 @@ describe('Mongo Helper', () => {
     });
     MongoHelper.setRetryConnection();
     MongoHelper.setRetryDisconnection();
+    const fakeUrl = faker.internet.url();
+    const fakeDb = faker.lorem.word(10);
     const retryConnect = MongoHelper.getRetryConnect();
     const retryDisconnect = MongoHelper.getRetryDisconnect();
     const connectionError = await getError(async () =>
-      MongoHelper.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME),
+      MongoHelper.connect(fakeUrl, fakeDb),
     );
     const disconnectionError = await getError(async () =>
       MongoHelper.disconnect(),
@@ -195,10 +200,12 @@ describe('Mongo Helper', () => {
     });
     MongoHelper.setRetryConnection();
     MongoHelper.setRetryDisconnection();
+    const fakeUrl = faker.internet.url();
+    const fakeDb = faker.lorem.word(10);
     const retryConnect = MongoHelper.getRetryConnect();
     const retryDisconnect = MongoHelper.getRetryDisconnect();
     const connectionError = await getError(async () =>
-      MongoHelper.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME),
+      MongoHelper.connect(fakeUrl, fakeDb),
     );
     expect(retryConnect).toBe(parseInt(process.env.MONGO_CONNECT_RETRY, 10));
     expect(retryDisconnect).toBe(
@@ -230,10 +237,12 @@ describe('Mongo Helper', () => {
     });
     MongoHelper.setRetryConnection();
     MongoHelper.setRetryDisconnection();
+    const fakeUrl = faker.internet.url();
+    const fakeDb = faker.lorem.word(10);
     const retryConnect = MongoHelper.getRetryConnect();
     const retryDisconnect = MongoHelper.getRetryDisconnect();
     const connectionError = await getError(async () =>
-      MongoHelper.connect(MONGO_FAKE_URI, MONGO_FAKE_DATABASE_NAME),
+      MongoHelper.connect(fakeUrl, fakeDb),
     );
     const disconnectionError = await getError(async () =>
       MongoHelper.disconnect(),
