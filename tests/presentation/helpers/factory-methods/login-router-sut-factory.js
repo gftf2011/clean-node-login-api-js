@@ -7,42 +7,46 @@ const ServerError = require('../../../../src/utils/errors/server-error');
 const DependenciesFactory = require('../abstract-factories/login-router-dependencies-factory');
 
 const {
-  AUTH_USE_CASE_WITH_NO_PASSWORD_ERROR_SUT,
-  AUTH_USE_CASE_WITH_NO_EMAIL_ERROR_SUT,
-  AUTH_USE_CASE_THROWING_SERVER_ERROR_SUT,
-  AUTH_USE_CASE_THROWING_MONGO_CONNECTION_ERROR_SUT,
-  AUTH_USE_CASE_THROWING_MONGO_CLOSE_ERROR_SUT,
-  EMAIL_VALIDATOR_THROWING_ERROR_SUT,
+  LOGIN_ROUTER_SUT_AUTH_USE_CASE_WITH_NO_PASSWORD_ERROR,
+  LOGIN_ROUTER_SUT_AUTH_USE_CASE_WITH_NO_EMAIL_ERROR,
+  LOGIN_ROUTER_SUT_AUTH_USE_CASE_THROWING_SERVER_ERROR,
+  LOGIN_ROUTER_SUT_AUTH_USE_CASE_THROWING_MONGO_CONNECTION_ERROR,
+  LOGIN_ROUTER_SUT_AUTH_USE_CASE_THROWING_MONGO_CLOSE_ERROR,
+  LOGIN_ROUTER_SUT_EMAIL_VALIDATOR_THROWING_ERROR,
 } = require('../constants');
 
 module.exports = class SutFactory {
   create(type) {
     this.dependencies = new DependenciesFactory().create();
 
-    if (type === AUTH_USE_CASE_WITH_NO_PASSWORD_ERROR_SUT) {
+    if (type === LOGIN_ROUTER_SUT_AUTH_USE_CASE_WITH_NO_PASSWORD_ERROR) {
       this.dependencies.authUseCaseSpy.execute = email => {
         this.dependencies.authUseCaseSpy.email = email;
         throw new MissingParamError('password');
       };
-    } else if (type === AUTH_USE_CASE_WITH_NO_EMAIL_ERROR_SUT) {
+    } else if (type === LOGIN_ROUTER_SUT_AUTH_USE_CASE_WITH_NO_EMAIL_ERROR) {
       this.dependencies.authUseCaseSpy.execute = () => {
         throw new MissingParamError('email');
       };
-    } else if (type === AUTH_USE_CASE_THROWING_SERVER_ERROR_SUT) {
+    } else if (type === LOGIN_ROUTER_SUT_AUTH_USE_CASE_THROWING_SERVER_ERROR) {
       this.dependencies.authUseCaseSpy.execute = () => {
         throw new ServerError();
       };
-    } else if (type === EMAIL_VALIDATOR_THROWING_ERROR_SUT) {
+    } else if (type === LOGIN_ROUTER_SUT_EMAIL_VALIDATOR_THROWING_ERROR) {
       this.dependencies.emailValidatorSpy.isValid = _email => {
         throw new ServerError();
       };
-    } else if (type === AUTH_USE_CASE_THROWING_MONGO_CONNECTION_ERROR_SUT) {
+    } else if (
+      type === LOGIN_ROUTER_SUT_AUTH_USE_CASE_THROWING_MONGO_CONNECTION_ERROR
+    ) {
       this.dependencies.authUseCaseSpy.execute = () => {
         throw new MongoNotConnectedError(
           'Not possible to connect to MongoDB Driver',
         );
       };
-    } else if (type === AUTH_USE_CASE_THROWING_MONGO_CLOSE_ERROR_SUT) {
+    } else if (
+      type === LOGIN_ROUTER_SUT_AUTH_USE_CASE_THROWING_MONGO_CLOSE_ERROR
+    ) {
       this.dependencies.authUseCaseSpy.execute = () => {
         throw new MongoServerClosedError(
           'Not possible to close MongoDB Driver',
