@@ -1,5 +1,7 @@
 require('../../../src/main/bootstrap');
 
+const faker = require('faker');
+
 const ServerError = require('../../../src/utils/errors/server-error');
 const MissingParamError = require('../../../src/utils/errors/missing-param-error');
 
@@ -12,13 +14,9 @@ const SutFactory = require('../helpers/factory-methods/update-access-token-repos
 let db;
 
 const {
-  FAKE_GENERIC_USER_ID,
-  FAKE_GENERIC_EMAIL,
-  FAKE_GENERIC_PASSWORD,
-  FAKE_GENERIC_ACCESS_TOKEN,
-  UPDATE_ACCESS_TOKEN_REPOSITORY_EMPTY_SUT,
-  UPDATE_ACCESS_TOKEN_REPOSITORY_EMPTY_OBJECT_SUT,
-  UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_EMPTY_USER_MODEL_OBJECT_SUT,
+  UPDATE_ACCESS_TOKEN_REPOSITORY_SUT_EMPTY,
+  UPDATE_ACCESS_TOKEN_REPOSITORY_SUT_EMPTY_OBJECT,
+  UPDATE_ACCESS_TOKEN_REPOSITORY_SUT_WITH_EMPTY_USER_MODEL_OBJECT,
 } = require('../helpers/constants');
 
 describe('UpdateAccessToken Repository', () => {
@@ -40,41 +38,50 @@ describe('UpdateAccessToken Repository', () => {
   });
 
   it('Should update the user with the properly given access token', async () => {
+    const fakeEmail = faker.internet.email();
+    const fakePassword = faker.internet.password(10, true);
+    const fakeAccessToken = faker.datatype.uuid();
     const userModel = db.collection('users');
     const { sut } = new SutFactory(db).create();
     const fakeUserInsert = await userModel.insertOne({
-      email: FAKE_GENERIC_EMAIL,
-      password: FAKE_GENERIC_PASSWORD,
+      email: fakeEmail,
+      password: fakePassword,
     });
     const userFound = await userModel.findOne({
       _id: fakeUserInsert.insertedId,
     });
-    await sut.update(userFound._id, FAKE_GENERIC_ACCESS_TOKEN);
+    await sut.update(userFound._id, fakeAccessToken);
     const userFoundUpdated = await userModel.findOne({ _id: userFound._id });
-    expect(userFoundUpdated.accessToken).toBe(FAKE_GENERIC_ACCESS_TOKEN);
+    expect(userFoundUpdated.accessToken).toBe(fakeAccessToken);
   });
 
   it('Should throw ServerError if no dependency is provided', async () => {
+    const fakeUserId = faker.datatype.uuid();
+    const fakeAccessToken = faker.datatype.uuid();
     const { sut } = new SutFactory(db).create(
-      UPDATE_ACCESS_TOKEN_REPOSITORY_EMPTY_SUT,
+      UPDATE_ACCESS_TOKEN_REPOSITORY_SUT_EMPTY,
     );
-    const promise = sut.update(FAKE_GENERIC_USER_ID, FAKE_GENERIC_ACCESS_TOKEN);
+    const promise = sut.update(fakeUserId, fakeAccessToken);
     await expect(promise).rejects.toThrow(new ServerError());
   });
 
   it('Should throw ServerError if no userModel is provided', async () => {
+    const fakeUserId = faker.datatype.uuid();
+    const fakeAccessToken = faker.datatype.uuid();
     const { sut } = new SutFactory(db).create(
-      UPDATE_ACCESS_TOKEN_REPOSITORY_EMPTY_OBJECT_SUT,
+      UPDATE_ACCESS_TOKEN_REPOSITORY_SUT_EMPTY_OBJECT,
     );
-    const promise = sut.update(FAKE_GENERIC_USER_ID, FAKE_GENERIC_ACCESS_TOKEN);
+    const promise = sut.update(fakeUserId, fakeAccessToken);
     await expect(promise).rejects.toThrow(new ServerError());
   });
 
   it('Should throw ServerError if userModel provided has no updateOne method', async () => {
+    const fakeUserId = faker.datatype.uuid();
+    const fakeAccessToken = faker.datatype.uuid();
     const { sut } = new SutFactory(db).create(
-      UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_EMPTY_USER_MODEL_OBJECT_SUT,
+      UPDATE_ACCESS_TOKEN_REPOSITORY_SUT_WITH_EMPTY_USER_MODEL_OBJECT,
     );
-    const promise = sut.update(FAKE_GENERIC_USER_ID, FAKE_GENERIC_ACCESS_TOKEN);
+    const promise = sut.update(fakeUserId, fakeAccessToken);
     await expect(promise).rejects.toThrow(new ServerError());
   });
 
@@ -86,9 +93,10 @@ describe('UpdateAccessToken Repository', () => {
   });
 
   it('Should throw MissingParamError if accessToken was not provided', async () => {
+    const fakeUserId = faker.datatype.uuid();
     const userModel = db.collection('users');
     const sut = new UpdateAccessTokenRepository({ userModel });
-    const promise = sut.update(FAKE_GENERIC_USER_ID);
+    const promise = sut.update(fakeUserId);
     await expect(promise).rejects.toThrow(new MissingParamError('accessToken'));
   });
 

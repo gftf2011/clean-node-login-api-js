@@ -1,9 +1,9 @@
 const UpdateAccessTokenRepository = require('../../../../src/infra/repositories/update-access-token-repository');
 
 const {
-  UPDATE_ACCESS_TOKEN_REPOSITORY_EMPTY_SUT,
-  UPDATE_ACCESS_TOKEN_REPOSITORY_EMPTY_OBJECT_SUT,
-  UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_EMPTY_USER_MODEL_OBJECT_SUT,
+  UPDATE_ACCESS_TOKEN_REPOSITORY_SUT_EMPTY,
+  UPDATE_ACCESS_TOKEN_REPOSITORY_SUT_EMPTY_OBJECT,
+  UPDATE_ACCESS_TOKEN_REPOSITORY_SUT_WITH_EMPTY_USER_MODEL_OBJECT,
 } = require('../constants');
 
 module.exports = class SutFactory {
@@ -14,12 +14,12 @@ module.exports = class SutFactory {
   create(type) {
     this.userModel = this.db.collection('users');
 
-    if (type === UPDATE_ACCESS_TOKEN_REPOSITORY_EMPTY_SUT) {
+    if (type === UPDATE_ACCESS_TOKEN_REPOSITORY_SUT_EMPTY) {
       this.sut = new UpdateAccessTokenRepository();
-    } else if (type === UPDATE_ACCESS_TOKEN_REPOSITORY_EMPTY_OBJECT_SUT) {
+    } else if (type === UPDATE_ACCESS_TOKEN_REPOSITORY_SUT_EMPTY_OBJECT) {
       this.sut = new UpdateAccessTokenRepository({});
     } else if (
-      type === UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_EMPTY_USER_MODEL_OBJECT_SUT
+      type === UPDATE_ACCESS_TOKEN_REPOSITORY_SUT_WITH_EMPTY_USER_MODEL_OBJECT
     ) {
       this.sut = new UpdateAccessTokenRepository({ userModel: {} });
     } else {

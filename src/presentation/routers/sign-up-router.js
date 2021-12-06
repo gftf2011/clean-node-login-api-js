@@ -11,7 +11,6 @@ module.exports = class SignUpRouter {
     this.signUpUseCase = signUpUseCase;
   }
 
-  // eslint-disable-next-line consistent-return
   async route(httpRequest) {
     try {
       const { email, password, cpf, name } = httpRequest.body;
