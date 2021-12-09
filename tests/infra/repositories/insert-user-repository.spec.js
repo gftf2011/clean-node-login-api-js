@@ -76,11 +76,28 @@ describe('InsertUser Repository', () => {
       cpf: fakerBr.br.cpf(),
       name: `${faker.name.firstName()} ${faker.name.lastName()}`,
     };
-    const userModel = db.collection('users');
-    const { sut } = new SutFactory(db).create();
+    const { sut, userModel } = new SutFactory(db).create();
     const userId = await sut.insert(fakeUser);
     const userFound = await userModel.findOne({ _id: userId });
     expect(userFound._id).toStrictEqual(userId);
+  });
+
+  it('Should throw MissingParamError if no user is provided', async () => {
+    const { sut } = new SutFactory(db).create();
+    const promise = sut.insert();
+    await expect(promise).rejects.toThrow(new MissingParamError('user'));
+  });
+
+  it('Should throw ServerError if no userModel is provided', async () => {
+    const fakeUser = {
+      email: faker.internet.email(),
+      password: faker.internet.password(10, true),
+      cpf: fakerBr.br.cpf(),
+      name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+    };
+    const { sut } = new SutFactory(db).create(INSERT_USER_REPOSITORY_SUT_EMPTY);
+    const promise = sut.insert(fakeUser);
+    await expect(promise).rejects.toThrow(new ServerError());
   });
 
   afterAll(async () => {
