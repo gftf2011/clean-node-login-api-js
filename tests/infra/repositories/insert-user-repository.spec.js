@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 require('../../../src/main/bootstrap');
 
 const faker = require('faker');
@@ -9,56 +8,13 @@ const MissingParamError = require('../../../src/utils/errors/missing-param-error
 
 const MongoHelper = require('../../../src/infra/helpers/mongo-helper');
 
-const INSERT_USER_REPOSITORY_SUT_EMPTY = Symbol(
-  'INSERT_USER_REPOSITORY_SUT_EMPTY',
-);
-const INSERT_USER_REPOSITORY_SUT_EMPTY_OBJECT = Symbol(
-  'INSERT_USER_REPOSITORY_SUT_EMPTY_OBJECT',
-);
-const INSERT_USER_REPOSITORY_SUT_EMPTY_USER_MODEL_OBJECT = Symbol(
-  'INSERT_USER_REPOSITORY_SUT_EMPTY_USER_MODEL_OBJECT',
-);
+const SutFactory = require('../helpers/factory-methods/insert-user-repository-sut-factory');
 
-class InsertUserRepository {
-  constructor({ userModel } = {}) {
-    this.userModel = userModel;
-  }
-
-  async insert(user) {
-    if (!this.userModel || !this.userModel.insertOne) {
-      throw new ServerError();
-    } else if (!user) {
-      throw new MissingParamError('user');
-    }
-    const insertedUser = await this.userModel.insertOne(user);
-    return insertedUser.insertedId;
-  }
-}
-
-class SutFactory {
-  constructor(db) {
-    this.db = db;
-  }
-
-  create(type) {
-    this.userModel = this.db.collection('users');
-
-    if (type === INSERT_USER_REPOSITORY_SUT_EMPTY) {
-      this.sut = new InsertUserRepository();
-    } else if (type === INSERT_USER_REPOSITORY_SUT_EMPTY_OBJECT) {
-      this.sut = new InsertUserRepository({});
-    } else if (type === INSERT_USER_REPOSITORY_SUT_EMPTY_USER_MODEL_OBJECT) {
-      this.sut = new InsertUserRepository({ userModel: {} });
-    } else {
-      this.sut = new InsertUserRepository({ userModel: this.userModel });
-    }
-
-    return {
-      sut: this.sut,
-      userModel: this.userModel,
-    };
-  }
-}
+const {
+  INSERT_USER_REPOSITORY_SUT_EMPTY,
+  INSERT_USER_REPOSITORY_SUT_EMPTY_OBJECT,
+  INSERT_USER_REPOSITORY_SUT_EMPTY_USER_MODEL_OBJECT,
+} = require('../helpers/constants');
 
 let db;
 
