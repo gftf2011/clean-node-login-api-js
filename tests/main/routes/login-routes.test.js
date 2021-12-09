@@ -1,3 +1,4 @@
+const faker = require('faker');
 const request = require('supertest');
 const bcrypt = require('bcrypt');
 
@@ -7,13 +8,6 @@ const app = require('../../../src/main/server/app');
 const routes = require('../../../src/main/config/routes');
 
 require('../../../src/main/bootstrap');
-
-const {
-  FAKE_GENERIC_EMAIL,
-  FAKE_GENERIC_EMAIL2,
-  FAKE_GENERIC_PASSWORD,
-  FAKE_INVALID_EMAIL,
-} = require('./helpers/constants');
 
 describe('Login Routes', () => {
   let db;
@@ -30,76 +24,88 @@ describe('Login Routes', () => {
   });
 
   it('Should return 200 when valid credentials are provided', async () => {
-    const hashedPassword = await bcrypt.hash(FAKE_GENERIC_PASSWORD, 8);
+    const fakeEmail = faker.internet.email();
+    const fakePassword = faker.internet.password(10, true);
+    const hashedPassword = await bcrypt.hash(fakePassword, 8);
     await userModel.insertOne({
-      email: FAKE_GENERIC_EMAIL,
+      email: fakeEmail,
       password: hashedPassword,
     });
     await request(app)
       .post('/api/login')
       .send({
-        email: FAKE_GENERIC_EMAIL,
-        password: FAKE_GENERIC_PASSWORD,
+        email: fakeEmail,
+        password: fakePassword,
       })
       .expect(200);
   });
 
   it('Should return 400 when email is not provided', async () => {
+    const fakePassword = faker.internet.password(10, true);
     await request(app)
       .post('/api/login')
       .send({
-        password: FAKE_GENERIC_PASSWORD,
+        password: fakePassword,
       })
       .expect(400);
   });
 
   it('Should return 400 when password is not provided', async () => {
+    const fakeEmail = faker.internet.email();
     await request(app)
       .post('/api/login')
       .send({
-        email: FAKE_GENERIC_EMAIL,
+        email: fakeEmail,
       })
       .expect(400);
   });
 
   it('Should return 400 when email provided is not valid', async () => {
+    const fakeEmail = faker.internet.email();
+    const fakeInvalidEmail = 'invalid_email';
+    const fakePassword = faker.internet.password(10, true);
     await userModel.insertOne({
-      email: FAKE_GENERIC_EMAIL,
-      password: FAKE_GENERIC_PASSWORD,
+      email: fakeEmail,
+      password: fakePassword,
     });
     await request(app)
       .post('/api/login')
       .send({
-        email: FAKE_INVALID_EMAIL,
-        password: FAKE_GENERIC_PASSWORD,
+        email: fakeInvalidEmail,
+        password: fakePassword,
       })
       .expect(400);
   });
 
   it('Should return 401 when password does not match with user found', async () => {
+    const fakeEmail = faker.internet.email();
+    const fakePassword = faker.internet.password(10, true);
     await userModel.insertOne({
-      email: FAKE_GENERIC_EMAIL,
-      password: FAKE_GENERIC_PASSWORD,
+      email: fakeEmail,
+      password: fakePassword,
     });
     await request(app)
       .post('/api/login')
       .send({
-        email: FAKE_GENERIC_EMAIL,
-        password: FAKE_GENERIC_PASSWORD,
+        email: fakeEmail,
+        password: fakePassword,
       })
       .expect(401);
   });
 
   it('Should return 401 when email does not exists', async () => {
+    const fakeEmail = faker.internet.email('Rhinos', 'Tadeu');
+    const fakeEmail2 = faker.internet.email('Alexander', 'Primus');
+    const fakePassword = faker.internet.password(10, true);
     await userModel.insertOne({
-      email: FAKE_GENERIC_EMAIL,
-      password: FAKE_GENERIC_PASSWORD,
+      email: fakeEmail,
+      password: fakePassword,
     });
     await request(app)
       .post('/api/login')
       .send({
-        email: FAKE_GENERIC_EMAIL2,
-        password: FAKE_GENERIC_PASSWORD,
+        email: fakeEmail2,
+        password: fakePassword,
       })
       .expect(401);
   });
