@@ -12,6 +12,9 @@ const MongoHelper = require('../../../src/infra/helpers/mongo-helper');
 const INSERT_USER_REPOSITORY_SUT_EMPTY = Symbol(
   'INSERT_USER_REPOSITORY_SUT_EMPTY',
 );
+const INSERT_USER_REPOSITORY_SUT_EMPTY_OBJECT = Symbol(
+  'INSERT_USER_REPOSITORY_SUT_EMPTY_OBJECT',
+);
 
 class InsertUserRepository {
   constructor({ userModel } = {}) {
@@ -39,9 +42,12 @@ class SutFactory {
 
     if (type === INSERT_USER_REPOSITORY_SUT_EMPTY) {
       this.sut = new InsertUserRepository();
+    } else if (type === INSERT_USER_REPOSITORY_SUT_EMPTY_OBJECT) {
+      this.sut = new InsertUserRepository({});
     } else {
       this.sut = new InsertUserRepository({ userModel: this.userModel });
     }
+
     return {
       sut: this.sut,
       userModel: this.userModel,
@@ -96,6 +102,20 @@ describe('InsertUser Repository', () => {
       name: `${faker.name.firstName()} ${faker.name.lastName()}`,
     };
     const { sut } = new SutFactory(db).create(INSERT_USER_REPOSITORY_SUT_EMPTY);
+    const promise = sut.insert(fakeUser);
+    await expect(promise).rejects.toThrow(new ServerError());
+  });
+
+  it('Should throw ServerError if userModel has been provided in the dependencies as undefined', async () => {
+    const fakeUser = {
+      email: faker.internet.email(),
+      password: faker.internet.password(10, true),
+      cpf: fakerBr.br.cpf(),
+      name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+    };
+    const { sut } = new SutFactory(db).create(
+      INSERT_USER_REPOSITORY_SUT_EMPTY_OBJECT,
+    );
     const promise = sut.insert(fakeUser);
     await expect(promise).rejects.toThrow(new ServerError());
   });
