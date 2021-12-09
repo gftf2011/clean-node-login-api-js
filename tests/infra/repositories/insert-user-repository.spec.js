@@ -15,6 +15,9 @@ const INSERT_USER_REPOSITORY_SUT_EMPTY = Symbol(
 const INSERT_USER_REPOSITORY_SUT_EMPTY_OBJECT = Symbol(
   'INSERT_USER_REPOSITORY_SUT_EMPTY_OBJECT',
 );
+const INSERT_USER_REPOSITORY_SUT_EMPTY_USER_MODEL_OBJECT = Symbol(
+  'INSERT_USER_REPOSITORY_SUT_EMPTY_USER_MODEL_OBJECT',
+);
 
 class InsertUserRepository {
   constructor({ userModel } = {}) {
@@ -44,6 +47,8 @@ class SutFactory {
       this.sut = new InsertUserRepository();
     } else if (type === INSERT_USER_REPOSITORY_SUT_EMPTY_OBJECT) {
       this.sut = new InsertUserRepository({});
+    } else if (type === INSERT_USER_REPOSITORY_SUT_EMPTY_USER_MODEL_OBJECT) {
+      this.sut = new InsertUserRepository({ userModel: {} });
     } else {
       this.sut = new InsertUserRepository({ userModel: this.userModel });
     }
@@ -115,6 +120,20 @@ describe('InsertUser Repository', () => {
     };
     const { sut } = new SutFactory(db).create(
       INSERT_USER_REPOSITORY_SUT_EMPTY_OBJECT,
+    );
+    const promise = sut.insert(fakeUser);
+    await expect(promise).rejects.toThrow(new ServerError());
+  });
+
+  it('Should throw ServerError if userModel has no insertOne method', async () => {
+    const fakeUser = {
+      email: faker.internet.email(),
+      password: faker.internet.password(10, true),
+      cpf: fakerBr.br.cpf(),
+      name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+    };
+    const { sut } = new SutFactory(db).create(
+      INSERT_USER_REPOSITORY_SUT_EMPTY_USER_MODEL_OBJECT,
     );
     const promise = sut.insert(fakeUser);
     await expect(promise).rejects.toThrow(new ServerError());
