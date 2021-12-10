@@ -39,6 +39,15 @@ describe('SignUp Routes', () => {
     expect(userFound.name).toBe(user.name);
   });
 
+  it('Should return 400 when email is not provided', async () => {
+    const user = {
+      password: faker.internet.password(10, true),
+      cpf: fakerBr.br.cpf(),
+      name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+    };
+    await request(app).post('/api/sign-up').send(user).expect(400);
+  });
+
   afterEach(async () => {
     await userModel.deleteMany();
   });
