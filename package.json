@@ -70,6 +70,7 @@
     "fast-glob": "^3.2.7",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.1.4",
+    "morgan": "^1.10.0",
     "validator": "^13.7.0"
   },
   "engines": {
