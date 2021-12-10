@@ -48,6 +48,16 @@ describe('SignUp Routes', () => {
     await request(app).post('/api/sign-up').send(user).expect(400);
   });
 
+  it('Should return 400 when email provided is not valid', async () => {
+    const user = {
+      email: 'any_invalid_email',
+      password: faker.internet.password(10, true),
+      cpf: fakerBr.br.cpf(),
+      name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+    };
+    await request(app).post('/api/sign-up').send(user).expect(400);
+  });
+
   afterEach(async () => {
     await userModel.deleteMany();
   });
