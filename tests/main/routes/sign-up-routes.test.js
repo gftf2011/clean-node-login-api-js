@@ -58,6 +58,15 @@ describe('SignUp Routes', () => {
     await request(app).post('/api/sign-up').send(user).expect(400);
   });
 
+  it('Should return 400 when password is not provided', async () => {
+    const user = {
+      email: faker.internet.email(),
+      cpf: fakerBr.br.cpf(),
+      name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+    };
+    await request(app).post('/api/sign-up').send(user).expect(400);
+  });
+
   afterEach(async () => {
     await userModel.deleteMany();
   });
