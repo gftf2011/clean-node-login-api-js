@@ -95,6 +95,24 @@ describe('SignUp Routes', () => {
     await request(app).post('/api/sign-up').send(user).expect(400);
   });
 
+  it('Should return 403 when user tries to sign up with the same email', async () => {
+    const email = faker.internet.email();
+    const user = {
+      email,
+      password: faker.internet.password(10, true),
+      cpf: fakerBr.br.cpf(),
+      name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+    };
+    const user2 = {
+      email,
+      password: faker.internet.password(10, true),
+      cpf: fakerBr.br.cpf(),
+      name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+    };
+    await request(app).post('/api/sign-up').send(user).expect(200);
+    await request(app).post('/api/sign-up').send(user2).expect(403);
+  });
+
   afterEach(async () => {
     await userModel.deleteMany();
   });
