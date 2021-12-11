@@ -6,12 +6,12 @@ services:
     ports:
       - ${APPLICATION_PORT}:3333
     command: npm start:build
-  # redis:
-  #   image: redis:6.2.6
-  #   container_name: ${REDIS_CONTAINER_NAME}
-  #   restart: always
-  #   ports:
-  #     - ${REDIS_CLIENT_PORT}:6379
+  redis:
+    image: redis:6.2.6
+    container_name: ${REDIS_CONTAINER_NAME}
+    restart: always
+    ports:
+      - ${REDIS_CLIENT_PORT}:6379
   mongo:
     image: mongo:4.0.3
     container_name: ${MONGO_CONTAINER_NAME}

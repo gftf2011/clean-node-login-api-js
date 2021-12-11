@@ -28,7 +28,7 @@
     "jest": "^27.3.1",
     "lint-staged": "^11.2.6",
     "prettier": "^2.4.1",
-    "snyk": "^1.773.0",
+    "snyk": "^1.789.0",
     "supertest": "^6.1.6"
   },
   "scripts": {
@@ -45,7 +45,7 @@
     "start": "node src/main/index.js",
     "start:build": "node dist/main/index.js",
     "snyk:test": "npx snyk test",
-    "test": "jest --clearCache ; jest --colors --noStackTrace --passWithNoTests --detectOpenHandles",
+    "test": "snyk test && jest --clearCache ; jest --colors --noStackTrace --passWithNoTests --detectOpenHandles",
     "test:all": "jest --clearCache ; jest --watchAll --colors --noStackTrace --passWithNoTests --runInBand",
     "test:unit": "jest --clearCache ; jest --colors --noStackTrace --passWithNoTests --runInBand --watch -c jest-unit-config.js",
     "test:integration": "jest --clearCache ; jest --colors --noStackTrace --passWithNoTests --runInBand --watch -c jest-integration-config.js",
@@ -67,6 +67,8 @@
     "cpf-cnpj-validator": "^1.0.3",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "express-brute": "^1.0.1",
+    "express-brute-redis": "^0.0.1",
     "fast-glob": "^3.2.7",
     "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
