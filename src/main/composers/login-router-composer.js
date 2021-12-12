@@ -15,14 +15,13 @@ const TokenGenerator = require('../../utils/generators/token-generator');
 const Encrypter = require('../../utils/encrypter');
 const EmailValidator = require('../../utils/validators/email-validator');
 
-// ENV
-const { TOKEN_SECRET } = require('../config/env');
-
 module.exports = class LoginRouterComposer {
   compose() {
     const userModel = MongoHelper.getDb().collection('users');
 
-    const tokenGenerator = new TokenGenerator({ secret: TOKEN_SECRET });
+    const tokenGenerator = new TokenGenerator({
+      secret: process.env.TOKEN_SECRET,
+    });
     const encrypter = new Encrypter();
     const emailValidator = new EmailValidator();
 

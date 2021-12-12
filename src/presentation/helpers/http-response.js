@@ -1,5 +1,6 @@
 const UnauthorizedUserError = require('../../utils/errors/unauthorized-user-error');
 const ForbiddenUserRegistrationError = require('../../utils/errors/forbidden-user-registration-error');
+const NoTokenProvidedError = require('../../utils/errors/no-token-provided-error');
 
 module.exports = class HttpResponse {
   static success(data) {
@@ -20,6 +21,13 @@ module.exports = class HttpResponse {
     return {
       statusCode: 401,
       body: new UnauthorizedUserError(),
+    };
+  }
+
+  static noTokenProvided() {
+    return {
+      statusCode: 401,
+      body: new NoTokenProvidedError(),
     };
   }
 
