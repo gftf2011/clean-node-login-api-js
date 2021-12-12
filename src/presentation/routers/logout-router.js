@@ -1,7 +1,8 @@
 const HttpResponse = require('../helpers/http-response');
 
 module.exports = class LogOutRouter {
-  constructor({ tokenValidator } = {}) {
+  constructor({ tokenValidator, logOutUseCase } = {}) {
+    this.logOutUseCase = logOutUseCase;
     this.tokenValidator = tokenValidator;
   }
 
@@ -12,9 +13,13 @@ module.exports = class LogOutRouter {
     if (!token) {
       return HttpResponse.noTokenProvided();
     }
-    const userId = await this.tokenValidator.retriveUserId(token);
+    const userId = await this.tokenValidator.retrieveUserId(token);
     if (!userId) {
       return HttpResponse.unauthorizedUser();
+    }
+    const isLoggedOut = await this.logOutUseCase.execute(userId);
+    if (!isLoggedOut) {
+      return HttpResponse.noUserFound();
     }
   }
 };
