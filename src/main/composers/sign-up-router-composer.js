@@ -17,14 +17,13 @@ const Encrypter = require('../../utils/encrypter');
 const EmailValidator = require('../../utils/validators/email-validator');
 const CpfValidator = require('../../utils/validators/cpf-validator');
 
-// ENV
-const { TOKEN_SECRET } = require('../config/env');
-
 module.exports = class SignUpRouterComposer {
   compose() {
     const userModel = MongoHelper.getDb().collection('users');
 
-    const tokenGenerator = new TokenGenerator({ secret: TOKEN_SECRET });
+    const tokenGenerator = new TokenGenerator({
+      secret: process.env.TOKEN_SECRET,
+    });
     const encrypter = new Encrypter();
     const emailValidator = new EmailValidator();
     const cpfValidator = new CpfValidator();

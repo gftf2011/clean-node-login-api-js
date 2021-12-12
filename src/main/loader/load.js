@@ -1,13 +1,12 @@
 const MongoHelper = require('../../infra/helpers/mongo-helper');
 
-const {
-  MONGO_URL,
-  MONGO_INITDB_DATABASE,
-  MONGO_RETRY,
-} = require('../config/env');
-
 module.exports = async () => {
-  MongoHelper.setRetryConnection(MONGO_RETRY);
-  MongoHelper.setRetryDisconnection(MONGO_RETRY);
-  await MongoHelper.connect(MONGO_URL, MONGO_INITDB_DATABASE);
+  MongoHelper.setRetryConnection(parseInt(process.env.MONGO_CONNECT_RETRY, 10));
+  MongoHelper.setRetryDisconnection(
+    parseInt(process.env.MONGO_CONNECT_RETRY, 10),
+  );
+  await MongoHelper.connect(
+    process.env.MONGO_URL,
+    process.env.MONGO_INITDB_DATABASE,
+  );
 };
