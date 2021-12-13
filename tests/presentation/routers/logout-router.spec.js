@@ -2,6 +2,7 @@ const faker = require('faker');
 
 const NoTokenProvidedError = require('../../../src/utils/errors/no-token-provided-error');
 const NoUserFoundError = require('../../../src/utils/errors/no-user-found-error');
+const ServerError = require('../../../src/utils/errors/server-error');
 const UnauthorizedUserError = require('../../../src/utils/errors/unauthorized-user-error');
 
 const SutFactory = require('../helpers/factory-methods/logout-router-sut-factory');
@@ -85,5 +86,12 @@ describe('LogOut Router', () => {
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(204);
     expect(httpResponse.body).toBeNull();
+  });
+
+  it('Should return 500 if no "httpRequest" is provided', async () => {
+    const { sut } = new SutFactory().create();
+    const httpResponse = await sut.route();
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
   });
 });
