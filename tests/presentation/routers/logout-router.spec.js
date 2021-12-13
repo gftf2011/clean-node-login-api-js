@@ -47,4 +47,15 @@ describe('LogOut Router', () => {
     expect(httpResponse.statusCode).toBe(404);
     expect(httpResponse.body).toEqual(new NoUserFoundError());
   });
+
+  it('Should call TokenValidator with authorization token', async () => {
+    const { sut, tokenValidatorSpy } = new SutFactory().create();
+    const httpRequest = {
+      headers: {
+        authorization: faker.datatype.uuid(),
+      },
+    };
+    await sut.route(httpRequest);
+    expect(httpRequest.headers.authorization).toBe(tokenValidatorSpy.token);
+  });
 });
