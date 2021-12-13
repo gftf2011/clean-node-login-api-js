@@ -71,4 +71,19 @@ describe('LogOut Router', () => {
     await sut.route(httpRequest);
     expect(tokenValidatorSpy.userId).toBe(logOutUseCaseSpy.userId);
   });
+
+  it('Should return 204 when valid authorization is provided', async () => {
+    const { sut, tokenValidatorSpy, logOutUseCaseSpy } =
+      new SutFactory().create();
+    const httpRequest = {
+      headers: {
+        authorization: faker.datatype.uuid(),
+      },
+    };
+    tokenValidatorSpy.userId = faker.datatype.uuid();
+    logOutUseCaseSpy.isLoggedOut = true;
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(204);
+    expect(httpResponse.body).toBeNull();
+  });
 });
