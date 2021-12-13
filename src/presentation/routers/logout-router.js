@@ -6,7 +6,6 @@ module.exports = class LogOutRouter {
     this.tokenValidator = tokenValidator;
   }
 
-  // eslint-disable-next-line consistent-return
   async route(httpRequest) {
     const { authorization: token } = httpRequest.headers;
 
@@ -21,5 +20,6 @@ module.exports = class LogOutRouter {
     if (!isLoggedOut) {
       return HttpResponse.noUserFound();
     }
+    return HttpResponse.noContentResponse();
   }
 };
