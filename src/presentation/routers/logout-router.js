@@ -1,3 +1,4 @@
+const ServerError = require('../../utils/errors/server-error');
 const HttpResponse = require('../helpers/http-response');
 
 module.exports = class LogOutRouter {
@@ -7,19 +8,23 @@ module.exports = class LogOutRouter {
   }
 
   async route(httpRequest) {
-    const { authorization: token } = httpRequest.headers;
+    try {
+      const { authorization: token } = httpRequest.headers;
 
-    if (!token) {
-      return HttpResponse.noTokenProvided();
+      if (!token) {
+        return HttpResponse.noTokenProvided();
+      }
+      const userId = await this.tokenValidator.retrieveUserId(token);
+      if (!userId) {
+        return HttpResponse.unauthorizedUser();
+      }
+      const isLoggedOut = await this.logOutUseCase.execute(userId);
+      if (!isLoggedOut) {
+        return HttpResponse.noUserFound();
+      }
+      return HttpResponse.noContentResponse();
+    } catch (err) {
+      return HttpResponse.serverError(new ServerError());
     }
-    const userId = await this.tokenValidator.retrieveUserId(token);
-    if (!userId) {
-      return HttpResponse.unauthorizedUser();
-    }
-    const isLoggedOut = await this.logOutUseCase.execute(userId);
-    if (!isLoggedOut) {
-      return HttpResponse.noUserFound();
-    }
-    return HttpResponse.noContentResponse();
   }
 };
