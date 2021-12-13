@@ -58,4 +58,17 @@ describe('LogOut Router', () => {
     await sut.route(httpRequest);
     expect(httpRequest.headers.authorization).toBe(tokenValidatorSpy.token);
   });
+
+  it('Should call LogOutUseCase with userId', async () => {
+    const { sut, tokenValidatorSpy, logOutUseCaseSpy } =
+      new SutFactory().create();
+    const httpRequest = {
+      headers: {
+        authorization: faker.datatype.uuid(),
+      },
+    };
+    tokenValidatorSpy.userId = faker.datatype.uuid();
+    await sut.route(httpRequest);
+    expect(tokenValidatorSpy.userId).toBe(logOutUseCaseSpy.userId);
+  });
 });
