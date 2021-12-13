@@ -94,4 +94,11 @@ describe('LogOut Router', () => {
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
   });
+
+  it('Should return 500 if "httpRequest" has no headers provided', async () => {
+    const { sut } = new SutFactory().create();
+    const httpResponse = await sut.route({});
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
+  });
 });
