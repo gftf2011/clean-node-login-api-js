@@ -141,4 +141,18 @@ describe('LogOut Router', () => {
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
   });
+
+  it('Should return 500 if TokenValidator has no retrieveUserId method', async () => {
+    const sut = new LogOutRouter({
+      tokenValidator: {},
+    });
+    const httpRequest = {
+      headers: {
+        authorization: faker.datatype.uuid(),
+      },
+    };
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
+  });
 });
