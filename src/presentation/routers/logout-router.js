@@ -1,3 +1,4 @@
+const MissingParamError = require('../../utils/errors/missing-param-error');
 const ServerError = require('../../utils/errors/server-error');
 const HttpResponse = require('../helpers/http-response');
 
@@ -23,7 +24,10 @@ module.exports = class LogOutRouter {
         return HttpResponse.noUserFound();
       }
       return HttpResponse.noContentResponse();
-    } catch (err) {
+    } catch (error) {
+      if (error instanceof MissingParamError) {
+        return HttpResponse.badRequest(error);
+      }
       return HttpResponse.serverError(new ServerError());
     }
   }
