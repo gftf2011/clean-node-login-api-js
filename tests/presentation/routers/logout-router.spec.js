@@ -1,6 +1,6 @@
 const faker = require('faker');
 
-const { MongoNotConnectedError } = require('mongodb');
+const { MongoNotConnectedError, MongoServerClosedError } = require('mongodb');
 const NoTokenProvidedError = require('../../../src/utils/errors/no-token-provided-error');
 const NoUserFoundError = require('../../../src/utils/errors/no-user-found-error');
 const ServerError = require('../../../src/utils/errors/server-error');
@@ -17,6 +17,7 @@ const {
   LOGOUT_ROUTER_SUT_LOGOUT_USE_CASE_NO_USER_ID_ERROR,
   LOGOUT_ROUTER_SUT_LOGOUT_USE_CASE_THROWING_SERVER_ERROR,
   LOGOUT_ROUTER_SUT_LOGOUT_USE_CASE_THROWING_MONGO_CONNECTION_ERROR,
+  LOGOUT_ROUTER_SUT_LOGOUT_USE_CASE_THROWING_MONGO_CLOSE_ERROR,
 } = require('../helpers/constants');
 
 // Receber o bearer token - (accessToken)
@@ -258,6 +259,23 @@ describe('LogOut Router', () => {
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(
       new MongoNotConnectedError('Not possible to connect to MongoDB Driver'),
+    );
+  });
+
+  it('Should return 500 if LogOutUseCase throws MongoServerClosedError', async () => {
+    const { sut, tokenValidatorSpy } = new SutFactory().create(
+      LOGOUT_ROUTER_SUT_LOGOUT_USE_CASE_THROWING_MONGO_CLOSE_ERROR,
+    );
+    const httpRequest = {
+      headers: {
+        authorization: faker.datatype.uuid(),
+      },
+    };
+    tokenValidatorSpy.userId = faker.datatype.uuid();
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(
+      new MongoServerClosedError('Not possible to close MongoDB Driver'),
     );
   });
 });
