@@ -25,7 +25,6 @@ module.exports = class LoginRouter {
         return HttpResponse.badRequest(new MissingParamError('password'));
       }
 
-      // accessToken is temporary, will be replaced by an object of existent User in the database
       const accessToken = await this.authUseCase.execute(email, password);
       if (!accessToken) {
         return HttpResponse.unauthorizedUser();
