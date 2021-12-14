@@ -8,6 +8,7 @@ const UnauthorizedUserError = require('../../../src/utils/errors/unauthorized-us
 const SutFactory = require('../helpers/factory-methods/logout-router-sut-factory');
 
 const LogOutRouter = require('../../../src/presentation/routers/logout-router');
+const TokenValidatorSpyFactory = require('../helpers/abstract-factories/spies/token-validator-spy-factory');
 
 // Receber o bearer token - (accessToken)
 // Verificar o bearer token é válido
@@ -151,6 +152,23 @@ describe('LogOut Router', () => {
         authorization: faker.datatype.uuid(),
       },
     };
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
+  });
+
+  it('Should return 500 if no LogOutUseCase is provided', async () => {
+    const tokenValidatorSpy = new TokenValidatorSpyFactory().create();
+    const sut = new LogOutRouter({
+      tokenValidator: tokenValidatorSpy,
+      logOutUseCase: undefined,
+    });
+    const httpRequest = {
+      headers: {
+        authorization: faker.datatype.uuid(),
+      },
+    };
+    tokenValidatorSpy.userId = faker.datatype.uuid();
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
