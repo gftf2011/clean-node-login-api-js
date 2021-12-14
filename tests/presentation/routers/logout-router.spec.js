@@ -173,4 +173,21 @@ describe('LogOut Router', () => {
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
   });
+
+  it('Should return 500 if LogOutUseCase has no execute method', async () => {
+    const tokenValidatorSpy = new TokenValidatorSpyFactory().create();
+    const sut = new LogOutRouter({
+      tokenValidator: tokenValidatorSpy,
+      logOutUseCase: {},
+    });
+    const httpRequest = {
+      headers: {
+        authorization: faker.datatype.uuid(),
+      },
+    };
+    tokenValidatorSpy.userId = faker.datatype.uuid();
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
+  });
 });
