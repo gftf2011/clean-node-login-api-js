@@ -1,3 +1,4 @@
+const { MongoNotConnectedError } = require('mongodb');
 const LogOutRouter = require('../../../../src/presentation/routers/logout-router');
 const MissingParamError = require('../../../../src/utils/errors/missing-param-error');
 const ServerError = require('../../../../src/utils/errors/server-error');
@@ -8,6 +9,7 @@ const {
   LOGOUT_ROUTER_SUT_TOKEN_VALIDATOR_NO_TOKEN_ERROR,
   LOGOUT_ROUTER_SUT_LOGOUT_USE_CASE_NO_USER_ID_ERROR,
   LOGOUT_ROUTER_SUT_LOGOUT_USE_CASE_THROWING_SERVER_ERROR,
+  LOGOUT_ROUTER_SUT_LOGOUT_USE_CASE_THROWING_MONGO_CONNECTION_ERROR,
 } = require('../constants');
 
 module.exports = class SutFactory {
@@ -28,6 +30,15 @@ module.exports = class SutFactory {
       this.dependencies.logOutUseCaseSpy.execute = userId => {
         this.dependencies.logOutUseCaseSpy.userId = userId;
         throw new ServerError();
+      };
+    } else if (
+      type === LOGOUT_ROUTER_SUT_LOGOUT_USE_CASE_THROWING_MONGO_CONNECTION_ERROR
+    ) {
+      this.dependencies.logOutUseCaseSpy.execute = userId => {
+        this.dependencies.logOutUseCaseSpy.userId = userId;
+        throw new MongoNotConnectedError(
+          'Not possible to connect to MongoDB Driver',
+        );
       };
     }
 

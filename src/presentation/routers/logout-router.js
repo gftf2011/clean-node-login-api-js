@@ -1,3 +1,4 @@
+const { MongoNotConnectedError, MongoServerClosedError } = require('mongodb');
 const MissingParamError = require('../../utils/errors/missing-param-error');
 const ServerError = require('../../utils/errors/server-error');
 const HttpResponse = require('../helpers/http-response');
@@ -27,6 +28,12 @@ module.exports = class LogOutRouter {
     } catch (error) {
       if (error instanceof MissingParamError) {
         return HttpResponse.badRequest(error);
+      }
+      if (
+        error instanceof MongoNotConnectedError ||
+        error instanceof MongoServerClosedError
+      ) {
+        return HttpResponse.serverError(error);
       }
       return HttpResponse.serverError(new ServerError());
     }
