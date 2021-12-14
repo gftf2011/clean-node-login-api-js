@@ -13,6 +13,7 @@ const MissingParamError = require('../../../src/utils/errors/missing-param-error
 
 const {
   LOGOUT_ROUTER_SUT_TOKEN_VALIDATOR_NO_TOKEN_ERROR,
+  LOGOUT_ROUTER_SUT_LOGOUT_USE_CASE_NO_USER_ID_ERROR,
 } = require('../helpers/constants');
 
 // Receber o bearer token - (accessToken)
@@ -94,6 +95,35 @@ describe('LogOut Router', () => {
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(204);
     expect(httpResponse.body).toBeNull();
+  });
+
+  it('Should return 400 TokenValidator throws MissingParamError', async () => {
+    const { sut } = new SutFactory().create(
+      LOGOUT_ROUTER_SUT_TOKEN_VALIDATOR_NO_TOKEN_ERROR,
+    );
+    const httpRequest = {
+      headers: {
+        authorization: faker.datatype.uuid(),
+      },
+    };
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new MissingParamError('token'));
+  });
+
+  it('Should return 400 LogOutUseCase throws MissingParamError', async () => {
+    const { sut, tokenValidatorSpy } = new SutFactory().create(
+      LOGOUT_ROUTER_SUT_LOGOUT_USE_CASE_NO_USER_ID_ERROR,
+    );
+    const httpRequest = {
+      headers: {
+        authorization: faker.datatype.uuid(),
+      },
+    };
+    tokenValidatorSpy.userId = faker.datatype.uuid();
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new MissingParamError('userId'));
   });
 
   it('Should return 500 if no "httpRequest" is provided', async () => {
@@ -194,19 +224,5 @@ describe('LogOut Router', () => {
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
-  });
-
-  it('Should return 400 TokenValidator throws MissingParamError', async () => {
-    const { sut } = new SutFactory().create(
-      LOGOUT_ROUTER_SUT_TOKEN_VALIDATOR_NO_TOKEN_ERROR,
-    );
-    const httpRequest = {
-      headers: {
-        authorization: faker.datatype.uuid(),
-      },
-    };
-    const httpResponse = await sut.route(httpRequest);
-    expect(httpResponse.statusCode).toBe(400);
-    expect(httpResponse.body).toEqual(new MissingParamError('token'));
   });
 });

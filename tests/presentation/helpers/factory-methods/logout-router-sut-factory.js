@@ -5,6 +5,7 @@ const DependenciesFactory = require('../abstract-factories/logout-router-depende
 
 const {
   LOGOUT_ROUTER_SUT_TOKEN_VALIDATOR_NO_TOKEN_ERROR,
+  LOGOUT_ROUTER_SUT_LOGOUT_USE_CASE_NO_USER_ID_ERROR,
 } = require('../constants');
 
 module.exports = class SutFactory {
@@ -15,6 +16,11 @@ module.exports = class SutFactory {
       this.dependencies.tokenValidatorSpy.retrieveUserId = async token => {
         this.dependencies.tokenValidatorSpy.token = token;
         throw new MissingParamError('token');
+      };
+    } else if (type === LOGOUT_ROUTER_SUT_LOGOUT_USE_CASE_NO_USER_ID_ERROR) {
+      this.dependencies.logOutUseCaseSpy.execute = async userId => {
+        this.dependencies.logOutUseCaseSpy.userId = userId;
+        throw new MissingParamError('userId');
       };
     }
 
