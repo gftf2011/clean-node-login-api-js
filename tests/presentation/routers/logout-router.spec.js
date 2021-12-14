@@ -14,6 +14,7 @@ const MissingParamError = require('../../../src/utils/errors/missing-param-error
 const {
   LOGOUT_ROUTER_SUT_TOKEN_VALIDATOR_NO_TOKEN_ERROR,
   LOGOUT_ROUTER_SUT_LOGOUT_USE_CASE_NO_USER_ID_ERROR,
+  LOGOUT_ROUTER_SUT_LOGOUT_USE_CASE_THROWING_SERVER_ERROR,
 } = require('../helpers/constants');
 
 // Receber o bearer token - (accessToken)
@@ -124,6 +125,21 @@ describe('LogOut Router', () => {
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError('userId'));
+  });
+
+  it('Should return 500 LogOutUseCase throws ServerError', async () => {
+    const { sut, tokenValidatorSpy } = new SutFactory().create(
+      LOGOUT_ROUTER_SUT_LOGOUT_USE_CASE_THROWING_SERVER_ERROR,
+    );
+    const httpRequest = {
+      headers: {
+        authorization: faker.datatype.uuid(),
+      },
+    };
+    tokenValidatorSpy.userId = faker.datatype.uuid();
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
   });
 
   it('Should return 500 if no "httpRequest" is provided', async () => {
