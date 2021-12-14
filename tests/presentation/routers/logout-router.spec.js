@@ -115,4 +115,16 @@ describe('LogOut Router', () => {
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
   });
+
+  it('Should return 500 if dependency is an empty object provided', async () => {
+    const sut = new LogOutRouter({});
+    const httpRequest = {
+      headers: {
+        authorization: faker.datatype.uuid(),
+      },
+    };
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
+  });
 });
