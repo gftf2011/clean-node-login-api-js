@@ -1,5 +1,5 @@
 module.exports = class TokenValidatorSpy {
-  async retrieveUserId(token) {
+  retrieveUserId(token) {
     this.token = token;
     return this.userId;
   }
