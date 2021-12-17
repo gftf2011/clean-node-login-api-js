@@ -13,11 +13,22 @@ jest.mock('jsonwebtoken', () => ({
 }));
 
 describe('Token Validator', () => {
-  it('Should return "id" if valid token and secret are provided', async () => {
+  it('Should call validator with correct token and secret', () => {
+    process.env.TOKEN_SECRET = faker.datatype.uuid();
+    jwt.decodedId = { _id: faker.datatype.uuid() };
+    const fakeToken = faker.datatype.uuid();
+    const fakeAuth = `Bearer ${fakeToken}`;
+    const { sut } = new SutFactory().create();
+    sut.retrieveUserId(fakeAuth);
+    expect(jwt.token).toBe(fakeToken);
+    expect(jwt.secret).toBe(process.env.TOKEN_SECRET);
+  });
+
+  it('Should return "id" if valid token and secret are provided', () => {
     jwt.decodedId = { _id: faker.datatype.uuid() };
     const fakeAuth = `Bearer ${faker.datatype.uuid()}`;
     const { sut } = new SutFactory().create();
-    const id = await sut.retrieveUserId(fakeAuth);
+    const id = sut.retrieveUserId(fakeAuth);
     expect(id).toBe(jwt.decodedId._id);
   });
 });
