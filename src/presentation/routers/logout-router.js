@@ -16,7 +16,7 @@ module.exports = class LogOutRouter {
       if (!token) {
         return HttpResponse.noTokenProvided();
       }
-      const userId = await this.tokenValidator.retrieveUserId(token);
+      const userId = this.tokenValidator.retrieveUserId(token);
       if (!userId) {
         return HttpResponse.unauthorizedUser();
       }
