@@ -31,4 +31,14 @@ describe('Token Validator', () => {
     const id = sut.retrieveUserId(fakeAuth);
     expect(id).toBe(jwt.decodedId._id);
   });
+
+  it('Should return null if jwt verify throws error', () => {
+    jest.spyOn(jwt, 'verify').mockImplementationOnce((_token, _secret) => {
+      throw new Error();
+    });
+    const fakeAuth = `Bearer ${faker.datatype.uuid()}`;
+    const { sut } = new SutFactory().create();
+    const id = sut.retrieveUserId(fakeAuth);
+    expect(id).toBeNull();
+  });
 });
