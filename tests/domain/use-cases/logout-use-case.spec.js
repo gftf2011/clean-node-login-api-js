@@ -9,6 +9,13 @@ const faker = require('faker');
 const SutFactory = require('../helpers/factory-mothods/logout-use-case-sut-factory');
 
 describe('LogOut UseCase', () => {
+  it('Should call LoadUserByIdRepository with correct userId', async () => {
+    const fakeUserId = faker.datatype.uuid();
+    const { sut, loadUserByIdRepositorySpy } = new SutFactory().create();
+    await sut.execute(fakeUserId);
+    expect(loadUserByIdRepositorySpy.userId).toBe(fakeUserId);
+  });
+
   it('Should return "false" if LoadUserByIdRepository load returns no user', async () => {
     const fakeUserId = faker.datatype.uuid();
     const { sut, loadUserByIdRepositorySpy } = new SutFactory().create();
