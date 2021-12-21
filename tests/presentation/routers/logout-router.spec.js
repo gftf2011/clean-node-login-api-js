@@ -20,12 +20,6 @@ const {
   LOGOUT_ROUTER_SUT_LOGOUT_USE_CASE_THROWING_MONGO_CLOSE_ERROR,
 } = require('../helpers/constants');
 
-// Receber o bearer token - (accessToken)
-// Verificar o bearer token é válido
-// Pegar o id de usuário dentro do bearer token
-// Verificar se o usuário existe
-// Setar o accessToken como nulo a partir do ID
-
 describe('LogOut Router', () => {
   it('Should throw error if no authorization is provided', async () => {
     const { sut } = new SutFactory().create();
