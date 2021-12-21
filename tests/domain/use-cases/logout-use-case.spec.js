@@ -23,4 +23,12 @@ describe('LogOut UseCase', () => {
     const isLoggedOut = await sut.execute(fakeUserId);
     expect(isLoggedOut).toBeFalsy();
   });
+
+  it('Should return "true" if UpdateAccessTokenRepository updates user accessToken', async () => {
+    const fakeUserId = faker.datatype.uuid();
+    const { sut, loadUserByIdRepositorySpy } = new SutFactory().create();
+    loadUserByIdRepositorySpy.user = {};
+    const isLoggedOut = await sut.execute(fakeUserId);
+    expect(isLoggedOut).toBeTruthy();
+  });
 });
