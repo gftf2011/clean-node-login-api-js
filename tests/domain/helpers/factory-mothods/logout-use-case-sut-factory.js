@@ -8,6 +8,8 @@ module.exports = class SutFactory {
 
     this.sut = new LogOutUseCase({
       loadUserByIdRepository: this.dependencies.loadUserByIdRepositorySpy,
+      updateAccessTokenRepository:
+        this.dependencies.updateAccessTokenRepositorySpy,
     });
 
     return {
