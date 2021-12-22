@@ -16,6 +16,16 @@ describe('LogOut UseCase', () => {
     expect(loadUserByIdRepositorySpy.userId).toBe(fakeUserId);
   });
 
+  it('Should call UpdateAccessTokenRepository with correct values', async () => {
+    const fakeUserId = faker.datatype.uuid();
+    const { sut, loadUserByIdRepositorySpy, updateAccessTokenRepositorySpy } =
+      new SutFactory().create();
+    loadUserByIdRepositorySpy.user = {};
+    await sut.execute(fakeUserId);
+    expect(updateAccessTokenRepositorySpy.accessToken).toBeNull();
+    expect(updateAccessTokenRepositorySpy.userId).toBe(fakeUserId);
+  });
+
   it('Should return "false" if LoadUserByIdRepository load returns no user', async () => {
     const fakeUserId = faker.datatype.uuid();
     const { sut, loadUserByIdRepositorySpy } = new SutFactory().create();
