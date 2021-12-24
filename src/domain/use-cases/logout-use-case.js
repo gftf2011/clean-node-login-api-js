@@ -7,7 +7,7 @@ module.exports = class LogOutUseCase {
   }
 
   async execute(userId) {
-    if (!this.loadUserByIdRepository) {
+    if (!this.loadUserByIdRepository || !this.loadUserByIdRepository.load) {
       throw new ServerError();
     }
     const user = await this.loadUserByIdRepository.load(userId);
