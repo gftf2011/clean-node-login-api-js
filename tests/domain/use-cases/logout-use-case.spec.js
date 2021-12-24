@@ -51,4 +51,11 @@ describe('LogOut UseCase', () => {
     const promise = sut.execute(fakeUserId);
     await expect(promise).rejects.toThrow(new ServerError());
   });
+
+  it('Should throw error if dependency is an empty object', async () => {
+    const fakeUserId = faker.datatype.uuid();
+    const sut = new LogOutUseCase({});
+    const promise = sut.execute(fakeUserId);
+    await expect(promise).rejects.toThrow(new ServerError());
+  });
 });
