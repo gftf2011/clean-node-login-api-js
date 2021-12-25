@@ -11,7 +11,8 @@ module.exports = class LogOutUseCase {
     if (
       !this.loadUserByIdRepository ||
       !this.loadUserByIdRepository.load ||
-      !this.updateAccessTokenRepository
+      !this.updateAccessTokenRepository ||
+      !this.updateAccessTokenRepository.update
     ) {
       throw new ServerError();
     }
