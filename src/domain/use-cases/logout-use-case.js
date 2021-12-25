@@ -8,7 +8,11 @@ module.exports = class LogOutUseCase {
   }
 
   async execute(userId) {
-    if (!this.loadUserByIdRepository || !this.loadUserByIdRepository.load) {
+    if (
+      !this.loadUserByIdRepository ||
+      !this.loadUserByIdRepository.load ||
+      !this.updateAccessTokenRepository
+    ) {
       throw new ServerError();
     }
     if (!userId) {
