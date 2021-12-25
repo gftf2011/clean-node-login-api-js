@@ -95,4 +95,15 @@ describe('LogOut UseCase', () => {
     const promise = sut.execute(fakeUserId);
     await expect(promise).rejects.toThrow(new ServerError());
   });
+
+  it('Should throw error if UpdateAccessTokenRepository has no update method', async () => {
+    const fakeUserId = faker.datatype.uuid();
+    const { loadUserByIdRepositorySpy } = new SutFactory().create();
+    const sut = new LogOutUseCase({
+      loadUserByIdRepository: loadUserByIdRepositorySpy,
+      updateAccessTokenRepository: {},
+    });
+    const promise = sut.execute(fakeUserId);
+    await expect(promise).rejects.toThrow(new ServerError());
+  });
 });
