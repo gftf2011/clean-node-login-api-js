@@ -4,6 +4,7 @@ const LogOutUseCase = require('../../../../src/domain/use-cases/logout-use-case'
 
 const {
   LOG_OUT_USE_CASE_SUT_LOAD_USER_BY_ID_REPOSITORY_WITH_ERROR,
+  LOG_OUT_USE_CASE_SUT_UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR,
 } = require('../constants');
 
 const ServerError = require('../../../../src/utils/errors/server-error');
@@ -14,6 +15,12 @@ module.exports = class SutFactory {
 
     if (type === LOG_OUT_USE_CASE_SUT_LOAD_USER_BY_ID_REPOSITORY_WITH_ERROR) {
       this.dependencies.loadUserByIdRepositorySpy.load = () => {
+        return Promise.reject(new ServerError());
+      };
+    } else if (
+      type === LOG_OUT_USE_CASE_SUT_UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR
+    ) {
+      this.dependencies.updateAccessTokenRepositorySpy.update = () => {
         return Promise.reject(new ServerError());
       };
     }
