@@ -15,6 +15,7 @@ const MissingParamError = require('../../../src/utils/errors/missing-param-error
 
 const {
   LOG_OUT_USE_CASE_SUT_LOAD_USER_BY_ID_REPOSITORY_WITH_ERROR,
+  LOG_OUT_USE_CASE_SUT_UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR,
 } = require('../helpers/constants');
 
 describe('LogOut UseCase', () => {
@@ -131,5 +132,31 @@ describe('LogOut UseCase', () => {
     await expect(spyLoadUserByIdRepository).rejects.toThrow(new ServerError());
     await expect(promise).rejects.toThrow(new ServerError());
     await expect(spyUpdateAccessTokenRepository).not.toHaveBeenCalled();
+  });
+
+  it('Should throw error if UpdateAccessTokenRepository throws error', async () => {
+    const fakeUserId = faker.datatype.uuid();
+    const { sut, loadUserByIdRepositorySpy, updateAccessTokenRepositorySpy } =
+      new SutFactory().create(
+        LOG_OUT_USE_CASE_SUT_UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR,
+      );
+    loadUserByIdRepositorySpy.user = {};
+    const spyLoadUserByIdRepository = jest.spyOn(
+      loadUserByIdRepositorySpy,
+      'load',
+    );
+    const spyUpdateAccessTokenRepository = jest.spyOn(
+      updateAccessTokenRepositorySpy,
+      'update',
+    );
+    const promise = sut.execute(fakeUserId);
+    await expect(spyLoadUserByIdRepository).toHaveBeenCalled();
+    await expect(spyLoadUserByIdRepository).toHaveBeenCalledTimes(1);
+    await expect(promise).rejects.toThrow(new ServerError());
+    await expect(spyUpdateAccessTokenRepository).toHaveBeenCalled();
+    await expect(spyUpdateAccessTokenRepository).toHaveBeenCalledTimes(1);
+    await expect(spyUpdateAccessTokenRepository).rejects.toThrow(
+      new ServerError(),
+    );
   });
 });
