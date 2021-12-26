@@ -12,10 +12,10 @@ const EncrypterSpyFactory = require('../helpers/abstract-factories/spies/encrypt
 const TokenGeneratorSpyFactory = require('../helpers/abstract-factories/spies/token-generator-spy-factory');
 
 const {
-  LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR_SUT,
-  ENCRYPTER_WITH_ERROR_SUT,
-  TOKEN_GENERATOR_WITH_ERROR_SUT,
-  UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR_SUT,
+  AUTH_USE_CASE_SUT_LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR,
+  AUTH_USE_CASE_SUT_ENCRYPTER_WITH_ERROR,
+  AUTH_USE_CASE_SUT_TOKEN_GENERATOR_WITH_ERROR,
+  AUTH_USE_CASE_SUT_UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR,
 } = require('../helpers/constants');
 
 describe('Auth UseCase', () => {
@@ -256,7 +256,7 @@ describe('Auth UseCase', () => {
     const fakeEmail = faker.internet.email();
     const fakePassword = faker.internet.password(10, true);
     const { sut } = new SutFactory().create(
-      LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR_SUT,
+      AUTH_USE_CASE_SUT_LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR,
     );
     const promise = sut.execute(fakeEmail, fakePassword);
     await expect(promise).rejects.toThrow(new ServerError());
@@ -268,7 +268,7 @@ describe('Auth UseCase', () => {
     const fakeHashedPassword = faker.internet.password(64, false);
     const fakeUserId = faker.datatype.uuid();
     const { sut, loadUserByEmailRepositorySpy } = new SutFactory().create(
-      ENCRYPTER_WITH_ERROR_SUT,
+      AUTH_USE_CASE_SUT_ENCRYPTER_WITH_ERROR,
     );
     loadUserByEmailRepositorySpy.user = {
       id: fakeUserId,
@@ -284,7 +284,7 @@ describe('Auth UseCase', () => {
     const fakeHashedPassword = faker.internet.password(64, false);
     const fakeUserId = faker.datatype.uuid();
     const { sut, loadUserByEmailRepositorySpy } = new SutFactory().create(
-      TOKEN_GENERATOR_WITH_ERROR_SUT,
+      AUTH_USE_CASE_SUT_TOKEN_GENERATOR_WITH_ERROR,
     );
     loadUserByEmailRepositorySpy.user = {
       id: fakeUserId,
@@ -300,7 +300,7 @@ describe('Auth UseCase', () => {
     const fakeHashedPassword = faker.internet.password(64, false);
     const fakeUserId = faker.datatype.uuid();
     const { sut, loadUserByEmailRepositorySpy } = new SutFactory().create(
-      UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR_SUT,
+      AUTH_USE_CASE_SUT_UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR,
     );
     loadUserByEmailRepositorySpy.user = {
       id: fakeUserId,
