@@ -5,29 +5,31 @@ const DependenciesFactory = require('../abstract-factories/auth-use-case-depende
 const AuthUseCase = require('../../../../src/domain/use-cases/auth-use-case');
 
 const {
-  LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR_SUT,
-  ENCRYPTER_WITH_ERROR_SUT,
-  TOKEN_GENERATOR_WITH_ERROR_SUT,
-  UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR_SUT,
+  AUTH_USE_CASE_SUT_LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR,
+  AUTH_USE_CASE_SUT_ENCRYPTER_WITH_ERROR,
+  AUTH_USE_CASE_SUT_TOKEN_GENERATOR_WITH_ERROR,
+  AUTH_USE_CASE_SUT_UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR,
 } = require('../constants');
 
 module.exports = class SutFactory {
   create(type) {
     this.dependencies = new DependenciesFactory().create();
 
-    if (type === LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR_SUT) {
+    if (type === AUTH_USE_CASE_SUT_LOAD_USER_BY_EMAIL_REPOSITORY_WITH_ERROR) {
       this.dependencies.loadUserByEmailRepositorySpy.load = () => {
         throw new ServerError();
       };
-    } else if (type === ENCRYPTER_WITH_ERROR_SUT) {
+    } else if (type === AUTH_USE_CASE_SUT_ENCRYPTER_WITH_ERROR) {
       this.dependencies.encrypterSpy.compare = () => {
         throw new ServerError();
       };
-    } else if (type === TOKEN_GENERATOR_WITH_ERROR_SUT) {
+    } else if (type === AUTH_USE_CASE_SUT_TOKEN_GENERATOR_WITH_ERROR) {
       this.dependencies.tokenGeneratorSpy.generate = () => {
         throw new ServerError();
       };
-    } else if (type === UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR_SUT) {
+    } else if (
+      type === AUTH_USE_CASE_SUT_UPDATE_ACCESS_TOKEN_REPOSITORY_WITH_ERROR
+    ) {
       this.dependencies.updateAccessTokenRepositorySpy.update = () => {
         throw new ServerError();
       };

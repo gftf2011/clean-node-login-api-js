@@ -13,6 +13,10 @@ const LogOutUseCase = require('../../../src/domain/use-cases/logout-use-case');
 const ServerError = require('../../../src/utils/errors/server-error');
 const MissingParamError = require('../../../src/utils/errors/missing-param-error');
 
+const {
+  LOG_OUT_USE_CASE_SUT_LOAD_USER_BY_ID_REPOSITORY_WITH_ERROR,
+} = require('../helpers/constants');
+
 describe('LogOut UseCase', () => {
   it('Should call LoadUserByIdRepository with correct userId', async () => {
     const fakeUserId = faker.datatype.uuid();
@@ -105,5 +109,27 @@ describe('LogOut UseCase', () => {
     });
     const promise = sut.execute(fakeUserId);
     await expect(promise).rejects.toThrow(new ServerError());
+  });
+
+  it('Should throw error if LoadUserByIdRepository throws error', async () => {
+    const fakeUserId = faker.datatype.uuid();
+    const { sut, loadUserByIdRepositorySpy, updateAccessTokenRepositorySpy } =
+      new SutFactory().create(
+        LOG_OUT_USE_CASE_SUT_LOAD_USER_BY_ID_REPOSITORY_WITH_ERROR,
+      );
+    const spyLoadUserByIdRepository = jest.spyOn(
+      loadUserByIdRepositorySpy,
+      'load',
+    );
+    const spyUpdateAccessTokenRepository = jest.spyOn(
+      updateAccessTokenRepositorySpy,
+      'update',
+    );
+    const promise = sut.execute(fakeUserId);
+    await expect(spyLoadUserByIdRepository).toHaveBeenCalled();
+    await expect(spyLoadUserByIdRepository).toHaveBeenCalledTimes(1);
+    await expect(spyLoadUserByIdRepository).rejects.toThrow(new ServerError());
+    await expect(promise).rejects.toThrow(new ServerError());
+    await expect(spyUpdateAccessTokenRepository).not.toHaveBeenCalled();
   });
 });
