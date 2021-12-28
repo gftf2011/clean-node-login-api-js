@@ -13,6 +13,7 @@ const MongoHelper = require('../../../src/infra/helpers/mongo-helper');
 const {
   LOAD_USER_BY_ID_REPOSITORY_SUT_EMPTY,
   LOAD_USER_BY_ID_REPOSITORY_SUT_EMPTY_OBJECT,
+  LOAD_USER_BY_ID_REPOSITORY_SUT_WITH_EMPTY_USER_MODEL_OBJECT,
 } = require('../helpers/constants');
 
 const ServerError = require('../../../src/utils/errors/server-error');
@@ -74,6 +75,15 @@ describe('LoadUserById Repository', () => {
     const fakeId = faker.datatype.uuid();
     const { sut } = new SutFactory(db).create(
       LOAD_USER_BY_ID_REPOSITORY_SUT_EMPTY_OBJECT,
+    );
+    const promise = sut.load(fakeId);
+    await expect(promise).rejects.toThrow(new ServerError());
+  });
+
+  it('Should throw ServerError if userModel has no findOne method', async () => {
+    const fakeId = faker.datatype.uuid();
+    const { sut } = new SutFactory(db).create(
+      LOAD_USER_BY_ID_REPOSITORY_SUT_WITH_EMPTY_USER_MODEL_OBJECT,
     );
     const promise = sut.load(fakeId);
     await expect(promise).rejects.toThrow(new ServerError());
