@@ -19,6 +19,7 @@ const {
 const ServerError = require('../../../src/utils/errors/server-error');
 
 const SutFactory = require('../helpers/factory-methods/load-user-by-id-repository-sut-factory');
+const MissingParamError = require('../../../src/utils/errors/missing-param-error');
 
 let db;
 
@@ -87,6 +88,12 @@ describe('LoadUserById Repository', () => {
     );
     const promise = sut.load(fakeId);
     await expect(promise).rejects.toThrow(new ServerError());
+  });
+
+  it('Should throw MissingParamError if no id is provided', async () => {
+    const { sut } = new SutFactory(db).create();
+    const promise = sut.load();
+    await expect(promise).rejects.toThrow(new MissingParamError('id'));
   });
 
   afterAll(async () => {
