@@ -1,5 +1,3 @@
-/* eslint-disable max-classes-per-file */
-
 // Receber o bearer token - (accessToken)
 // Verificar o bearer token é válido
 // Pegar o id de usuário dentro do bearer token
@@ -11,6 +9,12 @@ require('../../../src/main/bootstrap');
 const faker = require('faker');
 
 const MongoHelper = require('../../../src/infra/helpers/mongo-helper');
+
+const {
+  LOAD_USER_BY_ID_REPOSITORY_SUT_EMPTY,
+} = require('../helpers/constants');
+
+const ServerError = require('../../../src/utils/errors/server-error');
 
 const SutFactory = require('../helpers/factory-methods/load-user-by-id-repository-sut-factory');
 
@@ -54,6 +58,15 @@ describe('LoadUserById Repository', () => {
     });
     const user = await sut.load(fakeUserInsert.insertedId);
     expect(user).toEqual(fakeUserfound);
+  });
+
+  it('Should throw ServerError if no userModel is provided', async () => {
+    const fakeId = faker.datatype.uuid();
+    const { sut } = new SutFactory(db).create(
+      LOAD_USER_BY_ID_REPOSITORY_SUT_EMPTY,
+    );
+    const promise = sut.load(fakeId);
+    await expect(promise).rejects.toThrow(new ServerError());
   });
 
   afterAll(async () => {
