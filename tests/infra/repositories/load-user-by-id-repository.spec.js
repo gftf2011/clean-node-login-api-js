@@ -12,6 +12,7 @@ const MongoHelper = require('../../../src/infra/helpers/mongo-helper');
 
 const {
   LOAD_USER_BY_ID_REPOSITORY_SUT_EMPTY,
+  LOAD_USER_BY_ID_REPOSITORY_SUT_EMPTY_OBJECT,
 } = require('../helpers/constants');
 
 const ServerError = require('../../../src/utils/errors/server-error');
@@ -64,6 +65,15 @@ describe('LoadUserById Repository', () => {
     const fakeId = faker.datatype.uuid();
     const { sut } = new SutFactory(db).create(
       LOAD_USER_BY_ID_REPOSITORY_SUT_EMPTY,
+    );
+    const promise = sut.load(fakeId);
+    await expect(promise).rejects.toThrow(new ServerError());
+  });
+
+  it('Should throw ServerError if userModel has been provided in the dependencies as empty object', async () => {
+    const fakeId = faker.datatype.uuid();
+    const { sut } = new SutFactory(db).create(
+      LOAD_USER_BY_ID_REPOSITORY_SUT_EMPTY_OBJECT,
     );
     const promise = sut.load(fakeId);
     await expect(promise).rejects.toThrow(new ServerError());

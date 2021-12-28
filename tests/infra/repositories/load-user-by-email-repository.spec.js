@@ -70,7 +70,7 @@ describe('LoadUserByEmail Repository', () => {
     await expect(promise).rejects.toThrow(new ServerError());
   });
 
-  it('Should throw ServerError if userModel has been provided in the dependencies as undefined', async () => {
+  it('Should throw ServerError if userModel has been provided in the dependencies as empty object', async () => {
     const fakeEmail = faker.internet.email();
     const { sut } = new SutFactory(db).create(
       LOAD_USER_BY_EMAIL_REPOSITORY_SUT_EMPTY_OBJECT,
