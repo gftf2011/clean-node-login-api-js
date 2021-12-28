@@ -34,6 +34,13 @@ describe('LoadUserById Repository', () => {
     await db.collection('users').deleteMany();
   });
 
+  it('Should return null if no user is found', async () => {
+    const fakeId = faker.datatype.uuid();
+    const { sut } = new SutFactory(db).create();
+    const user = await sut.load(fakeId);
+    expect(user).toBeNull();
+  });
+
   it('Should return user if an user is found', async () => {
     const fakeEmail = faker.internet.email();
     const fakePassword = faker.internet.password(10, true);
