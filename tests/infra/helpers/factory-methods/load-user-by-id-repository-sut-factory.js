@@ -3,6 +3,7 @@ const LoadUserByIdRepository = require('../../../../src/infra/repositories/load-
 const {
   LOAD_USER_BY_ID_REPOSITORY_SUT_EMPTY,
   LOAD_USER_BY_ID_REPOSITORY_SUT_EMPTY_OBJECT,
+  LOAD_USER_BY_ID_REPOSITORY_SUT_WITH_EMPTY_USER_MODEL_OBJECT,
 } = require('../constants');
 
 module.exports = class SutFactory {
@@ -17,6 +18,10 @@ module.exports = class SutFactory {
       this.sut = new LoadUserByIdRepository();
     } else if (type === LOAD_USER_BY_ID_REPOSITORY_SUT_EMPTY_OBJECT) {
       this.sut = new LoadUserByIdRepository({});
+    } else if (
+      type === LOAD_USER_BY_ID_REPOSITORY_SUT_WITH_EMPTY_USER_MODEL_OBJECT
+    ) {
+      this.sut = new LoadUserByIdRepository({ userModel: {} });
     } else {
       this.sut = new LoadUserByIdRepository({ userModel: this.userModel });
     }
