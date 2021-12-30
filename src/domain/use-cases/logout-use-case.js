@@ -23,7 +23,7 @@ module.exports = class LogOutUseCase {
     if (!user) {
       return false;
     }
-    await this.updateAccessTokenRepository.update(userId, null);
+    await this.updateAccessTokenRepository.update(userId, '');
     return true;
   }
 };

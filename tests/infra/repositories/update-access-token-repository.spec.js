@@ -100,6 +100,14 @@ describe('UpdateAccessToken Repository', () => {
     await expect(promise).rejects.toThrow(new MissingParamError('accessToken'));
   });
 
+  it('Should throw MissingParamError if accessToken is null', async () => {
+    const fakeUserId = faker.datatype.uuid();
+    const userModel = db.collection('users');
+    const sut = new UpdateAccessTokenRepository({ userModel });
+    const promise = sut.update(fakeUserId, null);
+    await expect(promise).rejects.toThrow(new MissingParamError('accessToken'));
+  });
+
   afterAll(async () => {
     await mongoHelper.disconnect();
   });
