@@ -44,6 +44,10 @@ describe('Login Routes', () => {
       .expect(204);
   });
 
+  it('Should return 401 when authorization is not provided', async () => {
+    await request(app).post('/api/logout').expect(401);
+  });
+
   afterEach(async () => {
     await userModel.deleteMany();
   });
