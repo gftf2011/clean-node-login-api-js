@@ -26,7 +26,7 @@ describe('LogOut UseCase', () => {
       new SutFactory().create();
     loadUserByIdRepositorySpy.user = {};
     await sut.execute(fakeUserId);
-    expect(updateAccessTokenRepositorySpy.accessToken).toBeNull();
+    expect(updateAccessTokenRepositorySpy.accessToken).toBe('');
     expect(updateAccessTokenRepositorySpy.userId).toBe(fakeUserId);
   });
 

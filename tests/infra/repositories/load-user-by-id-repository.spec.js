@@ -4,6 +4,8 @@
 // Verificar se o usuário existe
 // Setar o accessToken como nulo a partir do ID
 
+const { ObjectId } = require('mongodb');
+
 require('../../../src/main/bootstrap');
 
 const faker = require('faker');
@@ -42,7 +44,7 @@ describe('LoadUserById Repository', () => {
   });
 
   it('Should return null if no user is found', async () => {
-    const fakeId = faker.datatype.uuid();
+    const fakeId = new ObjectId();
     const { sut } = new SutFactory(db).create();
     const user = await sut.load(fakeId);
     expect(user).toBeNull();
