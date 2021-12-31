@@ -32,7 +32,8 @@
     "supertest": "^6.1.6"
   },
   "scripts": {
-    "docker:up": "docker-compose up -d",
+    "docker:clear": "docker-compose down && npm run docker:delete:volumes",
+    "docker:up": "docker-compose up -d --remove-orphans",
     "docker:down": "docker-compose down",
     "docker:delete:volumes": "docker volume prune -f",
     "build:dev": "rm -rf .env && cat .env.dev >> .env",
@@ -69,11 +70,14 @@
     "express": "^4.17.1",
     "express-brute": "^1.0.1",
     "express-brute-redis": "^0.0.1",
+    "express-rate-limit": "^6.0.3",
     "fast-glob": "^3.2.7",
     "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.1.4",
     "morgan": "^1.10.0",
+    "rate-limit-redis": "^2.1.0",
+    "redis": "3.1.2",
     "validator": "^13.7.0"
   },
   "engines": {
