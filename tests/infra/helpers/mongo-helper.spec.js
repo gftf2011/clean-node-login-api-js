@@ -1,3 +1,5 @@
+jest.mock('../../../src/infra/helpers/builders/mongo-director');
+
 const faker = require('faker');
 const { MongoNotConnectedError, MongoServerClosedError } = require('mongodb');
 const NoError = require('./errors/no-error');
@@ -5,8 +7,6 @@ const MongoDirector = require('../../../src/infra/helpers/builders/mongo-directo
 const MongoHelper = require('../../../src/infra/helpers/mongo-helper');
 
 const { MONGO_ATTEMPTS_TO_RETRY } = require('./constants');
-
-jest.mock('../../../src/infra/helpers/builders/mongo-director');
 
 const getError = async call => {
   try {

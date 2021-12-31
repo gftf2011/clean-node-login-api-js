@@ -1,10 +1,3 @@
-const bcrypt = require('bcrypt');
-const faker = require('faker');
-
-const MissingParamError = require('../../src/utils/errors/missing-param-error');
-
-const SutFactory = require('./helpers/abstract-factories/encrypter-sut-factory');
-
 jest.mock('bcrypt', () => ({
   isValid: true,
   async compare(value, hashValue) {
@@ -18,6 +11,13 @@ jest.mock('bcrypt', () => ({
     return this.hashValue;
   },
 }));
+
+const bcrypt = require('bcrypt');
+const faker = require('faker');
+
+const MissingParamError = require('../../src/utils/errors/missing-param-error');
+
+const SutFactory = require('./helpers/abstract-factories/encrypter-sut-factory');
 
 describe('Encrypter', () => {
   it('Should call bcrypt compare method with correct values', async () => {

@@ -1,10 +1,3 @@
-const validator = require('validator');
-const faker = require('faker');
-
-const MissingParamError = require('../../../src/utils/errors/missing-param-error');
-
-const SutFactory = require('../helpers/abstract-factories/email-validator-sut-factory');
-
 jest.mock('validator', () => ({
   isEmailValid: true,
   email: '',
@@ -13,6 +6,13 @@ jest.mock('validator', () => ({
     return this.isEmailValid;
   },
 }));
+
+const validator = require('validator');
+const faker = require('faker');
+
+const MissingParamError = require('../../../src/utils/errors/missing-param-error');
+
+const SutFactory = require('../helpers/abstract-factories/email-validator-sut-factory');
 
 describe('Email Validator', () => {
   it('Should call validator with correct email', () => {
