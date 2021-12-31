@@ -1,10 +1,3 @@
-const { cpf: cpfValidator } = require('cpf-cnpj-validator');
-const faker = require('faker-br');
-
-const MissingParamError = require('../../../src/utils/errors/missing-param-error');
-
-const SutFactory = require('../helpers/abstract-factories/cpf-validator-sut-factory');
-
 jest.mock('cpf-cnpj-validator', () => ({
   cpf: {
     isCpfValid: true,
@@ -15,6 +8,13 @@ jest.mock('cpf-cnpj-validator', () => ({
     },
   },
 }));
+
+const { cpf: cpfValidator } = require('cpf-cnpj-validator');
+const faker = require('faker-br');
+
+const MissingParamError = require('../../../src/utils/errors/missing-param-error');
+
+const SutFactory = require('../helpers/abstract-factories/cpf-validator-sut-factory');
 
 describe('CPF Validator', () => {
   it('Should call validator with correct cpf', () => {
