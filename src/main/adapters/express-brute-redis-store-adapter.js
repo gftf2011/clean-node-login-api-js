@@ -8,8 +8,8 @@ module.exports = class ExpressBruteRedisStoreAdapter {
       port: parseInt(process.env.REDIS_CLIENT_PORT, 10),
     });
     const bruteForce = new ExpressBrute(store, {
-      freeRetries: 3,
-      minWait: 1000,
+      freeRetries: parseInt(process.env.BRUTE_FREE_RETRIES, 10),
+      minWait: parseInt(process.env.BRUTE_MIN_WAIT, 10),
     });
     return bruteForce.prevent;
   }
