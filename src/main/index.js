@@ -8,10 +8,10 @@ const routes = require('./config/routes');
 loader()
   .then(() => {
     routes(app);
-    app.listen(parseInt(process.env.APPLICATION_PORT, 10) || 3333, () => {
+    app.listen(parseInt(process.env.APPLICATION_PORT, 10), () => {
       console.log('Server Running');
     });
   })
   .catch(error => {
-    console.log(error);
+    console.error(error);
   });

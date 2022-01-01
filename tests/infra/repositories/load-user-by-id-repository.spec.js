@@ -1,9 +1,3 @@
-// Receber o bearer token - (accessToken)
-// Verificar o bearer token é válido
-// Pegar o id de usuário dentro do bearer token
-// Verificar se o usuário existe
-// Setar o accessToken como nulo a partir do ID
-
 const { ObjectId } = require('mongodb');
 
 require('../../../src/main/bootstrap');
