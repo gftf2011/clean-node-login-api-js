@@ -19,7 +19,7 @@ module.exports = {
     'no-plusplus': 'off',
     'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     'no-underscore-dangle': ['error', { allow: ['_id'] }],
-    'no-console': ['error', { allow: ['log'] }],
+    'no-console': ['error', { allow: ['log', 'error'] }],
     'import/no-dynamic-require': 'off',
     'jest/expect-expect': 'off',
   },
