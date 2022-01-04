@@ -76,7 +76,7 @@
     "fast-glob": "^3.2.7",
     "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
-    "mongodb": "^4.1.4",
+    "mongodb": "^4.2.2",
     "morgan": "^1.10.0",
     "rate-limit-redis": "^2.1.0",
     "redis": "3.1.2",
