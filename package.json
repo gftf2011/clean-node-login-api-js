@@ -32,6 +32,7 @@
     "supertest": "^6.1.6"
   },
   "scripts": {
+    "docs": "node docs/index.js",
     "docker:clear": "docker-compose down && npm run docker:delete:volumes",
     "docker:up": "docker-compose up -d --remove-orphans",
     "docker:down": "docker-compose down",
@@ -78,6 +79,7 @@
     "morgan": "^1.10.0",
     "rate-limit-redis": "^2.1.0",
     "redis": "3.1.2",
+    "swagger-ui-express": "^4.3.0",
     "validator": "^13.7.0"
   },
   "engines": {
