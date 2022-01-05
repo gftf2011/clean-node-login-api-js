@@ -1,5 +1,5 @@
 <div align="center">
-	<h1>clean-node-login-api-js</h1>
+	<h1>Clean Node Login Api</h1>
 </div>
 
 <div align="center">
@@ -9,6 +9,13 @@
   <a href="#memo-license">License</a>
 </div>
 
+<br/>
+
+<div align="center">
+  <img src="https://github.com/gftf2011/clean-node-login-api-js/blob/main/public/img/background.png" />
+</div>
+
+<br/>
 
 ## :page_facing_up: About
 
