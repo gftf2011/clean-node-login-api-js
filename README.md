@@ -49,6 +49,28 @@ The objective from this project is to show how to create an API with a well-defi
 
 <br/>
 
+## :racing_car: Running Project
+
+1. Clone Repository
+```sh
+  $ git clone https://gitlab.com/gftf2011/proffy-backend.git
+```
+2. Install dependencies
+```sh
+  ################################################################################
+  # YARN usage is recommended, or use the "npm install" to install dependencies. #
+  ################################################################################
+  $ yarn
+```
+3. Use command below to run development environment
+```sh
+  $ yarn docker:dev:run
+```
+
+### OBS.: Ensure to install all dependencies in <a href="#clipboard-required-tools">Required Tools</a>
+
+<br/>
+
 ## :memo: License
 
 This project is under MIT license. See the [LICENSE](https://github.com/gftf2011/clean-node-login-api-js/blob/main/LICENSE) file for more details.
