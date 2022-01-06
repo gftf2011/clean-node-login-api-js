@@ -14,6 +14,7 @@
 
 <div align="center">
   <a href="#page_facing_up-about">About</a> •
+  <a href="#hammer_and_wrench-supported-os">Supported OS</a> • 
   <a href="#large_blue_diamond-design-patterns">Design Patterns</a> •
   <a href="#clipboard-required-tools">Required Tools</a> •
   <a href="#racing_car-running-project">Running Project</a> •
@@ -35,6 +36,14 @@
 This a authentication API developed in pure Vanilla Javascript.
 
 The objective from this project is to show how to create an API with a well-defined and decoupled architecture, using T.D.D. - (Test Driven Development) as a work methodology, building along with the Clean Architecture concept, dividing the layers responsibility !
+
+<br/>
+
+## :hammer_and_wrench: Supported OS
+
+- [x] Mac OS
+- [x] Linux
+- [ ] Windows 
 
 <br/>
 
