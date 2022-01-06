@@ -6,6 +6,9 @@
   <a href="#page_facing_up-about">About</a> •
   <a href="#large_blue_diamond-design-patterns">Design Patterns</a> •
   <a href="#clipboard-required-tools">Required Tools</a> •
+  <a href="#racing_car-running-project">Running Project</a> •
+  <a href="#test_tube-running-tests">Running Tests</a> •
+  <a href="#file_cabinet-running-swagger">Running Swagger</a> •
   <a href="#memo-license">License</a>
 </div>
 
@@ -71,6 +74,27 @@ The objective from this project is to show how to create an API with a well-defi
 
 <br/>
 
+## :test_tube: Running Tests
+```sh
+  $ yarn docker:test:run
+```
+
+<br/>
+
+## :file_cabinet: Running Swagger
+
+1. Run command below
+```sh
+  $ yarn docs
+```
+2. Access the url - *localhost:3334/api-dosc*
+
+<br/>
+
 ## :memo: License
 
 This project is under MIT license. See the [LICENSE](https://github.com/gftf2011/clean-node-login-api-js/blob/main/LICENSE) file for more details.
+
+---
+
+Made with lots of :heart: by [Gabriel Ferrari Tarallo Ferraz](https://www.linkedin.com/in/gabriel-ferrari-tarallo-ferraz-7a4218135/)
