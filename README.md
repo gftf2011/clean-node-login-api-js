@@ -1,6 +1,16 @@
 <div align="center">
 	<h1>Clean Node Login Api</h1>
+  <br/>
+  <img src="https://img.shields.io/github/languages/code-size/gftf2011/clean-node-login-api-js"/>
+  <img src="https://img.shields.io/github/repo-size/gftf2011/clean-node-login-api-js"/>
+  <img src="https://img.shields.io/github/license/gftf2011/clean-node-login-api-js"/>
+  <img src="https://img.shields.io/github/package-json/v/gftf2011/clean-node-login-api-js"/>
+  <img src="https://img.shields.io/github/last-commit/gftf2011/clean-node-login-api-js"/>
+  <img src="https://snyk.io/test/github/gftf2011/clean-node-login-api-js/badge.svg"/>
+  <img src="https://badges.frapsoft.com/os/v1/open-source.svg?v=103"/>
 </div>
+
+<br/>
 
 <div align="center">
   <a href="#page_facing_up-about">About</a> •
