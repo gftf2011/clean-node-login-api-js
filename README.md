@@ -106,7 +106,7 @@ The objective from this project is to show how to create an API with a well-defi
 ```sh
   $ yarn docs
 ```
-2. Access the url - *localhost:3334/api-dosc*
+2. Access the url - *localhost:3334/api-docs*
 
 <br/>
 
