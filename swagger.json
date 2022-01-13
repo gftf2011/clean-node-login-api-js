@@ -1,0 +1,546 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "clean-node-login-api-js",
+    "description": "This is a server AUTH service project. Please, follow the documentation below to make sure your local development environment works correctly.",
+    "contact": {
+      "name": "Gabriel Ferrari Tarallo Ferraz",
+      "url": "https://www.linkedin.com/in/gabriel-ferrari-tarallo-ferraz-7a4218135/",
+      "email": "gftf2011@gmail.com"
+    },
+    "license": {
+      "name": "MIT license",
+      "url": "https://www.mit.edu/~amini/LICENSE.md"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3333/api"
+    }
+  ],
+  "tags": [
+    {
+      "name": "auth",
+      "description": "routes and http path requests related to authentication"
+    }
+  ],
+  "paths": {
+    "/sign-up": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Sign Up to create an account in the authentication system",
+        "description": "For valid response try use a valid cpf number AND a valid email provider like 'outlook', 'gmail', 'hotmail', etc.",
+        "requestBody": {
+          "description": "User information needed to create account",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              },
+              "examples": {
+                "user": {
+                  "value": {
+                    "name":"Gabriel Ferrari Tarallo Ferraz",
+                    "cpf": "80013916041",
+                    "email":"gftf@gmail.com",
+                    "password": "123456"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "accessToken": {
+                      "type": "string",
+                      "description": "Authorization token"
+                    }
+                  }
+                },
+                "examples": {
+                  "response": {
+                    "value": {
+                      "accessToken": "gyJhbGcieiJIUzI1NiIsInR5cCI6IfpXVCJ9.eyJfaWQiOiI2MWQyPLRiOGZhOWY3ZTNhOTM5ZDk4NmEiLCJpYXQiOjE2NDExODg3OTJ9.0F4MjQpDFhkdhR_eXZBmm1puXYnia7iaxNEl6wzda70"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                },
+                "examples": {
+                  "error": {
+                    "value": {
+                      "name": "MissingParamError"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                },
+                "examples": {
+                  "error": {
+                    "value": {
+                      "name": "ForbiddenUserRegistrationError"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "object",
+                          "properties": {
+                            "text": {
+                              "type": "string"
+                            },
+                            "nextValidRequestDate": {
+                              "type": "string",
+                              "format": "date-time"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "examples": {
+                  "bruteForceError": {
+                    "value": {
+                      "error": {
+                        "text": "Too many requests in this time frame.",
+                        "nextValidRequestDate": "2022-01-03T06:09:35.241Z"
+                      }
+                    }
+                  },
+                  "rateLimitError": {
+                    "value": {
+                      "message": "Too many requests, please try again later."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                },
+                "examples": {
+                  "error": {
+                    "value": {
+                      "name": "ServerError"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Log In to connect and authenticate in the system",
+        "description": "For valid response try use a valid email provider like 'outlook', 'gmail', 'hotmail', etc.",
+        "requestBody": {
+          "description": "User information needed to log in",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Account"
+              },
+              "examples": {
+                "account": {
+                  "value": {
+                    "email":"gftf@gmail.com",
+                    "password": "123456"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "accessToken": {
+                      "type": "string",
+                      "description": "Authorization token"
+                    }
+                  }
+                },
+                "examples": {
+                  "response": {
+                    "value": {
+                      "accessToken": "gyJhbGcieiJIUzI1NiIsInR5cCI6IfpXVCJ9.eyJfaWQiOiI2MWQyPLRiOGZhOWY3ZTNhOTM5ZDk4NmEiLCJpYXQiOjE2NDExODg3OTJ9.0F4MjQpDFhkdhR_eXZBmm1puXYnia7iaxNEl6wzda70"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                },
+                "examples": {
+                  "error": {
+                    "value": {
+                      "name": "MissingParamError"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                },
+                "examples": {
+                  "error": {
+                    "value": {
+                      "name": "UnauthorizedUserError"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "object",
+                          "properties": {
+                            "text": {
+                              "type": "string"
+                            },
+                            "nextValidRequestDate": {
+                              "type": "string",
+                              "format": "date-time"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "examples": {
+                  "bruteForceError": {
+                    "value": {
+                      "error": {
+                        "text": "Too many requests in this time frame.",
+                        "nextValidRequestDate": "2022-01-03T06:09:35.241Z"
+                      }
+                    }
+                  },
+                  "rateLimitError": {
+                    "value": {
+                      "message": "Too many requests, please try again later."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                },
+                "examples": {
+                  "error": {
+                    "value": {
+                      "name": "ServerError"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Log Out to exit account from the system",
+        "description": "Only needed the access token provided by the '/sign-up' & '/login' routes.",
+        "requestBody": {
+          "content": {
+            "application/json": {}
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                },
+                "examples": {
+                  "error": {
+                    "value": {
+                      "name": "NoTokenProvidedError"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "object",
+                          "properties": {
+                            "text": {
+                              "type": "string"
+                            },
+                            "nextValidRequestDate": {
+                              "type": "string",
+                              "format": "date-time"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "examples": {
+                  "bruteForceError": {
+                    "value": {
+                      "error": {
+                        "text": "Too many requests in this time frame.",
+                        "nextValidRequestDate": "2022-01-03T06:09:35.241Z"
+                      }
+                    }
+                  },
+                  "rateLimitError": {
+                    "value": {
+                      "message": "Too many requests, please try again later."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Type of error"
+                    }
+                  }
+                },
+                "examples": {
+                  "error": {
+                    "value": {
+                      "name": "ServerError"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email used by the user"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "description": "password used to authenticate"
+          },
+          "cpf": {
+            "type": "string",
+            "description": "CPF, brazilian taxvat for unique identification"
+          },
+          "name": {
+            "type": "string",
+            "description": "user name"
+          }
+        }
+      },
+      "Account": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email used by the user"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "description": "password used to authenticate"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

@@ -11,7 +11,7 @@ module.exports = class UpdateAccessTokenRepository {
       throw new ServerError();
     } else if (!userId) {
       throw new MissingParamError('userId');
-    } else if (!accessToken) {
+    } else if (accessToken === undefined || accessToken === null) {
       throw new MissingParamError('accessToken');
     }
     await this.userModel.updateOne(

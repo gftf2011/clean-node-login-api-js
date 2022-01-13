@@ -3,9 +3,9 @@ const request = require('supertest');
 
 jest.mock('../../../src/main/config/routes', () => jest.fn());
 
-describe('Brute Middleware', () => {
+describe('Rate Limit Middleware', () => {
   beforeAll(() => {
-    process.env.BRUTE_ON = 'true';
+    process.env.RATE_LIMIT_ON = 'true';
   });
 
   it('Should return 200 if API is called once', async () => {
@@ -16,11 +16,10 @@ describe('Brute Middleware', () => {
       app = require('../../../src/main/server/app');
       RedisHelper = require('../../../src/infra/helpers/redis-helper');
     });
-
-    app.get('/api/test-brute', (_req, res) => {
+    app.get('/api/test-rate-limit', (_req, res) => {
       res.send(true);
     });
-    await request(app).get('/api/test-brute').expect(200);
+    await request(app).get('/api/test-rate-limit').expect(200);
     RedisHelper.disconnect();
   });
 
@@ -32,18 +31,15 @@ describe('Brute Middleware', () => {
       app = require('../../../src/main/server/app');
       RedisHelper = require('../../../src/infra/helpers/redis-helper');
     });
-
-    app.get('/api/test-brute-2', (_req, res) => {
+    app.get('/api/test-rate-limit', (_req, res) => {
       res.send(true);
     });
-    await request(app).get('/api/test-brute-2').expect(200);
-    await request(app).get('/api/test-brute-2').expect(200);
-    await request(app).get('/api/test-brute-2').expect(200);
-    await request(app).get('/api/test-brute-2').expect(429);
+    await request(app).get('/api/test-rate-limit').expect(200);
+    await request(app).get('/api/test-rate-limit').expect(429);
     RedisHelper.disconnect();
   });
 
   afterAll(() => {
-    process.env.BRUTE_ON = 'false';
+    process.env.RATE_LIMIT_ON = 'false';
   });
 });
