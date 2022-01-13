@@ -1,6 +1,6 @@
 {
   "name": "clean-node-login-api-js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "src/main/index.js",
   "description": "NodeJs Rest API using TDD, Clean Architecture, Typescript and Design Patterns",
   "repository": "https://github.com/gftf2011/clean-node-login-api-js.git",
@@ -64,7 +64,7 @@
     }
   },
   "dependencies": {
-    "@babel/runtime": "^7.16.3",
+    "@babel/runtime": "^7.16.5",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "cpf-cnpj-validator": "^1.0.3",
@@ -76,7 +76,7 @@
     "fast-glob": "^3.2.7",
     "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
-    "mongodb": "^4.1.4",
+    "mongodb": "^4.2.2",
     "morgan": "^1.10.0",
     "rate-limit-redis": "^2.1.0",
     "redis": "3.1.2",
