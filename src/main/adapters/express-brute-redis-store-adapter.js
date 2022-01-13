@@ -1,15 +1,20 @@
 const RedisStore = require('express-brute-redis');
 const ExpressBrute = require('express-brute');
+const RedisHelper = require('../../infra/helpers/redis-helper');
 
 module.exports = class ExpressBruteRedisStoreAdapter {
   static adapter() {
+    RedisHelper.setClient(
+      process.env.REDIS_CLIENT_HOST,
+      process.env.REDIS_CLIENT_PORT,
+    );
+    const client = RedisHelper.getClient();
     const store = new RedisStore({
-      host: process.env.REDIS_CLIENT_HOST,
-      port: parseInt(process.env.REDIS_CLIENT_PORT, 10),
+      client,
     });
     const bruteForce = new ExpressBrute(store, {
-      freeRetries: 3,
-      minWait: 1000,
+      freeRetries: parseInt(process.env.BRUTE_FREE_RETRIES, 10),
+      minWait: parseInt(process.env.BRUTE_MIN_WAIT, 10),
     });
     return bruteForce.prevent;
   }

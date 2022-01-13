@@ -1,3 +1,12 @@
+jest.mock('jsonwebtoken', () => ({
+  token: null,
+  sign(payload, secret) {
+    this.payload = payload;
+    this.secret = secret;
+    return this.token;
+  },
+}));
+
 const jwt = require('jsonwebtoken');
 const faker = require('faker');
 
@@ -7,15 +16,6 @@ const ServerError = require('../../../src/utils/errors/server-error');
 const TokenGenerator = require('../../../src/utils/generators/token-generator');
 
 const SutFactory = require('../helpers/abstract-factories/token-generator-sut-factory');
-
-jest.mock('jsonwebtoken', () => ({
-  token: null,
-  sign(payload, secret) {
-    this.payload = payload;
-    this.secret = secret;
-    return this.token;
-  },
-}));
 
 describe('Token Generator', () => {
   it('Should call JWT with correct values', async () => {
@@ -60,5 +60,9 @@ describe('Token Generator', () => {
     const { sut } = new SutFactory().create();
     const promise = sut.generate();
     await expect(promise).rejects.toThrow(new MissingParamError('id'));
+  });
+
+  afterEach(() => {
+    jwt.token = null;
   });
 });

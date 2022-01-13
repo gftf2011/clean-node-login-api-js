@@ -1,9 +1,3 @@
-const faker = require('faker');
-
-const jwt = require('jsonwebtoken');
-
-const SutFactory = require('../helpers/abstract-factories/token-validator-sut-factory');
-
 jest.mock('jsonwebtoken', () => ({
   verify(token, secret) {
     this.token = token;
@@ -11,6 +5,12 @@ jest.mock('jsonwebtoken', () => ({
     return this.decodedId;
   },
 }));
+
+const faker = require('faker');
+
+const jwt = require('jsonwebtoken');
+
+const SutFactory = require('../helpers/abstract-factories/token-validator-sut-factory');
 
 describe('Token Validator', () => {
   it('Should call validator with correct token and secret', () => {
