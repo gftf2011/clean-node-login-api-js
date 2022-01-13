@@ -1,6 +1,6 @@
 {
   "name": "clean-node-login-api-js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "src/main/index.js",
   "description": "NodeJs Rest API using TDD, Clean Architecture, Typescript and Design Patterns",
   "repository": "https://github.com/gftf2011/clean-node-login-api-js.git",
