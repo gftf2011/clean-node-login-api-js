@@ -5,12 +5,12 @@ ignore:
   SNYK-JS-EXPRESSBRUTE-174457:
     - express-brute:
         reason: No fix provided by community
-        expires: '2022-02-13T00:37:51.008Z'
+        expires: '2022-02-13T00:43:33.204Z'
     - express-brute-redis > express-brute:
         reason: No fix provided by community
-        expires: '2022-02-13T00:37:51.008Z'
+        expires: '2022-02-13T00:43:33.204Z'
   SNYK-JS-SWAGGERUIDIST-2314884:
     - swagger-ui-express > swagger-ui-dist:
         reason: No fix provided by community
-        expires: '2022-02-13T00:37:51.008Z'
+        expires: '2022-02-13T00:43:33.204Z'
 patch: {}
