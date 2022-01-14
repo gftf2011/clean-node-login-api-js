@@ -1,6 +1,6 @@
 {
   "name": "clean-node-login-api-js",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "src/main/index.js",
   "description": "NodeJs Rest API using TDD, Clean Architecture, Typescript and Design Patterns",
   "repository": "https://github.com/gftf2011/clean-node-login-api-js.git",
@@ -82,6 +82,11 @@
     "redis": "3.1.2",
     "swagger-ui-express": "^4.3.0",
     "validator": "^13.7.0"
+  },
+  "resolutions": {
+    "**/express-brute/underscore": "^1.12.1",
+    "**/express-brute-redis/underscore": "^1.12.1",
+    "**/express-brute-redis/express-brute/underscore": "^1.12.1"
   },
   "engines": {
     "node": "16.x",
