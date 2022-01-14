@@ -1,6 +1,6 @@
 {
   "name": "clean-node-login-api-js",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "src/main/index.js",
   "description": "NodeJs Rest API using TDD, Clean Architecture, Typescript and Design Patterns",
   "repository": "https://github.com/gftf2011/clean-node-login-api-js.git",
@@ -23,7 +23,7 @@
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-jest": "^25.2.4",
     "eslint-plugin-prettier": "^4.0.0",
-    "faker": "^5.5.3",
+    "faker": "5.5.3",
     "faker-br": "^0.4.1",
     "husky": "^7.0.0",
     "jest": "^27.3.1",
