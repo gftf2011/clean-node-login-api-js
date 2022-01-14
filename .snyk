@@ -5,22 +5,12 @@ ignore:
   SNYK-JS-EXPRESSBRUTE-174457:
     - express-brute:
         reason: No fix provided by community
-        expires: '2050-01-10T18:37:26.697Z'
+        expires: '2022-02-13T00:37:51.008Z'
     - express-brute-redis > express-brute:
         reason: No fix provided by community
-        expires: '2050-01-10T18:37:26.697Z'
-  SNYK-JS-UNDERSCORE-1080984:
-    - express-brute > underscore:
-        reason: No fix provided by community
-        expires: '2050-01-10T18:37:26.697Z'
-    - express-brute-redis > underscore:
-        reason: No fix provided by community
-        expires: '2050-01-10T18:37:26.697Z'
-    - express-brute-redis > express-brute > underscore:
-        reason: No fix provided by community
-        expires: '2050-01-10T18:37:26.697Z'
+        expires: '2022-02-13T00:37:51.008Z'
   SNYK-JS-SWAGGERUIDIST-2314884:
     - swagger-ui-express > swagger-ui-dist:
         reason: No fix provided by community
-        expires: '2050-01-10T18:37:26.697Z'
+        expires: '2022-02-13T00:37:51.008Z'
 patch: {}
