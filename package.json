@@ -73,7 +73,7 @@
     "express-brute": "^1.0.1",
     "express-brute-redis": "^0.0.1",
     "express-rate-limit": "^6.0.3",
-    "fast-glob": "^3.2.7",
+    "fast-glob": "^3.2.11",
     "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.2.2",
