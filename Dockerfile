@@ -7,5 +7,7 @@ COPY . .
 RUN npm install
 RUN npm run build:dev
 RUN npm run build
+RUN rm -rf node_modules
+RUN npm install --production
 EXPOSE 3333
 CMD [ "npm", "start:build" ]
