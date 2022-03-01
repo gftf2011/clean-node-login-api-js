@@ -64,7 +64,7 @@
     }
   },
   "dependencies": {
-    "@babel/runtime": "^7.16.5",
+    "@babel/runtime": "^7.17.0",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "cpf-cnpj-validator": "^1.0.3",
@@ -72,7 +72,7 @@
     "express": "^4.17.2",
     "express-brute": "^1.0.1",
     "express-brute-redis": "^0.0.1",
-    "express-rate-limit": "^6.0.3",
+    "express-rate-limit": "^6.2.0",
     "fast-glob": "^3.2.7",
     "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
