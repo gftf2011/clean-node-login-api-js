@@ -3171,7 +3171,7 @@ express-brute@~0.4.2:
     memcached "~0.2.4"
     underscore "~1.5.1"
 
-express-rate-limit@^6.0.3:
+express-rate-limit@^6.2.0:
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/express-rate-limit/-/express-rate-limit-6.3.0.tgz#253387ce4d36c9c2cc77c7c676068deb36cc0821"
   integrity sha512-932Io1VGKjM3ppi7xW9sb1J5nVkEJSUiOtHw2oE+JyHks1e+AXuOBSXbJKM0mcXwEnW1TibJibQ455Ow1YFjfg==
