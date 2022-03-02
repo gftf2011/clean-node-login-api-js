@@ -110,3 +110,7 @@ docker-compose.yml
 
 # Cache
 cache/
+
+# env folder
+!env/dev/.env
+!env/test/.env

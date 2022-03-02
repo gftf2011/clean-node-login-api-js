@@ -1,11 +1,6 @@
 version: '3.1'
 
 services:
-  app:
-    build: .
-    ports:
-      - ${APPLICATION_PORT}:3333
-    command: npm start:build
   redis:
     image: redis:6.2.6
     container_name: ${REDIS_CONTAINER_NAME}
@@ -27,7 +22,6 @@ services:
       MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
       MONGO_INITDB_USER: ${MONGO_INITDB_USER}
       MONGO_INITDB_PWD: ${MONGO_INITDB_PWD}
-
   mongo-express:
     image: mongo-express
     container_name: ${ME_CONTAINER_NAME}
@@ -40,6 +34,22 @@ services:
       ME_CONFIG_MONGODB_URL: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017/
     depends_on:
       - mongo
-
+  app:
+    image: node:lts-alpine
+    container_name: ${APP_CONTAINER_NAME}
+    working_dir: /usr/projects/clean-node-login-api-js
+    volumes:
+      - ./src/:/usr/projects/clean-node-login-api-js/src/
+      - ./package.json:/usr/projects/clean-node-login-api-js/package.json
+      - ./babel.config.js:/usr/projects/clean-node-login-api-js/babel.config.js
+    env_file:
+     - ./.env
+    command: sh -c "npm install && npm run start"
+    restart: always
+    ports:
+      - ${APPLICATION_PORT}:3333
+    depends_on:
+      - redis
+      - mongo
 volumes:
   mongo_data: {}

@@ -22,7 +22,6 @@ services:
       MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
       MONGO_INITDB_USER: ${MONGO_INITDB_USER}
       MONGO_INITDB_PWD: ${MONGO_INITDB_PWD}
-
   mongo-express:
     image: mongo-express
     container_name: ${ME_CONTAINER_NAME}
