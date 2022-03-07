@@ -44,7 +44,7 @@
     "build:docker:test": "rm -rf docker-compose.yml && cat docker/test/docker-compose.yml >> docker-compose.yml",
     "docker:dev:run": "npm run build:dev && npm run build:docker:dev && npm run docker:up",
     "docker:test:run": "npm run build:test && npm run build:docker:test && npm run docker:clear && npm run docker:up && npm run test",
-    "build": "npx babel src/** -d dist",
+    "build": "npx babel src/ -d dist/",
     "start": "node src/main/index.js",
     "start:build": "node dist/main/index.js",
     "snyk:test": "npx snyk test",
