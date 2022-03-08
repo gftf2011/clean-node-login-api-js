@@ -1,22 +1,28 @@
 const redis = require('redis');
 
 module.exports = class RedisBuilder {
-  constructor(host, port) {
-    this.host = host;
-    this.port = port;
+  #product;
+
+  constructor() {
+    this.#reset();
   }
 
-  setClient() {
-    this.client = redis.createClient({
-      host: this.host,
-      port: this.port,
+  #reset() {
+    this.#product = {};
+  }
+
+  client(host, port) {
+    const client = redis.createClient({
+      host,
+      port,
     });
+    this.#product = { ...this.#product, client };
+    return this;
   }
 
   getProduct() {
-    const result = {
-      client: this.client,
-    };
+    const result = this.#product;
+    this.#reset();
     return result;
   }
 };

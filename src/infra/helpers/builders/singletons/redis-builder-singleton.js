@@ -1,14 +1,14 @@
 const RedisBuilder = require('../redis-builder');
 
 module.exports = {
-  createInstance(host, port) {
-    this.instance = new RedisBuilder(host, port);
+  createInstance() {
+    this.instance = new RedisBuilder();
     return this.instance;
   },
 
-  getInstance(host, port) {
+  getInstance() {
     if (!this.instance) {
-      this.instance = this.createInstance(host, port);
+      this.instance = this.createInstance();
     }
     return this.instance;
   },

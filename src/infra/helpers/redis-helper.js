@@ -4,8 +4,8 @@ const RedisDirector = require('./builders/redis-director');
 
 module.exports = {
   setClient(host, port) {
-    const { client } = new RedisDirector().construct(
-      RedisBuilderSingleton.getInstance(host, port),
+    const { client } = new RedisDirector(host, port).construct(
+      RedisBuilderSingleton.getInstance(),
     );
     this.client = client;
   },

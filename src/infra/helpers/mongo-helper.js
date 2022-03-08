@@ -36,9 +36,9 @@ module.exports = {
     try {
       this.uri = uri;
       this.dbName = dbName;
-      const mongo = new MongoDirector();
+      const mongo = new MongoDirector(this.uri, this.dbName);
       const builtMongo = await mongo.construct(
-        MongoBuilderSingleton.getInstance(this.uri, this.dbName),
+        MongoBuilderSingleton.getInstance(),
       );
       this.client = builtMongo.client;
       this.db = builtMongo.db;
