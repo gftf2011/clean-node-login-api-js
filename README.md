@@ -75,7 +75,7 @@ The objective from this project is to show how to create an API with a well-defi
 
 1. Clone Repository
 ```sh
-  $ git clone https://gitlab.com/gftf2011/proffy-backend.git
+  $ git clone https://github.com/gftf2011/clean-node-login-api-js.git
 ```
 2. Install dependencies
 ```sh
