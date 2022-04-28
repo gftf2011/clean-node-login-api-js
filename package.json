@@ -2,7 +2,7 @@
   "name": "clean-node-login-api-js",
   "version": "1.0.6",
   "main": "src/main/index.js",
-  "description": "NodeJs Rest API using TDD, Clean Architecture, Typescript and Design Patterns",
+  "description": "NodeJs Rest API using TDD, Clean Architecture and Design Patterns",
   "repository": "https://github.com/gftf2011/clean-node-login-api-js.git",
   "author": "Gabriel Ferraz <gftf2011@gmail.com>",
   "license": "MIT",
