@@ -29,7 +29,7 @@
     "jest": "^27.3.1",
     "lint-staged": "^11.2.6",
     "prettier": "^2.4.1",
-    "snyk": "^1.789.0",
+    "snyk": "^1.996.0",
     "supertest": "^6.1.6"
   },
   "scripts": {
