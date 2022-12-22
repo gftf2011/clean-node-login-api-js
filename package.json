@@ -75,7 +75,7 @@
     "express-rate-limit": "^6.2.0",
     "fast-glob": "^3.2.11",
     "helmet": "^4.6.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "mongodb": "^4.3.1",
     "morgan": "^1.10.0",
     "rate-limit-redis": "^2.1.0",
